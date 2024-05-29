@@ -6,7 +6,7 @@ from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLSliceViewInteractorStyle, vtkMRMLLightBoxRendererManagerProxy
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLSliceLogic
-from vtkmodules.vtkRenderingCore import vtkActor2D, vtkImageMapper, vtkImageActor
+from vtkmodules.vtkRenderingCore import vtkActor2D, vtkImageMapper, vtkImageActor, vtkRenderer
 
 from .abstract_view import AbstractView
 from .slicer_app import SlicerApp
@@ -27,11 +27,16 @@ class SliceRendererManager(vtkMRMLLightBoxRendererManagerProxy):
         super().__init__()
         self.view = view
 
-        # self.image_mapper = vtkImageMapper()
-        # self.image_actor = vtkActor2D()
-        self.image_actor = vtkImageActor()
-        # self.image_actor.SetMapper(self.image_mapper)
-        # self.image_actor.GetProperty().SetDisplayLocationToBackground()
+        # Create Slice image mapper and set its window / level fix to 8bit
+        # The window / level setting based on the input vtkImageData is handled by the vtkVolumeDisplayNode
+        # The generated image data is RGBA between 0/255
+        self.image_mapper = vtkImageMapper()
+        self.image_mapper.SetColorWindow(255)
+        self.image_mapper.SetColorLevel(127.5)
+
+        self.image_actor = vtkActor2D()
+        self.image_actor.SetMapper(self.image_mapper)
+        self.image_actor.GetProperty().SetDisplayLocationToBackground()
 
     def GetRenderer(self, _):
         return self.view.first_renderer()
@@ -39,8 +44,7 @@ class SliceRendererManager(vtkMRMLLightBoxRendererManagerProxy):
     def SetImageDataConnection(self, imageDataConnection):
         self.image_actor.GetMapper().SetInputConnection(imageDataConnection)
         self.add_slice_actor_to_renderer_if_needed()
-        # self.image_actor.SetVisibility(bool(imageDataConnection))
-        # self.image_actor.SetForceOpaque(True)
+        self.image_actor.SetVisibility(bool(imageDataConnection))
 
     def add_slice_actor_to_renderer_if_needed(self):
         renderer = self.GetRenderer(0)
@@ -54,9 +58,15 @@ class SliceView(AbstractView):
     def __init__(self, app: SlicerApp, name: str):
         super().__init__()
 
+        self.first_renderer().GetActiveCamera().ParallelProjectionOn()
+
+        self.overlay_renderer = vtkRenderer()
+        self.overlay_renderer.GetActiveCamera().ParallelProjectionOn()
+        self.overlay_renderer.SetLayer(1)
+        self.render_window().AddRenderer(self.overlay_renderer)
+
         # Add Render manager
         self.render_manager = SliceRendererManager(self)
-        self.first_renderer().GetActiveCamera().ParallelProjectionOn()
 
         self.image_data_connection = None
 
@@ -86,6 +96,8 @@ class SliceView(AbstractView):
         self.logic.SetMRMLApplicationLogic(app.app_logic)
         self.logic.AddObserver(vtkCommand.ModifiedEvent, self.on_slice_logic_modified_event)
         self.interactor_observer.SetSliceLogic(self.logic)
+
+        app.app_logic.GetSliceLogics().AddItem(self.logic)
 
         # Connect to scene
         self.set_mrml_scene(app.scene)

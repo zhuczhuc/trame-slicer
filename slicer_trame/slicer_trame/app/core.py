@@ -30,7 +30,7 @@ class App:
 
         self.two_d_view.logic.GetSliceCompositeNode().SetBackgroundVolumeID(self.volume_node.GetID())
 
-        self.two_d_view.first_renderer().SetBackground(.0, .0, .0)
+        self.two_d_view.first_renderer().SetBackground(1.0, 1.0, 1.0)
         self.two_d_view.mrml_view_node.SetOrientation("Coronal")
         self.two_d_view.logic.FitSliceToAll()
 
