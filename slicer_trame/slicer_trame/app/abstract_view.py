@@ -66,3 +66,7 @@ class AbstractView:
         self.mrml_scene = scene
         if self.mrml_view_node and self.mrml_view_node.GetScene() != scene:
             self.mrml_view_node = None
+
+    def reset_camera(self):
+        for renderer in self._render_window.GetRenderers():
+            renderer.ResetCamera()

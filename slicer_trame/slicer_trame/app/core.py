@@ -1,3 +1,4 @@
+import vtkmodules.vtkCommonCore
 from trame.app import get_server
 from trame.decorators import TrameApp, change, controller
 from trame.widgets import vuetify3, vtk as vtk_widgets
@@ -7,7 +8,7 @@ from vtkmodules.vtkMRMLCore import vtkMRMLModelStorageNode, vtkMRMLVolumeArchety
 from slicer_trame.app.slice_view import SliceView
 from slicer_trame.app.slicer_app import SlicerApp
 from slicer_trame.app.threed_view import ThreeDView
-
+import vtk
 
 class App:
     def __init__(self):
@@ -53,6 +54,12 @@ class MyTrameApp:
         self.state.trame__title = "SlicerTrame"
         self.state.resolution = 6
 
+        self.ctrl.reset_camera = self.reset_camera
+
+    def reset_camera(self):
+        self.app.two_d_view.reset_camera()
+        self.app.threed_view.reset_camera()
+
     @property
     def state(self):
         return self.server.state
@@ -61,13 +68,15 @@ class MyTrameApp:
     def ctrl(self):
         return self.server.controller
 
-    @controller.set("reset_resolution")
-    def reset_resolution(self):
-        self.state.resolution = 6
+    @controller.set("reset_slice_offset")
+    def reset_slice_offset(self):
+        self.app.two_d_view.logic.FitSliceToAll()
+        self.state.slice_offset = self.app.two_d_view.logic.GetSliceOffset()
 
-    @change("resolution")
-    def on_resolution_change(self, resolution, **kwargs):
-        print(f">>> ENGINE(a): Slider updating resolution to {resolution}")
+    @change("slice_offset")
+    def on_slice_offset_change(self, slice_offset, **kwargs):
+        self.app.two_d_view.logic.SetSliceOffset(slice_offset)
+        self.remove_view.update()
 
     def _build_ui(self, *args, **kwargs):
         with SinglePageLayout(self.server) as layout:
@@ -75,14 +84,20 @@ class MyTrameApp:
             layout.title.set_text("Trame / vtk.js")
             with layout.toolbar:
                 vuetify3.VSpacer()
-                vuetify3.VSlider(  # Add slider
-                    v_model=("resolution", 6),  # bind variable with an initial value of 6
-                    min=3, max=60, step=1,  # slider range
+
+                # Create slider connected to 2D View update
+                offset_range = [0]*2
+                offset_resolution = vtk.reference(1)
+                self.app.two_d_view.logic.GetSliceOffsetRangeResolution(offset_range, offset_resolution)
+                self.slider = vuetify3.VSlider(  # Add slider
+                    v_model=("slice_offset", self.app.two_d_view.logic.GetSliceOffset()),
+                    min=offset_range[0], max=offset_range[1], step=float(offset_resolution),  # slider range
                     dense=True, hide_details=True,  # presentation setup
                 )
+
                 with vuetify3.VBtn(icon=True, click=self.ctrl.reset_camera):
                     vuetify3.VIcon("mdi-crop-free")
-                with vuetify3.VBtn(icon=True, click=self.reset_resolution):
+                with vuetify3.VBtn(icon=True, click=self.reset_slice_offset):
                     vuetify3.VIcon("mdi-undo")
 
             # Main content
@@ -91,6 +106,6 @@ class MyTrameApp:
                     with vuetify3.VCol(classes="fill-height"):
                         vtk_widgets.VtkLocalView(self.app.threed_view.render_window())
                     with vuetify3.VCol(classes="fill-height"):
-                        vtk_widgets.VtkRemoteView(self.app.two_d_view.render_window())
+                        self.remove_view = vtk_widgets.VtkRemoteView(self.app.two_d_view.render_window())
 
             return layout

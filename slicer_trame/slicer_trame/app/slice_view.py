@@ -6,7 +6,7 @@ from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLSliceViewInteractorStyle, vtkMRMLLightBoxRendererManagerProxy
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLSliceLogic
-from vtkmodules.vtkRenderingCore import vtkActor2D, vtkImageMapper, vtkImageActor, vtkRenderer
+from vtkmodules.vtkRenderingCore import vtkActor2D, vtkImageMapper, vtkRenderer
 
 from .abstract_view import AbstractView
 from .slicer_app import SlicerApp
