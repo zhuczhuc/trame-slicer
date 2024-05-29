@@ -2,27 +2,42 @@ from trame.app import get_server
 from trame.decorators import TrameApp, change, controller
 from trame.widgets import vuetify3, vtk as vtk_widgets
 from trame_vuetify.ui.vuetify3 import SinglePageLayout
-from vtkmodules.vtkIOGeometry import vtkSTLReader
+from vtkmodules.vtkMRMLCore import vtkMRMLModelStorageNode, vtkMRMLVolumeArchetypeStorageNode
 
+from slicer_trame.app.slice_view import SliceView
 from slicer_trame.app.slicer_app import SlicerApp
 from slicer_trame.app.threed_view import ThreeDView
 
 
 class App:
     def __init__(self):
-        reader = vtkSTLReader()
-        reader.SetFileName(r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\model.stl")
-        reader.Update()
-        polydata = reader.GetOutput()
-
         self.slicer_app = SlicerApp()
         self.threed_view = ThreeDView(self.slicer_app, "ThreeDView")
-        self.threed_view2 = ThreeDView(self.slicer_app, "ThreeDView2")
+        self.two_d_view = SliceView(self.slicer_app, "SliceView")
+
+        model_storage_node = vtkMRMLModelStorageNode()
+        model_storage_node.SetFileName(r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\artery.vtk")
+        model_storage_node.SetScene(self.slicer_app.scene)
         self.model_node = self.slicer_app.scene.AddNewNodeByClass("vtkMRMLModelNode")
-        self.model_node.SetAndObservePolyData(polydata)
+        self.model_node.SetAndObserveStorageNodeID(model_storage_node.GetID())
+        model_storage_node.ReadData(self.model_node)
+
+        volume_storage_node = vtkMRMLVolumeArchetypeStorageNode()
+        self.volume_node = self.slicer_app.scene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
+        volume_storage_node.SetFileName(r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\MRHead.nrrd")
+        volume_storage_node.ReadData(self.volume_node)
+        self.volume_node.SetAndObserveStorageNodeID(volume_storage_node.GetID())
+
+        self.two_d_view.logic.GetSliceCompositeNode().SetBackgroundVolumeID(self.volume_node.GetID())
+
+        self.two_d_view.first_renderer().SetBackground(.0, .0, .0)
+        self.two_d_view.mrml_view_node.SetOrientation("Coronal")
+        self.two_d_view.logic.FitSliceToAll()
+
         self.model_node.CreateDefaultDisplayNodes()
         self.threed_view.render()
-        self.threed_view2.render()
+        self.two_d_view.first_renderer().ResetCamera()
+        self.two_d_view.render()
 
 
 @TrameApp()
@@ -76,6 +91,6 @@ class MyTrameApp:
                     with vuetify3.VCol(classes="fill-height"):
                         vtk_widgets.VtkLocalView(self.app.threed_view.render_window())
                     with vuetify3.VCol(classes="fill-height"):
-                        vtk_widgets.VtkLocalView(self.app.threed_view2.render_window())
+                        vtk_widgets.VtkRemoteView(self.app.two_d_view.render_window())
 
             return layout
