@@ -33,6 +33,9 @@ class AbstractView:
     def first_renderer(self) -> vtkRenderer:
         return self._renderer
 
+    def renderer(self) -> vtkRenderer:
+        return self.first_renderer()
+
     def render(self) -> None:
         self._render_window.Render()
 

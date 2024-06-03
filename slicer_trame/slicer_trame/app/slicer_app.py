@@ -13,5 +13,6 @@ class SlicerApp:
         self.app_logic.GetColorLogic().AddDefaultColorNodes()
 
         self.app_logic.SetSliceLogics(vtkCollection())
+        self.app_logic.SetViewLogics(vtkCollection())
 
         vtkMRMLSliceNode.AddDefaultSliceOrientationPresets(self.scene)

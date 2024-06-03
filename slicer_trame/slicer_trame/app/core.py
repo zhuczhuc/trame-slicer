@@ -76,7 +76,7 @@ class MyTrameApp:
     @change("slice_offset")
     def on_slice_offset_change(self, slice_offset, **kwargs):
         self.app.two_d_view.logic.SetSliceOffset(slice_offset)
-        self.remove_view.update()
+        self.remote_view.update()
 
     def _build_ui(self, *args, **kwargs):
         with SinglePageLayout(self.server) as layout:
@@ -85,7 +85,6 @@ class MyTrameApp:
             with layout.toolbar:
                 vuetify3.VSpacer()
 
-                # Create slider connected to 2D View update
                 offset_range = [0]*2
                 offset_resolution = vtk.reference(1)
                 self.app.two_d_view.logic.GetSliceOffsetRangeResolution(offset_range, offset_resolution)
@@ -106,6 +105,6 @@ class MyTrameApp:
                     with vuetify3.VCol(classes="fill-height"):
                         vtk_widgets.VtkLocalView(self.app.threed_view.render_window())
                     with vuetify3.VCol(classes="fill-height"):
-                        self.remove_view = vtk_widgets.VtkRemoteView(self.app.two_d_view.render_window())
+                        self.remote_view = vtk_widgets.VtkRemoteView(self.app.two_d_view.render_window())
 
             return layout
