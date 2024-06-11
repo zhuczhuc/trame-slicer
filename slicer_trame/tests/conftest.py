@@ -16,7 +16,9 @@ def a_slicer_app():
 
 @pytest.fixture
 def a_threed_view(a_slicer_app):
-    return ThreeDView(a_slicer_app, "ThreeD")
+    three_d_view = ThreeDView(a_slicer_app, "ThreeD")
+    yield three_d_view
+    three_d_view.finalize()
 
 
 @pytest.fixture

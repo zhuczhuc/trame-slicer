@@ -8,6 +8,7 @@ def test_threed_view_can_render_mrml_models(a_threed_view, a_model_node):
     a_threed_view.interactor().Start()
 
 
+
 def test_threed_view_can_render_mrml_volumes(a_threed_view, a_slice_view, a_volume_node, a_slicer_app):
     a_slice_view.logic.GetSliceCompositeNode().SetBackgroundVolumeID(a_volume_node.GetID())
     logic = vtkSlicerVolumeRenderingLogic()

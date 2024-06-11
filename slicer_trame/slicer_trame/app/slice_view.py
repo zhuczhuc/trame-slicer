@@ -1,4 +1,6 @@
-from vtkmodules.vtkCommonCore import vtkCommand
+import vtk
+from vtkmodules.vtkCommonCore import vtkCommand, vtkCallbackCommand
+from vtkmodules.vtkInteractionStyle import vtkInteractorStyleUser
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLVolumeGlyphSliceDisplayableManager, vtkMRMLModelSliceDisplayableManager, vtkMRMLCrosshairDisplayableManager,
@@ -63,7 +65,9 @@ class SliceView(AbstractView):
         self.overlay_renderer = vtkRenderer()
         self.overlay_renderer.GetActiveCamera().ParallelProjectionOn()
         self.overlay_renderer.SetLayer(1)
+        self.render_window().SetNumberOfLayers(2)
         self.render_window().AddRenderer(self.overlay_renderer)
+        self.render_window().SetAlphaBitPlanes(1)
 
         # Add Render manager
         self.render_manager = SliceRendererManager(self)
@@ -71,9 +75,9 @@ class SliceView(AbstractView):
         self.image_data_connection = None
 
         managers = [
+            vtkMRMLCrosshairDisplayableManager,
             vtkMRMLVolumeGlyphSliceDisplayableManager,
             vtkMRMLModelSliceDisplayableManager,
-            vtkMRMLCrosshairDisplayableManager,
             vtkMRMLOrientationMarkerDisplayableManager,
             vtkMRMLRulerDisplayableManager,
             vtkMRMLScalarBarDisplayableManager,
@@ -84,27 +88,23 @@ class SliceView(AbstractView):
             manager.SetMRMLApplicationLogic(app.app_logic)
             self.displayable_manager_group.AddDisplayableManager(manager)
 
-        self.interactor_observer = vtkMRMLSliceViewInteractorStyle()
-        self.interactor_observer.SetDisplayableManagers(self.displayable_manager_group)
-        self.displayable_manager_group.GetInteractor().Initialize()
         self.displayable_manager_group.SetLightBoxRendererManagerProxy(self.render_manager)
-
+        self.interactor_observer = vtkMRMLSliceViewInteractorStyle()
         self.name = name
 
         # Create slice logic
         self.logic = vtkMRMLSliceLogic()
         self.logic.SetMRMLApplicationLogic(app.app_logic)
         self.logic.AddObserver(vtkCommand.ModifiedEvent, self.on_slice_logic_modified_event)
-        self.interactor_observer.SetSliceLogic(self.logic)
-
         app.app_logic.GetSliceLogics().AddItem(self.logic)
+
+        self.interactor_observer.SetSliceLogic(self.logic)
+        self.interactor_observer.SetDisplayableManagers(self.displayable_manager_group)
 
         # Connect to scene
         self.set_mrml_scene(app.scene)
-
-    def setup_rendering(self):
-        self.render_window().SetAlphaBitPlanes(1)
-        self.render_window().SetNumberOfLayers(2)
+        self.interactor().SetInteractorStyle(vtkInteractorStyleUser())
+        self.interactor_observer.SetInteractor(self.interactor())
 
     def set_mrml_scene(self, scene: vtkMRMLScene) -> None:
         super().set_mrml_scene(scene)
@@ -114,7 +114,6 @@ class SliceView(AbstractView):
 
     def on_slice_logic_modified_event(self, *_):
         self.update_image_data_connection()
-        self.update_offset_slider()
 
     def update_image_data_connection(self):
         image_data_connection = self.logic.GetImageDataConnection()
@@ -123,6 +122,3 @@ class SliceView(AbstractView):
 
         self.image_data_connection = image_data_connection
         self.render_manager.SetImageDataConnection(self.image_data_connection)
-
-    def update_offset_slider(self):
-        pass

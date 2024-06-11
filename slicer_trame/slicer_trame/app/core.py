@@ -1,14 +1,104 @@
-import vtkmodules.vtkCommonCore
-from trame.app import get_server
+import asyncio
+import json
+import time
+
+import vtk
+# Required for rendering initialization, not necessary for
+# local rendering, but doesn't hurt to include it
+import vtkmodules.vtkRenderingOpenGL2  # noqa
+from trame.app import asynchronous, get_server
 from trame.decorators import TrameApp, change, controller
-from trame.widgets import vuetify3, vtk as vtk_widgets
+from trame.ui.vuetify import SinglePageLayout
+from trame.widgets import vuetify3, vtklocal as vtk_widgets
+from trame_rca.widgets.rca import RemoteControlledArea
 from trame_vuetify.ui.vuetify3 import SinglePageLayout
+# Required for interactor initialization
+from vtkmodules.vtkInteractionStyle import vtkInteractorStyleSwitch  # noqa
 from vtkmodules.vtkMRMLCore import vtkMRMLModelStorageNode, vtkMRMLVolumeArchetypeStorageNode
+from vtkmodules.vtkWebCore import vtkRemoteInteractionAdapter, vtkWebApplication
 
 from slicer_trame.app.slice_view import SliceView
 from slicer_trame.app.slicer_app import SlicerApp
 from slicer_trame.app.threed_view import ThreeDView
-import vtk
+
+# Activate a RemoteControlledArea : https://github.com/Kitware/trame-rca/blob/master/examples/00_cone/app.py
+
+# This should be unique
+HELPER = vtkWebApplication()
+HELPER.SetImageEncoding(vtkWebApplication.ENCODING_NONE)
+HELPER.SetNumberOfEncoderThreads(4)
+
+
+class ViewAdapter:
+    def __init__(self, window, name, target_fps=30):
+        self._view = window
+        self.area_name = name
+        self.streamer = None
+        self.last_meta = None
+        self.animating = False
+        self.target_fps = target_fps
+
+        self._iren = window.GetInteractor()
+        self._iren.EnableRenderOff()
+        self._view.ShowWindowOff()
+
+    def _get_metadata(self):
+        return dict(
+            type="image/jpeg",  # mime time
+            codec="",  # video codec, not relevant here
+            w=self._view.GetSize()[0],
+            h=self._view.GetSize()[1],
+            st=int(time.time_ns() / 1000000),
+            key=("key"),  # jpegs are always keyframes
+        )
+
+    async def _animate(self):
+        mtime = 0
+        while self.animating:
+            data = HELPER.InteractiveRender(self._view)
+            if data is not None and mtime != data.GetMTime():
+                mtime = data.GetMTime()
+                self.push(memoryview(data), self._get_metadata())
+                await asyncio.sleep(1.0 / self.target_fps)
+            await asyncio.sleep(0)
+
+        HELPER.InvalidateCache(self._view)
+        content = memoryview(HELPER.StillRender(self._view))
+        self.push(content, self._get_metadata())
+
+    def set_streamer(self, stream_manager):
+        self.streamer = stream_manager
+
+    def update_size(self, origin, size):
+        width = int(size.get("w", 300))
+        height = int(size.get("h", 300))
+        self._view.SetSize(width, height)
+        content = memoryview(HELPER.StillRender(self._view))
+        self.push(content, self._get_metadata())
+
+    def push(self, content, meta=None):
+        if meta is not None:
+            self.last_meta = meta
+        if content is None:
+            return
+        self.streamer.push_content(self.area_name, self.last_meta, content)
+
+    def on_interaction(self, origin, event):
+        event_type = event["type"]
+        if event_type == "StartInteractionEvent":
+            if not self.animating:
+                self.animating = True
+                asynchronous.create_task(self._animate())
+        elif event_type == "EndInteractionEvent":
+            self.animating = False
+        else:
+            event_str = json.dumps(event)
+            status = vtkRemoteInteractionAdapter.ProcessEvent(self._iren, event_str)
+
+            # Force Render next time InteractiveRender is called
+            if status:
+                HELPER.InvalidateCache(self._view)
+
 
 class App:
     def __init__(self):
@@ -46,6 +136,7 @@ class MyTrameApp:
     def __init__(self, server=None):
         self.server = get_server(server, client_type="vue3")
         self.app = App()
+
         if self.server.hot_reload:
             self.server.controller.on_server_reload.add(self._build_ui)
         self.ui = self._build_ui()
@@ -55,6 +146,12 @@ class MyTrameApp:
         self.state.resolution = 6
 
         self.ctrl.reset_camera = self.reset_camera
+        self.ctrl.on_server_ready.add(self.init_rca)
+
+    def init_rca(self, **_):
+        # RemoteControllerArea
+        view_handler = ViewAdapter(self.app.threed_view.render_window(), "view", target_fps=30)
+        self.server.controller.rc_area_register(view_handler)
 
     def reset_camera(self):
         self.app.two_d_view.reset_camera()
@@ -76,7 +173,7 @@ class MyTrameApp:
     @change("slice_offset")
     def on_slice_offset_change(self, slice_offset, **kwargs):
         self.app.two_d_view.logic.SetSliceOffset(slice_offset)
-        self.remote_view.update()
+        # self.twod_remote_view.update()
 
     def _build_ui(self, *args, **kwargs):
         with SinglePageLayout(self.server) as layout:
@@ -85,7 +182,7 @@ class MyTrameApp:
             with layout.toolbar:
                 vuetify3.VSpacer()
 
-                offset_range = [0]*2
+                offset_range = [0] * 2
                 offset_resolution = vtk.reference(1)
                 self.app.two_d_view.logic.GetSliceOffsetRangeResolution(offset_range, offset_resolution)
                 self.slider = vuetify3.VSlider(  # Add slider
@@ -103,8 +200,8 @@ class MyTrameApp:
             with layout.content:
                 with vuetify3.VContainer(fluid=True, classes="pa-0 fill-height"):
                     with vuetify3.VCol(classes="fill-height"):
-                        vtk_widgets.VtkLocalView(self.app.threed_view.render_window())
-                    with vuetify3.VCol(classes="fill-height"):
-                        self.remote_view = vtk_widgets.VtkRemoteView(self.app.two_d_view.render_window())
+                        RemoteControlledArea(name="view", display="image")
+                    # with vuetify3.VCol(classes="fill-height"):
+                    #     self.twod_remote_view = vtk_widgets.LocalView(self.app.two_d_view.render_window())
 
             return layout

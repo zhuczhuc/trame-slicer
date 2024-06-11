@@ -1,3 +1,4 @@
+from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLViewNode
 from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLCameraDisplayableManager, vtkMRMLViewDisplayableManager, vtkMRMLModelDisplayableManager,
@@ -6,6 +7,7 @@ from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLCrosshairDisplayableManager
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLViewLogic
+from vtkmodules.vtkRenderingCore import vtkInteractorStyle3D
 from vtkmodules.vtkSlicerVolumeRenderingModuleMRMLDisplayableManager import vtkMRMLVolumeRenderingDisplayableManager
 
 from .abstract_view import AbstractView
@@ -62,9 +64,11 @@ class ThreeDView(RenderView):
             manager.SetMRMLApplicationLogic(app.app_logic)
             self.displayable_manager_group.AddDisplayableManager(manager)
 
+        self.displayable_manager_group.GetInteractor().Initialize()
         self.interactor_observer = vtkMRMLThreeDViewInteractorStyle()
         self.interactor_observer.SetDisplayableManagers(self.displayable_manager_group)
-        self.displayable_manager_group.GetInteractor().Initialize()
+        self.interactor_observer.SetInteractor(self.interactor())
+        self.interactor().SetInteractorStyle(vtkInteractorStyle3D())
 
         self.name = name
         self.logic = vtkMRMLViewLogic()

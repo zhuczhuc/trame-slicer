@@ -1,4 +1,5 @@
 import vtk
+from vtkmodules.vtkInteractionStyle import vtkInteractorStyleImage
 from vtkmodules.vtkMRMLCore import vtkMRMLSliceNode, vtkMRMLScene, vtkMRMLVolumeArchetypeStorageNode
 from vtkmodules.vtkMRMLLogic import vtkMRMLSliceLogic
 from vtkmodules.vtkRenderingCore import vtkImageMapper, vtkActor2D
@@ -47,20 +48,24 @@ def display_working():
 def display_test():
     image_mapper = vtkImageMapper()
     image_mapper.SetInputConnection(sliceLogic.GetImageDataConnection())
+    image_mapper.SetColorWindow(255)
+    image_mapper.SetColorLevel(127.5)
     image_actor = vtkActor2D()
     image_actor.SetMapper(image_mapper)
     image_actor.GetProperty().SetDisplayLocationToBackground()
 
     rw = vtk.vtkRenderWindow()
     rr = vtk.vtkRenderer()
+    rr.AddActor2D(image_actor)
     rr.SetBackground(1.0, 1.0, 1.0)
 
     rw.AddRenderer(rr)
     ri = vtk.vtkRenderWindowInteractor()
     ri.SetRenderWindow(rw)
+    ri.SetInteractorStyle(vtkInteractorStyleImage())
 
     rw.Render()
     ri.Start()
 
 
-display_working()
+display_test()
