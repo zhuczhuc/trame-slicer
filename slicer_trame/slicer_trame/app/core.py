@@ -1,6 +1,7 @@
 import asyncio
 import json
 import time
+from typing import Optional
 
 import vtk
 # Required for rendering initialization, not necessary for
@@ -12,9 +13,11 @@ from trame.ui.vuetify import SinglePageLayout
 from trame.widgets import vuetify3, vtklocal as vtk_widgets
 from trame_rca.widgets.rca import RemoteControlledArea
 from trame_vuetify.ui.vuetify3 import SinglePageLayout
+from vtkmodules.vtkCommonCore import vtkCommand
 # Required for interactor initialization
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleSwitch  # noqa
 from vtkmodules.vtkMRMLCore import vtkMRMLModelStorageNode, vtkMRMLVolumeArchetypeStorageNode
+from vtkmodules.vtkRenderingCore import vtkRenderWindow
 from vtkmodules.vtkWebCore import vtkRemoteInteractionAdapter, vtkWebApplication
 
 from slicer_trame.app.slice_view import SliceView
@@ -30,12 +33,13 @@ HELPER.SetNumberOfEncoderThreads(4)
 
 
 class ViewAdapter:
-    def __init__(self, window, name, target_fps=30):
+    def __init__(self, window: vtkRenderWindow, name: str, target_fps: int = 30):
         self._view = window
         self.area_name = name
         self.streamer = None
         self.last_meta = None
         self.animating = False
+        self.is_updating = False
         self.target_fps = target_fps
 
         self._iren = window.GetInteractor()
@@ -66,6 +70,15 @@ class ViewAdapter:
         content = memoryview(HELPER.StillRender(self._view))
         self.push(content, self._get_metadata())
 
+    def still_render(self, *_):
+        if self.animating or self.is_updating:
+            return
+
+        self.is_updating = True
+        data = HELPER.StillRender(self._view) if not self.animating else HELPER.InteractiveRender(self._view)
+        self.push(memoryview(data), self._get_metadata())
+        self.is_updating = False
+
     def set_streamer(self, stream_manager):
         self.streamer = stream_manager
 
@@ -73,8 +86,7 @@ class ViewAdapter:
         width = int(size.get("w", 300))
         height = int(size.get("h", 300))
         self._view.SetSize(width, height)
-        content = memoryview(HELPER.StillRender(self._view))
-        self.push(content, self._get_metadata())
+        self.still_render()
 
     def push(self, content, meta=None):
         if meta is not None:
@@ -91,6 +103,7 @@ class ViewAdapter:
                 asynchronous.create_task(self._animate())
         elif event_type == "EndInteractionEvent":
             self.animating = False
+            self.still_render()
         else:
             event_str = json.dumps(event)
             status = vtkRemoteInteractionAdapter.ProcessEvent(self._iren, event_str)
@@ -136,6 +149,7 @@ class MyTrameApp:
     def __init__(self, server=None):
         self.server = get_server(server, client_type="vue3")
         self.app = App()
+        self.twod_remote_view: Optional[ViewAdapter] = None
 
         if self.server.hot_reload:
             self.server.controller.on_server_reload.add(self._build_ui)
@@ -150,8 +164,13 @@ class MyTrameApp:
 
     def init_rca(self, **_):
         # RemoteControllerArea
-        view_handler = ViewAdapter(self.app.threed_view.render_window(), "view", target_fps=30)
-        self.server.controller.rc_area_register(view_handler)
+        self.server.controller.rc_area_register(
+            ViewAdapter(self.app.threed_view.render_window(), "3d_view", target_fps=30)
+        )
+        self.twod_remote_view = ViewAdapter(self.app.two_d_view.render_window(), "2d_view", target_fps=90)
+        self.server.controller.rc_area_register(
+            self.twod_remote_view
+        )
 
     def reset_camera(self):
         self.app.two_d_view.reset_camera()
@@ -173,7 +192,8 @@ class MyTrameApp:
     @change("slice_offset")
     def on_slice_offset_change(self, slice_offset, **kwargs):
         self.app.two_d_view.logic.SetSliceOffset(slice_offset)
-        # self.twod_remote_view.update()
+        if self.twod_remote_view:
+            self.twod_remote_view.still_render()
 
     def _build_ui(self, *args, **kwargs):
         with SinglePageLayout(self.server) as layout:
@@ -200,8 +220,8 @@ class MyTrameApp:
             with layout.content:
                 with vuetify3.VContainer(fluid=True, classes="pa-0 fill-height"):
                     with vuetify3.VCol(classes="fill-height"):
-                        RemoteControlledArea(name="view", display="image")
-                    # with vuetify3.VCol(classes="fill-height"):
-                    #     self.twod_remote_view = vtk_widgets.LocalView(self.app.two_d_view.render_window())
+                        RemoteControlledArea(name="3d_view", display="image")
+                    with vuetify3.VCol(classes="fill-height"):
+                        RemoteControlledArea(name="2d_view", display="image")
 
             return layout

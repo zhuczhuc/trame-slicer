@@ -68,6 +68,7 @@ class SliceView(AbstractView):
         self.render_window().SetNumberOfLayers(2)
         self.render_window().AddRenderer(self.overlay_renderer)
         self.render_window().SetAlphaBitPlanes(1)
+        self.render_window().AddObserver(vtkCommand.WindowResizeEvent, self.update_slice_size)
 
         # Add Render manager
         self.render_manager = SliceRendererManager(self)
@@ -122,3 +123,6 @@ class SliceView(AbstractView):
 
         self.image_data_connection = image_data_connection
         self.render_manager.SetImageDataConnection(self.image_data_connection)
+
+    def update_slice_size(self, *_):
+        self.logic.ResizeSliceNode(*self.render_window().GetSize())
