@@ -4,6 +4,7 @@ from vtkmodules.vtkIOGeometry import vtkSTLReader
 from vtkmodules.vtkMRMLCore import vtkMRMLVolumeArchetypeStorageNode, vtkMRMLScalarVolumeNode, \
     vtkMRMLScalarVolumeDisplayNode, vtkMRMLColorTableNode
 
+from slicer_trame.app.abstract_view import DirectRendering
 from slicer_trame.app.slice_view import SliceView
 from slicer_trame.app.slicer_app import SlicerApp
 from slicer_trame.app.threed_view import ThreeDView
@@ -16,14 +17,14 @@ def a_slicer_app():
 
 @pytest.fixture
 def a_threed_view(a_slicer_app):
-    three_d_view = ThreeDView(a_slicer_app, "ThreeD")
+    three_d_view = ThreeDView(a_slicer_app, "ThreeD", scheduled_render_strategy=DirectRendering())
     yield three_d_view
     three_d_view.finalize()
 
 
 @pytest.fixture
 def a_slice_view(a_slicer_app):
-    return SliceView(a_slicer_app, "Red")
+    return SliceView(a_slicer_app, "Red", scheduled_render_strategy=DirectRendering())
 
 
 @pytest.fixture

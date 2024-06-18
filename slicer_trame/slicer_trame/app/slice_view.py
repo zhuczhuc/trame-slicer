@@ -57,8 +57,8 @@ class SliceRendererManager(vtkMRMLLightBoxRendererManagerProxy):
 
 
 class SliceView(AbstractView):
-    def __init__(self, app: SlicerApp, name: str):
-        super().__init__()
+    def __init__(self, app: SlicerApp, name: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.first_renderer().GetActiveCamera().ParallelProjectionOn()
 

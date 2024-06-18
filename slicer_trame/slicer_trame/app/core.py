@@ -10,16 +10,17 @@ import vtkmodules.vtkRenderingOpenGL2  # noqa
 from trame.app import asynchronous, get_server
 from trame.decorators import TrameApp, change, controller
 from trame.ui.vuetify import SinglePageLayout
-from trame.widgets import vuetify3, vtklocal as vtk_widgets
+from trame.widgets import vuetify3
 from trame_rca.widgets.rca import RemoteControlledArea
 from trame_vuetify.ui.vuetify3 import SinglePageLayout
-from vtkmodules.vtkCommonCore import vtkCommand
 # Required for interactor initialization
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleSwitch  # noqa
 from vtkmodules.vtkMRMLCore import vtkMRMLModelStorageNode, vtkMRMLVolumeArchetypeStorageNode
 from vtkmodules.vtkRenderingCore import vtkRenderWindow
+from vtkmodules.vtkSlicerVolumeRenderingModuleLogic import vtkSlicerVolumeRenderingLogic
 from vtkmodules.vtkWebCore import vtkRemoteInteractionAdapter, vtkWebApplication
 
+from slicer_trame.app.abstract_view import AsyncIORendering
 from slicer_trame.app.slice_view import SliceView
 from slicer_trame.app.slicer_app import SlicerApp
 from slicer_trame.app.threed_view import ThreeDView
@@ -116,8 +117,8 @@ class ViewAdapter:
 class App:
     def __init__(self):
         self.slicer_app = SlicerApp()
-        self.threed_view = ThreeDView(self.slicer_app, "ThreeDView")
-        self.two_d_view = SliceView(self.slicer_app, "SliceView")
+        self.threed_view = ThreeDView(self.slicer_app, "ThreeDView", scheduled_render_strategy=AsyncIORendering())
+        self.two_d_view = SliceView(self.slicer_app, "SliceView", scheduled_render_strategy=AsyncIORendering())
 
         model_storage_node = vtkMRMLModelStorageNode()
         model_storage_node.SetFileName(r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\artery.vtk")
@@ -139,9 +140,18 @@ class App:
         self.two_d_view.logic.FitSliceToAll()
 
         self.model_node.CreateDefaultDisplayNodes()
-        self.threed_view.render()
+        self.threed_view.schedule_render()
         self.two_d_view.first_renderer().ResetCamera()
-        self.two_d_view.render()
+        self.two_d_view.schedule_render()
+
+        self.logic = vtkSlicerVolumeRenderingLogic()
+        self.logic.SetMRMLApplicationLogic(self.slicer_app.app_logic)
+        self.logic.SetMRMLScene(self.slicer_app.scene)
+        self.logic.SetModuleShareDirectory(r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\slicer_trame\resources")
+        self.logic.ChangeVolumeRenderingMethod("vtkMRMLGPURayCastVolumeRenderingDisplayNode")
+        display = self.logic.CreateDefaultVolumeRenderingNodes(self.volume_node)
+        self.volume_node.CreateDefaultDisplayNodes()
+        self.volume_node.AddAndObserveDisplayNodeID(display.GetID())
 
 
 @TrameApp()

@@ -44,9 +44,8 @@ class ThreeDView(RenderView):
     Copied and adapted from qMRMLThreeDView
     """
 
-    def __init__(self, app: SlicerApp, name: str):
-
-        super().__init__()
+    def __init__(self, app: SlicerApp, name: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         managers = [
             vtkMRMLVolumeRenderingDisplayableManager,
