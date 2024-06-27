@@ -9,6 +9,7 @@ from vtkmodules.vtkMRMLDisplayableManager import (
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLSliceLogic
 from vtkmodules.vtkRenderingCore import vtkActor2D, vtkImageMapper, vtkRenderer
+from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import vtkMRMLSegmentationsDisplayableManager2D
 
 from .abstract_view import AbstractView
 from .slicer_app import SlicerApp
@@ -82,6 +83,7 @@ class SliceView(AbstractView):
             vtkMRMLOrientationMarkerDisplayableManager,
             vtkMRMLRulerDisplayableManager,
             vtkMRMLScalarBarDisplayableManager,
+            vtkMRMLSegmentationsDisplayableManager2D,
         ]
 
         for manager in managers:

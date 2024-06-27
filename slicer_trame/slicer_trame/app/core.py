@@ -12,6 +12,7 @@ from trame.decorators import TrameApp, change, controller
 from trame.ui.vuetify import SinglePageLayout
 from trame.widgets import vuetify3
 from trame_rca.widgets.rca import RemoteControlledArea
+from trame_vtklocal.widgets.vtklocal import LocalView
 from trame_vuetify.ui.vuetify3 import SinglePageLayout
 # Required for interactor initialization
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleSwitch  # noqa
@@ -174,9 +175,9 @@ class MyTrameApp:
 
     def init_rca(self, **_):
         # RemoteControllerArea
-        self.server.controller.rc_area_register(
-            ViewAdapter(self.app.threed_view.render_window(), "3d_view", target_fps=30)
-        )
+        # self.server.controller.rc_area_register(
+        #     ViewAdapter(self.app.threed_view.render_window(), "3d_view", target_fps=30)
+        # )
         self.twod_remote_view = ViewAdapter(self.app.two_d_view.render_window(), "2d_view", target_fps=90)
         self.server.controller.rc_area_register(
             self.twod_remote_view
@@ -230,7 +231,7 @@ class MyTrameApp:
             with layout.content:
                 with vuetify3.VContainer(fluid=True, classes="pa-0 fill-height"):
                     with vuetify3.VCol(classes="fill-height"):
-                        RemoteControlledArea(name="3d_view", display="image")
+                        LocalView(self.app.threed_view.render_window(), name="3d_view", display="image")
                     with vuetify3.VCol(classes="fill-height"):
                         RemoteControlledArea(name="2d_view", display="image")
 

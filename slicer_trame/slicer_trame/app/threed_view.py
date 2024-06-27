@@ -8,6 +8,7 @@ from vtkmodules.vtkMRMLDisplayableManager import (
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLViewLogic
 from vtkmodules.vtkRenderingCore import vtkInteractorStyle3D
+from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import vtkMRMLSegmentationsDisplayableManager3D
 from vtkmodules.vtkSlicerVolumeRenderingModuleMRMLDisplayableManager import vtkMRMLVolumeRenderingDisplayableManager
 
 from .abstract_view import AbstractView
@@ -56,6 +57,7 @@ class ThreeDView(RenderView):
             vtkMRMLCrosshairDisplayableManager3D,
             vtkMRMLOrientationMarkerDisplayableManager,
             vtkMRMLRulerDisplayableManager,
+            vtkMRMLSegmentationsDisplayableManager3D,
         ]
 
         for manager in managers:

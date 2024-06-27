@@ -2,7 +2,7 @@ import itk
 import pytest
 from vtkmodules.vtkIOGeometry import vtkSTLReader
 from vtkmodules.vtkMRMLCore import vtkMRMLVolumeArchetypeStorageNode, vtkMRMLScalarVolumeNode, \
-    vtkMRMLScalarVolumeDisplayNode, vtkMRMLColorTableNode
+    vtkMRMLScalarVolumeDisplayNode, vtkMRMLColorTableNode, vtkMRMLModelStorageNode, vtkMRMLModelNode
 
 from slicer_trame.app.abstract_view import DirectRendering
 from slicer_trame.app.slice_view import SliceView
@@ -29,15 +29,21 @@ def a_slice_view(a_slicer_app):
 
 @pytest.fixture
 def a_model_node(a_slicer_app):
-    reader = vtkSTLReader()
-    reader.SetFileName(r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\model.stl")
-    reader.Update()
-    polydata = reader.GetOutput()
+    return load_model_node(r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\model.stl", a_slicer_app)
 
-    model_node = a_slicer_app.scene.AddNewNodeByClass("vtkMRMLModelNode")
-    model_node.SetAndObservePolyData(polydata)
+
+def load_model_node(file_path, a_slicer_app):
+    storage_node = vtkMRMLModelStorageNode()
+    storage_node.SetFileName(file_path)
+    model_node: vtkMRMLModelNode = a_slicer_app.scene.AddNewNodeByClass("vtkMRMLModelNode")
+    storage_node.ReadData(model_node)
     model_node.CreateDefaultDisplayNodes()
     return model_node
+
+
+@pytest.fixture
+def a_segmentation_model(a_slicer_app):
+    return load_model_node(r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\a_segmentation.stl", a_slicer_app)
 
 
 @pytest.fixture
