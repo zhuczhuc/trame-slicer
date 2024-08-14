@@ -1,18 +1,25 @@
-from vtkmodules.vtkCommonCore import vtkCommand
-from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLViewNode
+from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLViewNode, vtkMRMLCrosshairNode
 from vtkmodules.vtkMRMLDisplayableManager import (
-    vtkMRMLCameraDisplayableManager, vtkMRMLViewDisplayableManager, vtkMRMLModelDisplayableManager,
-    vtkMRMLThreeDReformatDisplayableManager, vtkMRMLCrosshairDisplayableManager3D,
-    vtkMRMLOrientationMarkerDisplayableManager, vtkMRMLRulerDisplayableManager, vtkMRMLThreeDViewInteractorStyle,
-    vtkMRMLCrosshairDisplayableManager
+    vtkMRMLCameraDisplayableManager,
+    vtkMRMLViewDisplayableManager,
+    vtkMRMLModelDisplayableManager,
+    vtkMRMLThreeDReformatDisplayableManager,
+    vtkMRMLCrosshairDisplayableManager3D,
+    vtkMRMLOrientationMarkerDisplayableManager,
+    vtkMRMLRulerDisplayableManager,
+    vtkMRMLThreeDViewInteractorStyle,
+    vtkMRMLCrosshairDisplayableManager,
 )
-from vtkmodules.vtkMRMLLogic import vtkMRMLViewLogic
+from vtkmodules.vtkMRMLLogic import vtkMRMLViewLogic, vtkMRMLApplicationLogic
 from vtkmodules.vtkRenderingCore import vtkInteractorStyle3D
-from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import vtkMRMLSegmentationsDisplayableManager3D
-from vtkmodules.vtkSlicerVolumeRenderingModuleMRMLDisplayableManager import vtkMRMLVolumeRenderingDisplayableManager
+from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
+    vtkMRMLSegmentationsDisplayableManager3D,
+)
+from vtkmodules.vtkSlicerVolumeRenderingModuleMRMLDisplayableManager import (
+    vtkMRMLVolumeRenderingDisplayableManager,
+)
 
 from .abstract_view import AbstractView
-from .slicer_app import SlicerApp
 
 
 class RenderView(AbstractView):
@@ -45,7 +52,14 @@ class ThreeDView(RenderView):
     Copied and adapted from qMRMLThreeDView
     """
 
-    def __init__(self, app: SlicerApp, name: str, *args, **kwargs):
+    def __init__(
+        self,
+        scene: vtkMRMLScene,
+        app_logic: vtkMRMLApplicationLogic,
+        name: str,
+        *args,
+        **kwargs
+    ):
         super().__init__(*args, **kwargs)
 
         managers = [
@@ -62,7 +76,7 @@ class ThreeDView(RenderView):
 
         for manager in managers:
             manager = manager()
-            manager.SetMRMLApplicationLogic(app.app_logic)
+            manager.SetMRMLApplicationLogic(app_logic)
             self.displayable_manager_group.AddDisplayableManager(manager)
 
         self.displayable_manager_group.GetInteractor().Initialize()
@@ -73,10 +87,10 @@ class ThreeDView(RenderView):
 
         self.name = name
         self.logic = vtkMRMLViewLogic()
-        self.logic.SetMRMLApplicationLogic(app.app_logic)
+        self.logic.SetMRMLApplicationLogic(app_logic)
 
-        app.app_logic.GetViewLogics().AddItem(self.logic)
-        self.set_mrml_scene(app.scene)
+        app_logic.GetViewLogics().AddItem(self.logic)
+        self.set_mrml_scene(scene)
 
     def set_mrml_scene(self, scene: vtkMRMLScene) -> None:
         super().set_mrml_scene(scene)
@@ -101,7 +115,9 @@ class ThreeDView(RenderView):
             self.mrml_view_node.EndModify(was_modifying)
 
         # Exclude crosshair from focal point computation
-        crosshair_node = vtkMRMLCrosshairDisplayableManager().FindCrosshairNode(self.mrml_scene)
+        crosshair_node = vtkMRMLCrosshairDisplayableManager().FindCrosshairNode(
+            self.mrml_scene
+        )
         crosshairMode = 0
         if crosshair_node:
             crosshairMode = crosshair_node.GetCrosshairMode()
@@ -118,7 +134,9 @@ class ThreeDView(RenderView):
             self.mrml_view_node.EndModify(was_modifying)
             # Inform the displayable manager that the view is reset, so it can
             # update the box/labels bounds.
-            self.mrml_view_node.InvokeEvent(vtkMRMLViewNode.ResetFocalPointRequestedEvent)
+            self.mrml_view_node.InvokeEvent(
+                vtkMRMLViewNode.ResetFocalPointRequestedEvent
+            )
 
         if crosshair_node:
             crosshair_node.SetCrosshairMode(crosshairMode)

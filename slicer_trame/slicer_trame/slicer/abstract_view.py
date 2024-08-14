@@ -3,9 +3,18 @@ from typing import Optional, List
 
 from trame_server.utils import asynchronous
 from vtkmodules.vtkCommonCore import vtkCommand
-from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLViewNode, vtkMRMLAbstractViewNode
+from vtkmodules.vtkMRMLCore import (
+    vtkMRMLScene,
+    vtkMRMLViewNode,
+    vtkMRMLAbstractViewNode,
+)
 from vtkmodules.vtkMRMLDisplayableManager import vtkMRMLDisplayableManagerGroup
-from vtkmodules.vtkRenderingCore import vtkRenderWindow, vtkRenderer, vtkRenderWindowInteractor, vtkInteractorStyle
+from vtkmodules.vtkRenderingCore import (
+    vtkRenderWindow,
+    vtkRenderer,
+    vtkRenderWindowInteractor,
+    vtkInteractorStyle,
+)
 
 
 class ScheduledRenderStrategy:
@@ -40,7 +49,7 @@ class DirectRendering(ScheduledRenderStrategy):
 
 
 class AsyncIORendering(ScheduledRenderStrategy):
-    def __init__(self, schedule_render_fps: float = 30.):
+    def __init__(self, schedule_render_fps: float = 30.0):
         super().__init__()
         self.request_render_task: Optional[asyncio.Task] = None
         self.schedule_render_fps = schedule_render_fps
@@ -51,7 +60,7 @@ class AsyncIORendering(ScheduledRenderStrategy):
             self.request_render_task.add_done_callback(self.cleanup_render_task)
 
     async def _async_render(self):
-        await asyncio.sleep(1. / self.schedule_render_fps)
+        await asyncio.sleep(1.0 / self.schedule_render_fps)
         if self.abstract_view:
             self.abstract_view.render()
 
@@ -69,7 +78,12 @@ class AbstractView:
     Simple container class for a VTK Render Window, Renderers and VTK MRML Displayable Manager Group
     """
 
-    def __init__(self, scheduled_render_strategy: Optional[ScheduledRenderStrategy] = None, *args, **kwargs):
+    def __init__(
+        self,
+        scheduled_render_strategy: Optional[ScheduledRenderStrategy] = None,
+        *args,
+        **kwargs
+    ):
         self._renderer = vtkRenderer()
         self._render_window = vtkRenderWindow()
         self._render_window.SetMultiSamples(0)
@@ -80,12 +94,15 @@ class AbstractView:
 
         self.displayable_manager_group = vtkMRMLDisplayableManagerGroup()
         self.displayable_manager_group.SetRenderer(self._renderer)
-        self.displayable_manager_group.AddObserver(vtkCommand.UpdateEvent, self.schedule_render)
+        self.displayable_manager_group.AddObserver(
+            vtkCommand.UpdateEvent, self.schedule_render
+        )
         self.mrml_scene: Optional[vtkMRMLScene] = None
         self.mrml_view_node: Optional[vtkMRMLAbstractViewNode] = None
 
         self._scheduled_render = scheduled_render_strategy or DirectRendering()
         self._scheduled_render.set_abstract_view(self)
+        self._view_group = 0
 
     def finalize(self):
         self.render_window().ShowWindowOff()
@@ -125,6 +142,15 @@ class AbstractView:
 
         self.mrml_view_node = node
         self.displayable_manager_group.SetMRMLDisplayableNode(node)
+        self._refresh_node_view_group()
+
+    def set_view_group(self, view_group):
+        self._view_group = view_group
+        self._refresh_node_view_group()
+
+    def _refresh_node_view_group(self):
+        if self.mrml_view_node:
+            self.mrml_view_node.SetViewGroup(self._view_group)
 
     def set_mrml_scene(self, scene: vtkMRMLScene) -> None:
         if self.mrml_scene == scene:

@@ -1,29 +1,34 @@
-import vtk
-from vtkmodules.vtkCommonCore import vtkCommand, vtkCallbackCommand
+from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleUser
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLDisplayableManager import (
-    vtkMRMLVolumeGlyphSliceDisplayableManager, vtkMRMLModelSliceDisplayableManager, vtkMRMLCrosshairDisplayableManager,
-    vtkMRMLOrientationMarkerDisplayableManager, vtkMRMLRulerDisplayableManager, vtkMRMLScalarBarDisplayableManager,
-    vtkMRMLSliceViewInteractorStyle, vtkMRMLLightBoxRendererManagerProxy
+    vtkMRMLVolumeGlyphSliceDisplayableManager,
+    vtkMRMLModelSliceDisplayableManager,
+    vtkMRMLCrosshairDisplayableManager,
+    vtkMRMLOrientationMarkerDisplayableManager,
+    vtkMRMLRulerDisplayableManager,
+    vtkMRMLScalarBarDisplayableManager,
+    vtkMRMLSliceViewInteractorStyle,
+    vtkMRMLLightBoxRendererManagerProxy,
 )
-from vtkmodules.vtkMRMLLogic import vtkMRMLSliceLogic
+from vtkmodules.vtkMRMLLogic import vtkMRMLSliceLogic, vtkMRMLApplicationLogic
 from vtkmodules.vtkRenderingCore import vtkActor2D, vtkImageMapper, vtkRenderer
-from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import vtkMRMLSegmentationsDisplayableManager2D
+from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
+    vtkMRMLSegmentationsDisplayableManager2D,
+)
 
 from .abstract_view import AbstractView
-from .slicer_app import SlicerApp
 
 
 class SliceRendererManager(vtkMRMLLightBoxRendererManagerProxy):
     """
     In 3D Slicer the image actor is handled by CTK vtkLightBoxRendererManager currently not wrapped in SlicerLib
-    This render manager implements a one image actor / mapper for the renderining without lightbox features.
+    This render manager implements a one image actor / mapper for the rendering without lightbox features.
 
     It combines the vtkLightBoxRendererManager and vtkMRMLLightBoxRendererManagerProxy features.
 
     :see: https://github.com/commontk/CTK/blob/master/Libs/Visualization/VTK/Core/vtkLightBoxRendererManager.cpp
-    :see: D:\W\Slicer\Libs\MRML\Widgets\qMRMLSliceControllerWidget.cxx
+    :see: qMRMLSliceControllerWidget.cxx
     """
 
     def __init__(self, view: "SliceView"):
@@ -58,7 +63,14 @@ class SliceRendererManager(vtkMRMLLightBoxRendererManagerProxy):
 
 
 class SliceView(AbstractView):
-    def __init__(self, app: SlicerApp, name: str, *args, **kwargs):
+    def __init__(
+        self,
+        scene: vtkMRMLScene,
+        app_logic: vtkMRMLApplicationLogic,
+        name: str,
+        *args,
+        **kwargs
+    ):
         super().__init__(*args, **kwargs)
 
         self.first_renderer().GetActiveCamera().ParallelProjectionOn()
@@ -69,7 +81,9 @@ class SliceView(AbstractView):
         self.render_window().SetNumberOfLayers(2)
         self.render_window().AddRenderer(self.overlay_renderer)
         self.render_window().SetAlphaBitPlanes(1)
-        self.render_window().AddObserver(vtkCommand.WindowResizeEvent, self.update_slice_size)
+        self.render_window().AddObserver(
+            vtkCommand.WindowResizeEvent, self.update_slice_size
+        )
 
         # Add Render manager
         self.render_manager = SliceRendererManager(self)
@@ -88,24 +102,28 @@ class SliceView(AbstractView):
 
         for manager in managers:
             manager = manager()
-            manager.SetMRMLApplicationLogic(app.app_logic)
+            manager.SetMRMLApplicationLogic(app_logic)
             self.displayable_manager_group.AddDisplayableManager(manager)
 
-        self.displayable_manager_group.SetLightBoxRendererManagerProxy(self.render_manager)
+        self.displayable_manager_group.SetLightBoxRendererManagerProxy(
+            self.render_manager
+        )
         self.interactor_observer = vtkMRMLSliceViewInteractorStyle()
         self.name = name
 
         # Create slice logic
         self.logic = vtkMRMLSliceLogic()
-        self.logic.SetMRMLApplicationLogic(app.app_logic)
-        self.logic.AddObserver(vtkCommand.ModifiedEvent, self.on_slice_logic_modified_event)
-        app.app_logic.GetSliceLogics().AddItem(self.logic)
+        self.logic.SetMRMLApplicationLogic(app_logic)
+        self.logic.AddObserver(
+            vtkCommand.ModifiedEvent, self.on_slice_logic_modified_event
+        )
+        app_logic.GetSliceLogics().AddItem(self.logic)
 
         self.interactor_observer.SetSliceLogic(self.logic)
         self.interactor_observer.SetDisplayableManagers(self.displayable_manager_group)
 
         # Connect to scene
-        self.set_mrml_scene(app.scene)
+        self.set_mrml_scene(scene)
         self.interactor().SetInteractorStyle(vtkInteractorStyleUser())
         self.interactor_observer.SetInteractor(self.interactor())
 
