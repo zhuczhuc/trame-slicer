@@ -3,8 +3,8 @@ repos:
     rev: 24.8.0
     hooks:
       - id: black
-        entry: black
-        types: [python]
+        entry: black --check
+        types: [ python ]
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
@@ -16,5 +16,18 @@ repos:
     hooks:
       - id: flake8
         entry: flake8
-        types: [python]
-        args: [--config=slicer_trame/.flake8]
+        types: [ python ]
+        args: [ --config=slicer_trame/.flake8 ]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+        args: [ --profile=black ]
+
+#  - repo: https://github.com/pre-commit/mirrors-mypy
+#    rev: v1.11.1
+#    hooks:
+#      - id: mypy
+#        args: [ --disable-error-code, annotation-unchecked, --ignore-missing-imports ]

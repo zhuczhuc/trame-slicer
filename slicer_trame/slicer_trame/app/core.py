@@ -19,7 +19,7 @@ from vtkmodules.vtkMRMLCore import (
 )
 from vtkmodules.vtkWebCore import vtkWebApplication
 
-from slicer_trame.components.rca_view_adapter import ViewAdapter
+from slicer_trame.components.rca_view_adapter import RcaViewAdapter
 from slicer_trame.slicer import SlicerApp
 
 # This should be unique
@@ -74,7 +74,7 @@ class MyTrameApp:
     def __init__(self, server=None):
         self.server = get_server(server, client_type="vue3")
         self.app = App()
-        self.twod_remote_view: Optional[ViewAdapter] = None
+        self.twod_remote_view: Optional[RcaViewAdapter] = None
 
         if self.server.hot_reload:
             self.server.controller.on_server_reload.add(self._build_ui)
@@ -90,9 +90,11 @@ class MyTrameApp:
     def init_rca(self, **_):
         # RemoteControllerArea
         self.server.controller.rc_area_register(
-            ViewAdapter(self.app.threed_view.render_window(), "3d_view", target_fps=90)
+            RcaViewAdapter(
+                self.app.threed_view.render_window(), "3d_view", target_fps=90
+            )
         )
-        self.twod_remote_view = ViewAdapter(
+        self.twod_remote_view = RcaViewAdapter(
             self.app.two_d_view.render_window(), "2d_view", target_fps=90
         )
         self.server.controller.rc_area_register(self.twod_remote_view)

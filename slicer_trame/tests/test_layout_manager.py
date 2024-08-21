@@ -9,11 +9,11 @@ from slicer_trame.components.layout_grid import (
     LayoutDirection,
     SlicerView,
     SlicerViewType,
-    SlicerViewProps,
-    vue_layout_to_slicer,
     pretty_xml,
+    vue_layout_to_slicer,
 )
 from slicer_trame.slicer import LayoutManager, ViewManager
+from slicer_trame.slicer.abstract_view import ViewProps
 
 
 @pytest.fixture()
@@ -21,7 +21,7 @@ def a_sagittal_view():
     return SlicerView(
         "sagittal_view_tag",
         SlicerViewType.SLICE_VIEW,
-        SlicerViewProps(orientation="Sagittal"),
+        ViewProps(orientation="Sagittal"),
     )
 
 
@@ -30,7 +30,7 @@ def a_coronal_view():
     return SlicerView(
         "coronal_view_tag",
         SlicerViewType.SLICE_VIEW,
-        SlicerViewProps(orientation="Coronal"),
+        ViewProps(orientation="Coronal"),
     )
 
 
@@ -99,7 +99,6 @@ def test_changing_layout_triggers_view_creation(
     a_layout_manager.register_layout("Sagittal Only", sagittal_layout)
     a_layout_manager.set_layout("Sagittal Only")
     a_mock_view_manager.create_view.assert_called_with(
-        "sagittal_view_tag",
         a_sagittal_view,
     )
 

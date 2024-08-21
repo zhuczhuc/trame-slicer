@@ -1,5 +1,5 @@
 from vtkmodules.vtkCommonCore import vtkCollection
-from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLSliceNode, vtkMRMLCrosshairNode
+from vtkmodules.vtkMRMLCore import vtkMRMLCrosshairNode, vtkMRMLScene, vtkMRMLSliceNode
 from vtkmodules.vtkSlicerBaseLogic import vtkSlicerApplicationLogic
 from vtkmodules.vtkSlicerVolumeRenderingModuleLogic import vtkSlicerVolumeRenderingLogic
 

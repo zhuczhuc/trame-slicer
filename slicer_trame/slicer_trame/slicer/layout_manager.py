@@ -3,14 +3,15 @@ from typing import Optional
 from trame_client.widgets.core import VirtualNode
 from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLScriptedModuleNode
 
-from .view_manager import ViewManager
 from slicer_trame.components.layout_grid import (
     Layout,
     LayoutGrid,
-    vue_layout_to_slicer,
     pretty_xml,
     slicer_layout_to_vue,
+    vue_layout_to_slicer,
 )
+
+from .view_manager import ViewManager
 
 
 class LayoutManager:
@@ -59,7 +60,7 @@ class LayoutManager:
         views = layout.get_views(is_recursive=True)
         for view in views:
             if not self._view_manager.is_view_created(view.singleton_tag):
-                self._view_manager.create_view(view.singleton_tag, view)
+                self._view_manager.create_view(view)
 
     def _save_layout_to_scene(self, layout_id: str, layout: Layout) -> None:
         self._scene_node.SetParameter("layout_id", layout_id)

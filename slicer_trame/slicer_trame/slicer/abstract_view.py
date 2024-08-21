@@ -1,76 +1,56 @@
-import asyncio
-from typing import Optional, List
+from dataclasses import dataclass
+from typing import Callable, List, Literal, Optional
 
-from trame_server.utils import asynchronous
 from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkMRMLCore import (
+    vtkMRMLAbstractViewNode,
     vtkMRMLScene,
     vtkMRMLViewNode,
-    vtkMRMLAbstractViewNode,
 )
 from vtkmodules.vtkMRMLDisplayableManager import vtkMRMLDisplayableManagerGroup
 from vtkmodules.vtkRenderingCore import (
-    vtkRenderWindow,
-    vtkRenderer,
-    vtkRenderWindowInteractor,
     vtkInteractorStyle,
+    vtkRenderer,
+    vtkRenderWindow,
+    vtkRenderWindowInteractor,
 )
 
-
-class ScheduledRenderStrategy:
-    """
-    Abstract class for handling scheduled rendering.
-    Rendering update is triggered by Slicer's display managers.
-    In asyncio context, the update can be managed using asyncio Tasks.
-    In specific event loops, such as Qt, the rendering can be done using QTimer.
-    """
-
-    def __init__(self):
-        self.abstract_view: Optional[AbstractView] = None
-
-    def schedule_render(self):
-        pass
-
-    def did_render(self):
-        pass
-
-    def set_abstract_view(self, abstract_view: "AbstractView"):
-        self.abstract_view = abstract_view
+from .render_scheduler import DirectRendering, ScheduledRenderStrategy
+from .vtk_event_dispatcher import VtkEventDispatcher
 
 
-class NoScheduleRendering(ScheduledRenderStrategy):
-    pass
+@dataclass
+class ViewProps:
+    label: Optional[str] = None
+    orientation: Optional[Literal["Axial", "Coronal", "Sagittal"]] = None
+    color: Optional[str] = None
+    group: Optional[int] = None
 
+    def to_xml(self) -> str:
+        property_map = {
+            key: getattr(self, value) for key, value in self.xml_name_map().items()
+        }
 
-class DirectRendering(ScheduledRenderStrategy):
-    def schedule_render(self):
-        if self.abstract_view:
-            self.abstract_view.render()
+        return "".join(
+            f'<property name="{name}" action="default">{value}</property>'
+            for name, value in property_map.items()
+            if value is not None
+        )
 
+    @classmethod
+    def xml_name_map(cls):
+        return {
+            "orientation": "orientation",
+            "viewlabel": "label",
+            "viewcolor": "color",
+            "viewgroup": "group",
+        }
 
-class AsyncIORendering(ScheduledRenderStrategy):
-    def __init__(self, schedule_render_fps: float = 30.0):
-        super().__init__()
-        self.request_render_task: Optional[asyncio.Task] = None
-        self.schedule_render_fps = schedule_render_fps
-
-    def schedule_render(self):
-        if self.request_render_task is None:
-            self.request_render_task = asynchronous.create_task(self._async_render())
-            self.request_render_task.add_done_callback(self.cleanup_render_task)
-
-    async def _async_render(self):
-        await asyncio.sleep(1.0 / self.schedule_render_fps)
-        if self.abstract_view:
-            self.abstract_view.render()
-
-    def did_render(self):
-        if self.request_render_task is not None:
-            self.request_render_task.cancel()
-            self.request_render_task = None
-
-    def cleanup_render_task(self, *_):
-        self.request_render_task = None
+    @classmethod
+    def from_xml_dict(cls, xml_prop_dict: dict):
+        name_map = cls.xml_name_map()
+        renamed_dict = {name_map[key]: value for key, value in xml_prop_dict.items()}
+        return cls(**renamed_dict)
 
 
 class AbstractView:
@@ -82,7 +62,7 @@ class AbstractView:
         self,
         scheduled_render_strategy: Optional[ScheduledRenderStrategy] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self._renderer = vtkRenderer()
         self._render_window = vtkRenderWindow()
@@ -100,9 +80,19 @@ class AbstractView:
         self.mrml_scene: Optional[vtkMRMLScene] = None
         self.mrml_view_node: Optional[vtkMRMLAbstractViewNode] = None
 
+        self._scheduled_render: Optional[ScheduledRenderStrategy] = None
+        self.set_scheduled_render(scheduled_render_strategy or DirectRendering())
+        self._view_properties = ViewProps()
+
+        self._modified_dispatcher = VtkEventDispatcher()
+        self._modified_dispatcher.set_dispatch_information(self)
+        self._mrml_node_obs_id = None
+
+    def set_scheduled_render(
+        self, scheduled_render_strategy: ScheduledRenderStrategy
+    ) -> None:
         self._scheduled_render = scheduled_render_strategy or DirectRendering()
         self._scheduled_render.set_abstract_view(self)
-        self._view_group = 0
 
     def finalize(self):
         self.render_window().ShowWindowOff()
@@ -121,36 +111,51 @@ class AbstractView:
         return self.first_renderer()
 
     def schedule_render(self, *_) -> None:
+        if not self._scheduled_render:
+            return
         self._scheduled_render.schedule_render()
 
     def render(self) -> None:
         self._render_window.Render()
+        if not self._scheduled_render:
+            return
         self._scheduled_render.did_render()
 
     def render_window(self) -> vtkRenderWindow:
         return self._render_window
 
-    def interactor(self) -> Optional[vtkRenderWindowInteractor]:
+    def interactor(self) -> vtkRenderWindowInteractor:
         return self.render_window().GetInteractor()
 
     def interactor_style(self) -> Optional[vtkInteractorStyle]:
-        return self.interactor().GetInteractorStyle() if self.interactor() else None
+        return self.interactor().GetInteractorStyle()
 
     def set_mrml_view_node(self, node: vtkMRMLViewNode) -> None:
         if self.mrml_view_node == node:
             return
 
+        self._modified_dispatcher.detach_vtk_observer(self._mrml_node_obs_id)
         self.mrml_view_node = node
         self.displayable_manager_group.SetMRMLDisplayableNode(node)
-        self._refresh_node_view_group()
+        self._refresh_node_view_properties()
+        self._mrml_node_obs_id = self._modified_dispatcher.attach_vtk_observer(
+            node, "ModifiedEvent"
+        )
 
-    def set_view_group(self, view_group):
-        self._view_group = view_group
-        self._refresh_node_view_group()
+    def set_view_properties(self, view_properties: ViewProps):
+        self._view_properties = view_properties
+        self._refresh_node_view_properties()
 
-    def _refresh_node_view_group(self):
-        if self.mrml_view_node:
-            self.mrml_view_node.SetViewGroup(self._view_group)
+    def _refresh_node_view_properties(self):
+        if not self.mrml_view_node:
+            return
+
+        self.optional_set(self.mrml_view_node.SetViewGroup, self._view_properties.group)
+
+    @classmethod
+    def optional_set(cls, setter, value):
+        if value is not None:
+            setter(value)
 
     def set_mrml_scene(self, scene: vtkMRMLScene) -> None:
         if self.mrml_scene == scene:
@@ -163,3 +168,9 @@ class AbstractView:
     def reset_camera(self):
         for renderer in self._render_window.GetRenderers():
             renderer.ResetCamera()
+
+    def add_modified_observer(self, observer: Callable) -> None:
+        self._modified_dispatcher.add_dispatch_observer(observer)
+
+    def remove_modified_observer(self, observer: Callable) -> None:
+        self._modified_dispatcher.remove_dispatch_observer(observer)

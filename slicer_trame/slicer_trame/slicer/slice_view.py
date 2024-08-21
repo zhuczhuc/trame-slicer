@@ -1,17 +1,19 @@
-from vtkmodules.vtkCommonCore import vtkCommand
+from typing import Literal
+
+from vtkmodules.vtkCommonCore import reference, vtkCommand
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleUser
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLDisplayableManager import (
-    vtkMRMLVolumeGlyphSliceDisplayableManager,
-    vtkMRMLModelSliceDisplayableManager,
     vtkMRMLCrosshairDisplayableManager,
+    vtkMRMLLightBoxRendererManagerProxy,
+    vtkMRMLModelSliceDisplayableManager,
     vtkMRMLOrientationMarkerDisplayableManager,
     vtkMRMLRulerDisplayableManager,
     vtkMRMLScalarBarDisplayableManager,
     vtkMRMLSliceViewInteractorStyle,
-    vtkMRMLLightBoxRendererManagerProxy,
+    vtkMRMLVolumeGlyphSliceDisplayableManager,
 )
-from vtkmodules.vtkMRMLLogic import vtkMRMLSliceLogic, vtkMRMLApplicationLogic
+from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLSliceLogic
 from vtkmodules.vtkRenderingCore import vtkActor2D, vtkImageMapper, vtkRenderer
 from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
     vtkMRMLSegmentationsDisplayableManager2D,
@@ -81,8 +83,10 @@ class SliceView(AbstractView):
         self.render_window().SetNumberOfLayers(2)
         self.render_window().AddRenderer(self.overlay_renderer)
         self.render_window().SetAlphaBitPlanes(1)
-        self.render_window().AddObserver(
-            vtkCommand.WindowResizeEvent, self.update_slice_size
+
+        # Observe interactor resize event as window resize event is triggered before the window is actually resized.
+        self.interactor().AddObserver(
+            vtkCommand.WindowResizeEvent, self._update_slice_size
         )
 
         # Add Render manager
@@ -115,8 +119,9 @@ class SliceView(AbstractView):
         self.logic = vtkMRMLSliceLogic()
         self.logic.SetMRMLApplicationLogic(app_logic)
         self.logic.AddObserver(
-            vtkCommand.ModifiedEvent, self.on_slice_logic_modified_event
+            vtkCommand.ModifiedEvent, self._on_slice_logic_modified_event
         )
+        self._modified_dispatcher.attach_vtk_observer(self.logic, "ModifiedEvent")
         app_logic.GetSliceLogics().AddItem(self.logic)
 
         self.interactor_observer.SetSliceLogic(self.logic)
@@ -127,22 +132,83 @@ class SliceView(AbstractView):
         self.interactor().SetInteractorStyle(vtkInteractorStyleUser())
         self.interactor_observer.SetInteractor(self.interactor())
 
+    def _refresh_node_view_properties(self):
+        super()._refresh_node_view_properties()
+        if not self.mrml_view_node:
+            return
+
+        self.optional_set(
+            self.mrml_view_node.SetOrientation, self._view_properties.orientation
+        )
+
     def set_mrml_scene(self, scene: vtkMRMLScene) -> None:
         super().set_mrml_scene(scene)
         self.logic.SetMRMLScene(scene)
         if self.mrml_view_node is None:
             self.set_mrml_view_node(self.logic.AddSliceNode(self.name))
 
-    def on_slice_logic_modified_event(self, *_):
-        self.update_image_data_connection()
+    def _on_slice_logic_modified_event(self, *_):
+        self._update_image_data_connection()
 
-    def update_image_data_connection(self):
-        image_data_connection = self.logic.GetImageDataConnection()
-        if self.image_data_connection == image_data_connection:
+    def _update_image_data_connection(self):
+        self._set_image_data_connection(self.logic.GetImageDataConnection())
+
+    def _set_image_data_connection(self, connection):
+        if self.image_data_connection == connection:
             return
 
-        self.image_data_connection = image_data_connection
+        self.image_data_connection = connection
         self.render_manager.SetImageDataConnection(self.image_data_connection)
 
-    def update_slice_size(self, *_):
+    def _update_slice_size(self, *_):
+        print("Update")
         self.logic.ResizeSliceNode(*self.render_window().GetSize())
+
+    def set_orientation(
+        self,
+        orientation: Literal["Coronal", "Sagittal", "Axial"],
+    ) -> None:
+        self.mrml_view_node.SetOrientation(orientation)
+
+    def get_orientation(self) -> str:
+        return self.mrml_view_node.GetOrientation()
+
+    def set_background(self, *rgb_float: list[float]) -> None:
+        self.first_renderer().SetBackground(*rgb_float)
+
+    def fit_slice_to_all(self) -> None:
+        self.logic.FitSliceToAll()
+        self.schedule_render()
+
+    def start_interactor(self) -> None:
+        self.interactor().Start()
+
+    def set_background_volume_id(self, volume_id: str) -> None:
+        self.logic.GetSliceCompositeNode().SetBackgroundVolumeID(volume_id)
+
+    def set_foreground_volume_id(self, volume_id: str) -> None:
+        self.logic.GetSliceCompositeNode().SetForegroundVolumeID(volume_id)
+
+    def get_slice_range(self) -> tuple[float, float]:
+        (range_min, range_max), _ = self._get_slice_range_resolution()
+        return range_min, range_max
+
+    def get_slice_step(self) -> float:
+        _, resolution = self._get_slice_range_resolution()
+        return resolution
+
+    def _get_slice_range_resolution(self) -> tuple[list[float], float]:
+        slice_range = [-1.0, -1.0]
+        resolution = reference(1.0)
+
+        if not self.logic.GetSliceOffsetRangeResolution(slice_range, resolution):
+            return [0, 1], 0.1
+        return slice_range, resolution.get()
+
+    def get_slice_value(self) -> float:
+        return self.logic.GetSliceOffset()
+
+    def set_slice_value(self, value: float) -> None:
+        self.logic.StartSliceOffsetInteraction()
+        self.logic.SetSliceOffset(value)
+        self.logic.EndSliceOffsetInteraction()

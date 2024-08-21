@@ -1,21 +1,22 @@
+import asyncio
+
 import itk
 import pytest
-from slicer_trame.slicer.abstract_view import DirectRendering
+from trame.app import get_server
+from trame_server.utils.asynchronous import create_task
+from vtkmodules.vtkMRMLCore import (
+    vtkMRMLColorTableNode,
+    vtkMRMLModelNode,
+    vtkMRMLModelStorageNode,
+    vtkMRMLScalarVolumeDisplayNode,
+    vtkMRMLScalarVolumeNode,
+    vtkMRMLVolumeArchetypeStorageNode,
+)
+
+from slicer_trame.slicer.render_scheduler import DirectRendering
 from slicer_trame.slicer.slice_view import SliceView
 from slicer_trame.slicer.slicer_app import SlicerApp
 from slicer_trame.slicer.threed_view import ThreeDView
-from vtkmodules.vtkMRMLCore import (
-    vtkMRMLVolumeArchetypeStorageNode,
-    vtkMRMLScalarVolumeNode,
-    vtkMRMLScalarVolumeDisplayNode,
-    vtkMRMLColorTableNode,
-    vtkMRMLModelStorageNode,
-    vtkMRMLModelNode,
-)
-
-
-def pytest_addoption(parser):
-    parser.addoption("--render_interactive", action="store", default="false")
 
 
 @pytest.fixture
@@ -132,9 +133,38 @@ def a_volume_manually_crafted(a_slicer_app):
     return scalarNode
 
 
+def pytest_addoption(parser):
+    parser.addoption("--render_interactive", action="store", default=0)
+
+
 @pytest.fixture(scope="session")
 def render_interactive(pytestconfig):
-    def string_to_bool(option: str) -> bool:
-        return option.lower() in ["true", "1", "t", "y", "yes"]
+    return float(pytestconfig.getoption("render_interactive"))
 
-    return string_to_bool(pytestconfig.getoption("render_interactive", "false"))
+
+@pytest.fixture()
+def a_server(render_interactive):
+    server = get_server(None, client_type="vue3")
+
+    async def stop_server(stop_time_s):
+        await server.ready
+        await asyncio.sleep(stop_time_s)
+        await server.stop()
+
+    _server_start = server.start
+
+    def limited_time_start(*args, **kwargs):
+        interactive_time_s = max(0.1, render_interactive)
+        create_task(stop_server(stop_time_s=interactive_time_s))
+
+        # If render interactive time is very small, opening browser may make the tests hang.
+        # For rendering time less than 1 second, disable browser opening.
+        open_browser = bool(render_interactive > 1)
+        _server_start(open_browser=open_browser, *args, **kwargs)
+
+    server.start = limited_time_start
+
+    try:
+        yield server
+    finally:
+        server.start = _server_start

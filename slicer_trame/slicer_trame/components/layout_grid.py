@@ -1,48 +1,16 @@
 from dataclasses import dataclass
 from enum import Enum, auto, unique
 from itertools import chain
-from typing import Union, Optional
+from typing import Union
 
-from trame.widgets import html, client
+from trame.widgets import client, html
+
+from slicer_trame.slicer.abstract_view import ViewProps
 
 
 class LayoutDirection(Enum):
     Vertical = auto()
     Horizontal = auto()
-
-
-@dataclass
-class SlicerViewProps:
-    label: Optional[str] = None
-    orientation: Optional[str] = None
-    color: Optional[str] = None
-    group: Optional[str] = None
-
-    def to_xml(self) -> str:
-        property_map = {
-            key: getattr(self, value) for key, value in self.xml_name_map().items()
-        }
-
-        return "".join(
-            f'<property name="{name}" action="default">{value}</property>'
-            for name, value in property_map.items()
-            if value is not None
-        )
-
-    @classmethod
-    def xml_name_map(cls):
-        return {
-            "orientation": "orientation",
-            "viewlabel": "label",
-            "viewcolor": "color",
-            "viewgroup": "group",
-        }
-
-    @classmethod
-    def from_xml_dict(cls, xml_prop_dict: dict):
-        name_map = cls.xml_name_map()
-        renamed_dict = {name_map[key]: value for key, value in xml_prop_dict.items()}
-        return cls(**renamed_dict)
 
 
 @dataclass
@@ -58,11 +26,11 @@ class SlicerViewType(Enum):
 
 @dataclass
 class SlicerView(View):
-    classes: SlicerViewType
-    properties: SlicerViewProps
+    type: SlicerViewType
+    properties: ViewProps
 
     def to_xml(self):
-        return f'<view class="{self.classes.value}" singletontag="{self.singleton_tag}">{self.properties.to_xml()}</view>'
+        return f'<view class="{self.type.value}" singletontag="{self.singleton_tag}">{self.properties.to_xml()}</view>'
 
     @classmethod
     def from_xml(cls, xml_str: str) -> "SlicerView":
@@ -73,8 +41,8 @@ class SlicerView(View):
         properties = {child.get("name"): child.text for child in elt.getchildren()}
         return cls(
             singleton_tag=elt.get("singletontag"),
-            classes=SlicerViewType(elt.get("class")),
-            properties=SlicerViewProps.from_xml_dict(properties),
+            type=SlicerViewType(elt.get("class")),
+            properties=ViewProps.from_xml_dict(properties),
         )
 
 

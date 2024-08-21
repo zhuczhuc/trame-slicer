@@ -1,16 +1,16 @@
-from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLViewNode, vtkMRMLCrosshairNode
+from vtkmodules.vtkMRMLCore import vtkMRMLCrosshairNode, vtkMRMLScene, vtkMRMLViewNode
 from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLCameraDisplayableManager,
-    vtkMRMLViewDisplayableManager,
-    vtkMRMLModelDisplayableManager,
-    vtkMRMLThreeDReformatDisplayableManager,
+    vtkMRMLCrosshairDisplayableManager,
     vtkMRMLCrosshairDisplayableManager3D,
+    vtkMRMLModelDisplayableManager,
     vtkMRMLOrientationMarkerDisplayableManager,
     vtkMRMLRulerDisplayableManager,
+    vtkMRMLThreeDReformatDisplayableManager,
     vtkMRMLThreeDViewInteractorStyle,
-    vtkMRMLCrosshairDisplayableManager,
+    vtkMRMLViewDisplayableManager,
 )
-from vtkmodules.vtkMRMLLogic import vtkMRMLViewLogic, vtkMRMLApplicationLogic
+from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLViewLogic
 from vtkmodules.vtkRenderingCore import vtkInteractorStyle3D
 from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
     vtkMRMLSegmentationsDisplayableManager3D,
