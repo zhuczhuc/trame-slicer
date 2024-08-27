@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import pytest
 from trame_client.widgets.html import Div
 from trame_vuetify.ui.vuetify3 import VAppLayout
@@ -6,15 +8,18 @@ from slicer_trame.components.layout_grid import (
     Layout,
     LayoutDirection,
     LayoutGrid,
-    SlicerView,
-    SlicerViewType,
-    View,
     pretty_xml,
     slicer_layout_to_vue,
     vue_layout_to_slicer,
 )
 from slicer_trame.components.view_layout import ViewLayout
 from slicer_trame.slicer.abstract_view import ViewProps
+from slicer_trame.slicer.view_layout_definition import ViewLayoutDefinition, ViewType
+
+
+@dataclass
+class EmptyView:
+    singleton_tag: str
 
 
 def test_layout_component_can_display_server_configured_templates(a_server):
@@ -32,17 +37,19 @@ def test_layout_component_can_display_server_configured_templates(a_server):
             Layout(
                 LayoutDirection.Horizontal,
                 [
-                    View("red_view"),
+                    EmptyView("red_view"),
                     Layout(
                         LayoutDirection.Vertical,
                         [
-                            View("blue_view"),
-                            View("green_view"),
+                            EmptyView("blue_view"),
+                            EmptyView("green_view"),
                         ],
                     ),
                 ],
             )
         )
+
+    a_server.start()
 
 
 @pytest.fixture()
@@ -90,23 +97,23 @@ def a_slicer_layout():
 
 @pytest.fixture()
 def a_red_view():
-    return SlicerView(
+    return ViewLayoutDefinition(
         "Red",
-        SlicerViewType.SLICE_VIEW,
+        ViewType.SLICE_VIEW,
         ViewProps(
             orientation="Axial",
             label="R",
             color="#F34A33",
-            group="1",
+            group=1,
         ),
     )
 
 
 @pytest.fixture()
 def a_green_view():
-    return SlicerView(
+    return ViewLayoutDefinition(
         "Green",
-        SlicerViewType.SLICE_VIEW,
+        ViewType.SLICE_VIEW,
         ViewProps(
             orientation="Coronal",
             label="G",
@@ -117,9 +124,9 @@ def a_green_view():
 
 @pytest.fixture()
 def a_yellow_view():
-    return SlicerView(
+    return ViewLayoutDefinition(
         "Yellow",
-        SlicerViewType.SLICE_VIEW,
+        ViewType.SLICE_VIEW,
         ViewProps(
             orientation="Sagittal",
             label="Y",
@@ -130,7 +137,7 @@ def a_yellow_view():
 
 @pytest.fixture()
 def a_3d_view():
-    return SlicerView("1", SlicerViewType.THREE_D_VIEW, ViewProps(label="1"))
+    return ViewLayoutDefinition("1", ViewType.THREE_D_VIEW, ViewProps(label="1"))
 
 
 @pytest.fixture()

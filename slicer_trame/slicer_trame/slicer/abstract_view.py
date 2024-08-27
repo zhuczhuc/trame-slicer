@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Callable, List, Literal, Optional
+from typing import Callable, List, Literal, Optional, TypeVar
 
 from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkMRMLCore import (
@@ -18,13 +18,19 @@ from vtkmodules.vtkRenderingCore import (
 from .render_scheduler import DirectRendering, ScheduledRenderStrategy
 from .vtk_event_dispatcher import VtkEventDispatcher
 
+ViewOrientation = Literal["Axial", "Coronal", "Sagittal"]
+
 
 @dataclass
 class ViewProps:
     label: Optional[str] = None
-    orientation: Optional[Literal["Axial", "Coronal", "Sagittal"]] = None
+    orientation: Optional[ViewOrientation] = None
     color: Optional[str] = None
     group: Optional[int] = None
+
+    def __post_init__(self):
+        if self.group is not None:
+            self.group = int(self.group)
 
     def to_xml(self) -> str:
         property_map = {
@@ -51,6 +57,9 @@ class ViewProps:
         name_map = cls.xml_name_map()
         renamed_dict = {name_map[key]: value for key, value in xml_prop_dict.items()}
         return cls(**renamed_dict)
+
+
+AbstractViewChild = TypeVar("AbstractViewChild", bound="AbstractView")
 
 
 class AbstractView:
@@ -150,10 +159,17 @@ class AbstractView:
         if not self.mrml_view_node:
             return
 
-        self.optional_set(self.mrml_view_node.SetViewGroup, self._view_properties.group)
+        self._call_if_value_not_none(
+            self.mrml_view_node.SetViewGroup, self._view_properties.group
+        )
+
+    def get_view_group(self) -> int:
+        if not self.mrml_view_node:
+            return 0
+        return self.mrml_view_node.GetViewGroup()
 
     @classmethod
-    def optional_set(cls, setter, value):
+    def _call_if_value_not_none(cls, setter, value):
         if value is not None:
             setter(value)
 
@@ -174,3 +190,6 @@ class AbstractView:
 
     def remove_modified_observer(self, observer: Callable) -> None:
         self._modified_dispatcher.remove_dispatch_observer(observer)
+
+    def get_view_node_id(self) -> str:
+        return self.mrml_view_node.GetID() if self.mrml_view_node else ""

@@ -1,15 +1,12 @@
 import asyncio
+from pathlib import Path
 
-import itk
 import pytest
 from trame.app import get_server
 from trame_server.utils.asynchronous import create_task
 from vtkmodules.vtkMRMLCore import (
-    vtkMRMLColorTableNode,
     vtkMRMLModelNode,
     vtkMRMLModelStorageNode,
-    vtkMRMLScalarVolumeDisplayNode,
-    vtkMRMLScalarVolumeNode,
     vtkMRMLVolumeArchetypeStorageNode,
 )
 
@@ -46,10 +43,50 @@ def a_slice_view(a_slicer_app):
     )
 
 
+@pytest.fixture()
+def a_data_folder():
+    return Path(__file__).parent / "data"
+
+
+@pytest.fixture()
+def a_nrrd_volume_file_path(a_data_folder) -> Path:
+    return a_data_folder.joinpath("mr_head.nrrd")
+
+
+@pytest.fixture()
+def a_nifti_volume_file_path(a_data_folder) -> Path:
+    return a_data_folder.joinpath("mr_head.nii.gz")
+
+
+@pytest.fixture()
+def ct_chest_dcm_volume_file_paths(a_data_folder) -> list[Path]:
+    return list(a_data_folder.joinpath("ct_chest_dcm").glob("*.dcm"))
+
+
+@pytest.fixture()
+def mr_head_dcm_volume_file_paths(a_data_folder) -> list[Path]:
+    return list(a_data_folder.joinpath("mr_head_dcm").glob("*.dcm"))
+
+
+@pytest.fixture()
+def a_model_file_path(a_data_folder) -> Path:
+    return a_data_folder.joinpath("model.stl")
+
+
+@pytest.fixture()
+def a_segmentation_stl_file_path(a_data_folder) -> Path:
+    return a_data_folder.joinpath("segmentation.stl")
+
+
+@pytest.fixture()
+def a_segmentation_nifti_file_path(a_data_folder) -> Path:
+    return a_data_folder.joinpath("segmentation.nii.gz")
+
+
 @pytest.fixture
-def a_model_node(a_slicer_app):
+def a_model_node(a_slicer_app, a_model_file_path):
     return load_model_node(
-        r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\test_data\model.stl",
+        a_model_file_path.as_posix(),
         a_slicer_app,
     )
 
@@ -66,71 +103,24 @@ def load_model_node(file_path, a_slicer_app):
 
 
 @pytest.fixture
-def a_segmentation_model(a_slicer_app):
+def a_segmentation_model(a_slicer_app, a_data_folder):
     return load_model_node(
-        r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\test_data\a_segmentation.stl",
+        a_data_folder.joinpath("segmentation.stl").as_posix(),
         a_slicer_app,
     )
 
 
 @pytest.fixture
-def a_volume_node(a_slicer_app):
+def a_volume_node(a_slicer_app, a_data_folder, a_nrrd_volume_file_path):
     storage_node = vtkMRMLVolumeArchetypeStorageNode()
     node = a_slicer_app.scene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
     storage_node.SetFileName(
-        r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\test_data\MRHead.nrrd"
+        a_nrrd_volume_file_path.as_posix(),
     )
     storage_node.ReadData(node)
     node.SetAndObserveStorageNodeID(storage_node.GetID())
 
     return node
-
-
-@pytest.fixture
-def a_volume_node_manually_loaded(a_slicer_app):
-    im = itk.imread(
-        r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\test_data\MRHead.nrrd"
-    )
-    vtk_image = itk.vtk_image_from_image(im)
-    node: vtkMRMLScalarVolumeNode = a_slicer_app.scene.AddNewNodeByClass(
-        "vtkMRMLScalarVolumeNode"
-    )
-    node.SetAndObserveImageData(vtk_image)
-    node.CreateDefaultDisplayNodes()
-    return node
-
-
-@pytest.fixture
-def a_volume_manually_crafted(a_slicer_app):
-    import vtk
-
-    displayNode = vtkMRMLScalarVolumeDisplayNode()
-    scalarNode = vtkMRMLScalarVolumeNode()
-
-    displayNode.SetAutoWindowLevel(True)
-    displayNode.SetInterpolate(False)
-
-    scalarNode.SetName("foo")
-    scalarNode.SetScene(a_slicer_app.scene)
-    displayNode.SetScene(a_slicer_app.scene)
-
-    imageData = vtk.vtkImageData()
-    imageData.SetDimensions(10, 20, 30)
-    imageData.AllocateScalars(vtk.VTK_FLOAT, 1)
-    imageData.GetPointData().GetScalars().Fill(12.5)
-
-    a_slicer_app.scene.AddNode(displayNode)
-    scalarNode.SetAndObserveDisplayNodeID(displayNode.GetID())
-    scalarNode.SetAndObserveImageData(imageData)
-    a_slicer_app.scene.AddNode(scalarNode)
-
-    colorNode = vtkMRMLColorTableNode()
-    colorNode.SetTypeToGrey()
-    a_slicer_app.scene.AddNode(colorNode)
-
-    displayNode.SetAndObserveColorNodeID(colorNode.GetID())
-
-    return scalarNode
 
 
 def pytest_addoption(parser):

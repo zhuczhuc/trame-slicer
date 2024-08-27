@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from enum import Enum, auto, unique
+from enum import Enum, auto
 from itertools import chain
-from typing import Union
+from typing import Protocol, Union, runtime_checkable
 
 from trame.widgets import client, html
 
-from slicer_trame.slicer.abstract_view import ViewProps
+from slicer_trame.slicer.view_layout_definition import ViewLayoutDefinition
 
 
 class LayoutDirection(Enum):
@@ -13,37 +13,9 @@ class LayoutDirection(Enum):
     Horizontal = auto()
 
 
-@dataclass
-class View:
+@runtime_checkable
+class View(Protocol):
     singleton_tag: str
-
-
-@unique
-class SlicerViewType(Enum):
-    SLICE_VIEW = "vtkMRMLSliceNode"
-    THREE_D_VIEW = "vtkMRMLViewNode"
-
-
-@dataclass
-class SlicerView(View):
-    type: SlicerViewType
-    properties: ViewProps
-
-    def to_xml(self):
-        return f'<view class="{self.type.value}" singletontag="{self.singleton_tag}">{self.properties.to_xml()}</view>'
-
-    @classmethod
-    def from_xml(cls, xml_str: str) -> "SlicerView":
-        from lxml import etree
-
-        elt = etree.fromstring(xml_str)
-
-        properties = {child.get("name"): child.text for child in elt.getchildren()}
-        return cls(
-            singleton_tag=elt.get("singletontag"),
-            type=SlicerViewType(elt.get("class")),
-            properties=ViewProps.from_xml_dict(properties),
-        )
 
 
 @dataclass
@@ -54,7 +26,7 @@ class Layout:
     def get_views(self, is_recursive: bool) -> list[View]:
         """
         Returns every views contained in Layout as a flat list.
-        :param is_recursive: If true, returns sub layout views as well. Otherwise returns only direct views.
+        :param is_recursive: If true, returns sub layout views as well. Otherwise, returns only direct views.
         """
         views = [item for item in self.items if isinstance(item, View)]
         if not is_recursive:
@@ -126,7 +98,7 @@ def pretty_xml(xml_str: str) -> str:
 def vue_layout_to_slicer(layout: Layout):
     layout_str = f'<layout type="{layout.direction.name.lower()}">'
 
-    item: Union[Layout, SlicerView]
+    item: Union[Layout, ViewLayoutDefinition]
     for item in layout.items:
         item_xml = (
             vue_layout_to_slicer(item) if isinstance(item, Layout) else item.to_xml()
@@ -151,7 +123,7 @@ def slicer_layout_to_vue(xml_str: str) -> Layout:
         if child.tag == "layout":
             return slicer_layout_to_vue(child_xml_str)
         elif child.tag == "view":
-            return SlicerView.from_xml(child_xml_str)
+            return ViewLayoutDefinition.from_xml(child_xml_str)
 
         raise RuntimeError("Invalid input XML layout")
 

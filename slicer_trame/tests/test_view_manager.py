@@ -1,18 +1,21 @@
-from unittest import mock
+from dataclasses import dataclass, field
 
 import pytest
 from trame.widgets import client
 from trame_vuetify.ui.vuetify3 import VAppLayout
 from vtkmodules.vtkCommonCore import vtkCollection
+from vtkmodules.vtkMRMLCore import vtkMRMLScene
+from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
-from slicer_trame.components.layout_grid import SlicerView, SlicerViewType
-from slicer_trame.slicer import SlicerApp, ViewManager
-from slicer_trame.slicer.abstract_view import ViewProps
-from slicer_trame.slicer.view_factory import (
-    IViewFactory,
+from slicer_trame.components.rca_slicer_view_factory import (
     RemoteSliceViewFactory,
     RemoteThreeDViewFactory,
 )
+from slicer_trame.slicer import AbstractView, SlicerApp, ViewManager
+from slicer_trame.slicer.abstract_view import AbstractViewChild, ViewProps
+from slicer_trame.slicer.slice_view import SliceView
+from slicer_trame.slicer.view_factory import IViewFactory
+from slicer_trame.slicer.view_layout_definition import ViewLayoutDefinition, ViewType
 
 
 @pytest.fixture()
@@ -27,58 +30,63 @@ def a_view_manager(a_slicer_app):
 
 @pytest.fixture()
 def a_2d_view():
-    return SlicerView("2d_view", SlicerViewType.SLICE_VIEW, ViewProps())
+    return ViewLayoutDefinition("2d_view", ViewType.SLICE_VIEW, ViewProps())
 
 
 @pytest.fixture()
 def a_3d_view():
-    return SlicerView("3d_view", SlicerViewType.THREE_D_VIEW, ViewProps())
+    return ViewLayoutDefinition("3d_view", ViewType.THREE_D_VIEW, ViewProps())
+
+
+class FakeFactory(IViewFactory):
+    @dataclass
+    class View:
+        slicer_view: AbstractView = field(default_factory=AbstractView)
+
+    def __init__(self, can_create: bool):
+        super().__init__()
+        self.can_create = can_create
+
+    def can_create_view(self, view: ViewLayoutDefinition) -> bool:
+        return self.can_create
+
+    def _get_slicer_view(self, view: View) -> AbstractViewChild:
+        return view.slicer_view
+
+    def _create_view(
+        self,
+        view: ViewLayoutDefinition,
+        scene: vtkMRMLScene,
+        app_logic: vtkMRMLApplicationLogic,
+    ) -> View:
+        return self.View()
 
 
 def test_view_manager_uses_first_capable_factory_when_creating_view(
     a_view_manager,
     a_2d_view,
 ):
-    f1 = mock.create_autospec(IViewFactory)
-    f1.can_create_view.return_value = False
-
-    f2 = mock.create_autospec(IViewFactory)
-    f2.can_create_view.return_value = True
-
-    f3 = mock.create_autospec(IViewFactory)
-    f3.can_create_view.return_value = True
+    f1 = FakeFactory(can_create=False)
+    f2 = FakeFactory(can_create=True)
+    f3 = FakeFactory(can_create=True)
 
     a_view_manager.register_factory(f1)
     a_view_manager.register_factory(f2)
     a_view_manager.register_factory(f3)
     a_view_manager.create_view(a_2d_view)
 
-    f2.create_view.assert_called_once()
-    f3.create_view.assert_not_called()
-    f1.create_view.assert_not_called()
+    assert f2.has_view(a_2d_view.singleton_tag)
+    assert not f3.has_view(a_2d_view.singleton_tag)
+    assert not f1.has_view(a_2d_view.singleton_tag)
 
 
-@pytest.fixture()
-def a_factory_mock():
-    return mock.create_autospec(IViewFactory)
+def test_view_manager_returns_existing_view_if_created(a_view_manager, a_2d_view):
+    factory = FakeFactory(can_create=True)
+    a_view_manager.register_factory(factory)
 
-
-class AView:
-    pass
-
-
-def test_view_manager_returns_existing_view_if_created(
-    a_view_manager, a_factory_mock, a_2d_view
-):
-    a_view_manager.register_factory(a_factory_mock)
-    a_factory_mock.can_create_view.return_value = True
-
-    inst = AView()
-    a_factory_mock.create_view.side_effect = [inst, None]
-
-    assert a_view_manager.create_view(a_2d_view) == inst
-    assert a_view_manager.create_view(a_2d_view) == inst
-    a_factory_mock.create_view.assert_called_once()
+    v1 = a_view_manager.create_view(a_2d_view)
+    v2 = a_view_manager.create_view(a_2d_view)
+    assert v1 == v2
 
 
 def test_view_manager_with_default_factories_created_nodes_are_added_to_slicer_scene(
@@ -96,11 +104,11 @@ def test_view_manager_with_default_factories_created_nodes_are_added_to_slicer_s
 
     slice_nodes: vtkCollection = a_slicer_app.scene.GetNodesByClass("vtkMRMLSliceNode")
     assert slice_nodes.GetNumberOfItems() == 1
-    assert slice_nodes.GetItemAsObject(0) == slice_view.slicer_view.mrml_view_node
+    assert slice_nodes.GetItemAsObject(0) == slice_view.mrml_view_node
 
     threed_nodes: vtkCollection = a_slicer_app.scene.GetNodesByClass("vtkMRMLViewNode")
     assert threed_nodes.GetNumberOfItems() == 1
-    assert threed_nodes.GetItemAsObject(0) == threed_view.slicer_view.mrml_view_node
+    assert threed_nodes.GetItemAsObject(0) == threed_view.mrml_view_node
     a_server.start()
 
 
@@ -113,7 +121,7 @@ def test_view_manager_created_views_are_added_to_template(
     a_view_manager.register_factory(RemoteThreeDViewFactory(a_server))
 
     view = a_view_manager.create_view(a_3d_view)
-    view.slicer_view.render_window().Render()
+    view.render_window().Render()
     with VAppLayout(a_server):
         client.ServerTemplate(name=a_3d_view.singleton_tag)
 
@@ -128,28 +136,29 @@ def test_a_2d_view_factory_creates_views_with_the_right_properties(
 
     a_view_manager.register_factory(RemoteSliceViewFactory(a_server))
 
-    slice_view = SlicerView(
+    slice_view = ViewLayoutDefinition(
         "view_name",
-        SlicerViewType.SLICE_VIEW,
+        ViewType.SLICE_VIEW,
         ViewProps(label="L", orientation="Sagittal", color="#5D8CAE", group=2),
     )
     view = a_view_manager.create_view(slice_view)
 
-    assert view.slicer_view.mrml_view_node.GetOrientation() == "Sagittal"
-    assert view.slicer_view.mrml_view_node.GetViewGroup() == 2
+    assert view.mrml_view_node.GetOrientation() == "Sagittal"
+    assert view.mrml_view_node.GetViewGroup() == 2
 
 
 def test_2d_factory_views_have_sliders_and_reset_camera_connected_to_slicer(
     a_view_manager,
-    render_interactive,
     a_server,
     a_2d_view,
     a_volume_node,
 ):
-    a_view_manager.register_factory(RemoteSliceViewFactory(a_server))
-    view = a_view_manager.create_view(a_2d_view)
-    view.slicer_view.set_background_volume_id(a_volume_node.GetID())
-    vuetify_view_str = str(view.vuetify_view)
+    factory = RemoteSliceViewFactory(a_server)
+    a_view_manager.register_factory(factory)
+    view: SliceView = a_view_manager.create_view(a_2d_view)
+    view.set_background_volume_id(a_volume_node.GetID())
+    vuetify_view = factory.get_factory_view(a_2d_view.singleton_tag).vuetify_view
+    vuetify_view_str = str(vuetify_view)
     assert "VSlider" in vuetify_view_str
     assert "VBtn" in vuetify_view_str
 
@@ -161,26 +170,29 @@ def test_2d_factory_views_have_sliders_and_reset_camera_connected_to_slicer(
     assert "slider_min_2d_view" in vuetify_view_str
     assert "slider_step_2d_view" in vuetify_view_str
 
-    assert a_server.state["slider_value_2d_view"] == view.slicer_view.get_slice_value()
+    assert a_server.state["slider_value_2d_view"] == view.get_slice_value()
 
-    min_range, max_range = view.slicer_view.get_slice_range()
+    min_range, max_range = view.get_slice_range()
     assert a_server.state["slider_min_2d_view"] == min_range
     assert a_server.state["slider_max_2d_view"] == max_range
-    assert a_server.state["slider_step_2d_view"] == view.slicer_view.get_slice_step()
+    assert a_server.state["slider_step_2d_view"] == view.get_slice_step()
 
-    view.slicer_view.set_slice_value(42)
+    view.set_slice_value(42)
     assert a_server.state["slider_value_2d_view"] == 42.0
 
     a_server.start()
 
 
-def test_3d_view_factory_has_reset_camera_button():
-    raise NotImplementedError()
-
-
-def test_rca_factories_handle_slicer_view_interactive_render():
-    raise NotImplementedError()
-
-
-def test_a_2d_view_slider_updates_vue_sliders():
-    raise NotImplementedError()
+def test_3d_view_factory_has_reset_camera_button(
+    a_view_manager,
+    a_server,
+    a_3d_view,
+    a_volume_node,
+):
+    factory = RemoteThreeDViewFactory(a_server)
+    a_view_manager.register_factory(factory)
+    a_view_manager.create_view(a_3d_view)
+    view = factory.get_factory_view(a_3d_view.singleton_tag)
+    vuetify_view_str = str(view.vuetify_view)
+    assert "VBtn" in vuetify_view_str
+    a_server.start()

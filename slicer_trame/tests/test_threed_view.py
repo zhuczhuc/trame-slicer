@@ -17,16 +17,9 @@ def test_threed_view_can_render_mrml_volumes(
     render_interactive,
 ):
     # Use slice view to avoid warnings in test
-    a_slice_view.logic.GetSliceCompositeNode().SetBackgroundVolumeID(
-        a_volume_node.GetID()
-    )
-
-    logic = a_slicer_app.volume_rendering_logic
-    display = logic.CreateDefaultVolumeRenderingNodes(a_volume_node)
-    display.GetVolumePropertyNode().Copy(logic.GetPresetByName("MR-Default"))
-
+    a_slice_view.set_background_volume_id(a_volume_node.GetID())
+    a_slicer_app.volume_rendering.create_display_node(a_volume_node, "MR-Default")
     a_volume_node.GetDisplayNode().SetVisibility(True)
-    display.SetVisibility(True)
     a_threed_view.reset_camera()
     a_threed_view.reset_focal_point()
     a_threed_view.render()

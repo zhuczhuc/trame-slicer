@@ -1,10 +1,16 @@
-from vtkmodules.vtkCommonCore import vtkCollection
+from vtkmodules.vtkCommonCore import vtkCollection, vtkOutputWindow
 from vtkmodules.vtkMRMLCore import vtkMRMLCrosshairNode, vtkMRMLScene, vtkMRMLSliceNode
+from vtkmodules.vtkMRMLDisplayableManager import (
+    vtkMRMLSliceViewDisplayableManagerFactory,
+    vtkMRMLThreeDViewDisplayableManagerFactory,
+)
+from vtkmodules.vtkMRMLLogic import vtkMRMLColorLogic
 from vtkmodules.vtkSlicerBaseLogic import vtkSlicerApplicationLogic
-from vtkmodules.vtkSlicerVolumeRenderingModuleLogic import vtkSlicerVolumeRenderingLogic
 
+from .display_manager import DisplayManager
 from .io_manager import IOManager
 from .view_manager import ViewManager
+from .volume_rendering import VolumeRendering
 
 
 class SlicerApp:
@@ -15,6 +21,11 @@ class SlicerApp:
     """
 
     def __init__(self):
+        # Output VTK warnings to console by default
+        vtk_out = vtkOutputWindow()
+        vtk_out.SetDisplayModeToAlwaysStdErr()
+        vtkOutputWindow.SetInstance(vtk_out)
+
         self.scene = vtkMRMLScene()
 
         # Add one crosshair to the scene
@@ -32,22 +43,34 @@ class SlicerApp:
         self.app_logic.SetSliceLogics(vtkCollection())
         self.app_logic.SetViewLogics(vtkCollection())
 
-        # Create volume rendering logic
-        self.volume_rendering_logic = vtkSlicerVolumeRenderingLogic()
-        self.volume_rendering_logic.SetMRMLApplicationLogic(self.app_logic)
-        self.volume_rendering_logic.SetMRMLScene(self.scene)
-        self.volume_rendering_logic.SetModuleShareDirectory(
-            r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\slicer_trame\resources"
+        # Connect 3D and 2D view displayable manager factories
+        vtkMRMLThreeDViewDisplayableManagerFactory.GetInstance().SetMRMLApplicationLogic(
+            self.app_logic
         )
-        self.volume_rendering_logic.ChangeVolumeRenderingMethod(
-            "vtkMRMLGPURayCastVolumeRenderingDisplayNode"
+        vtkMRMLSliceViewDisplayableManagerFactory.GetInstance().SetMRMLApplicationLogic(
+            self.app_logic
         )
 
+        # Create colors logic
+        self.color_logic = vtkMRMLColorLogic()
+        self.color_logic.SetMRMLApplicationLogic(self.app_logic)
+        self.color_logic.SetMRMLScene(self.scene)
+        self.app_logic.SetModuleLogic("Colors", self.color_logic)
+
+        # Create volume rendering
+        self.volume_rendering = VolumeRendering(self.scene, self.app_logic)
+
         # Initialize orientation definitions
-        vtkMRMLSliceNode.AddDefaultSliceOrientationPresets(self.scene)
+        patient_right_is_screen_left = True
+        vtkMRMLSliceNode.AddDefaultSliceOrientationPresets(
+            self.scene, patient_right_is_screen_left
+        )
 
         # initialize view manager responsible for creating new views in the app
         self.view_manager = ViewManager(self.scene, self.app_logic)
 
         # Initialize IO manager
-        self.io_manager = IOManager(self.scene)
+        self.io_manager = IOManager(self.scene, self.app_logic)
+
+        # Initialize display manager
+        self.display_manager = DisplayManager(self.view_manager, self.volume_rendering)

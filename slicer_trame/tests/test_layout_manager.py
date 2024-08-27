@@ -7,29 +7,28 @@ from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from slicer_trame.components.layout_grid import (
     Layout,
     LayoutDirection,
-    SlicerView,
-    SlicerViewType,
     pretty_xml,
     vue_layout_to_slicer,
 )
 from slicer_trame.slicer import LayoutManager, ViewManager
 from slicer_trame.slicer.abstract_view import ViewProps
+from slicer_trame.slicer.view_layout_definition import ViewLayoutDefinition, ViewType
 
 
 @pytest.fixture()
 def a_sagittal_view():
-    return SlicerView(
+    return ViewLayoutDefinition(
         "sagittal_view_tag",
-        SlicerViewType.SLICE_VIEW,
+        ViewType.SLICE_VIEW,
         ViewProps(orientation="Sagittal"),
     )
 
 
 @pytest.fixture()
 def a_coronal_view():
-    return SlicerView(
+    return ViewLayoutDefinition(
         "coronal_view_tag",
-        SlicerViewType.SLICE_VIEW,
+        ViewType.SLICE_VIEW,
         ViewProps(orientation="Coronal"),
     )
 

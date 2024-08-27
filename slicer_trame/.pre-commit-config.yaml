@@ -3,7 +3,7 @@ repos:
     rev: 24.8.0
     hooks:
       - id: black
-        entry: black --check
+        entry: black
         types: [ python ]
 
   - repo: https://github.com/codespell-project/codespell

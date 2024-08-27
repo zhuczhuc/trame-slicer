@@ -1,11 +1,16 @@
-from typing import Any
-from weakref import WeakValueDictionary
+from itertools import chain
+from typing import Optional, TypeVar
 
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
-from slicer_trame.components.layout_grid import SlicerView
-from slicer_trame.slicer.view_factory import IViewFactory
+from .abstract_view import AbstractView, AbstractViewChild
+from .slice_view import SliceView
+from .threed_view import ThreeDView
+from .view_factory import IViewFactory
+from .view_layout_definition import ViewLayoutDefinition
+
+T = TypeVar("T")
 
 
 class ViewManager:
@@ -19,7 +24,6 @@ class ViewManager:
         self._scene = scene
         self._app_logic = application_logic
         self._factories: list[IViewFactory] = []
-        self._views = WeakValueDictionary()
 
     def register_factory(self, view_factory: IViewFactory) -> None:
         """
@@ -27,19 +31,26 @@ class ViewManager:
         """
         self._factories.append(view_factory)
 
-    def get_view(self, view_id: str) -> Any:
+    def get_view(self, view_id: str) -> Optional[AbstractViewChild]:
         """
         Get view associated with ID
         """
-        return self._views.get(view_id)
+        for factory in self._factories:
+            if factory.has_view(view_id):
+                return factory.get_view(view_id)
+        return None
 
-    def create_view(self, view: SlicerView) -> Any:
+    def remove_view(self, view_id: str) -> bool:
+        for factory in self._factories:
+            if factory.has_view(view_id):
+                return factory.remove_view(view_id)
+        return False
+
+    def create_view(self, view: ViewLayoutDefinition) -> Optional[AbstractViewChild]:
         """
         Uses the best registered factory to create the view with given id / type.
         Overwrites view stored if it exists.
         Returns created view.
-
-        If no factory can create view, raises exception.
         """
         view_id = view.singleton_tag
         if self.is_view_created(view_id):
@@ -47,12 +58,33 @@ class ViewManager:
 
         for factory in self._factories:
             if factory.can_create_view(view):
-                created_view = factory.create_view(view, self._scene, self._app_logic)
-                self._views[view_id] = created_view
-                return created_view
+                return factory.create_view(view, self._scene, self._app_logic)
 
     def is_view_created(self, view_id: str) -> bool:
         """
         Returns true if view id is created, false otherwise.
         """
-        return view_id in self._views
+        return any([factory.has_view(view_id) for factory in self._factories])
+
+    def get_views(self, view_group: Optional[int] = None) -> list[AbstractView]:
+        views = list(chain(*[factory.get_views() for factory in self._factories]))
+        return [
+            view
+            for view in views
+            if (view_group is None or view.get_view_group() == view_group)
+        ]
+
+    def get_slice_views(self, view_group: Optional[int] = None) -> list[SliceView]:
+        return self._get_view_type(SliceView, view_group)
+
+    def get_threed_views(self, view_group: Optional[int] = None) -> list[ThreeDView]:
+        return self._get_view_type(ThreeDView, view_group)
+
+    def _get_view_type(
+        self,
+        view_type: type[T],
+        view_group: Optional[int] = None,
+    ) -> list[T]:
+        return [
+            view for view in self.get_views(view_group) if isinstance(view, view_type)
+        ]

@@ -1,8 +1,8 @@
-from .core import MyTrameApp
+from .core import MyTrameSlicerApp
 
 
 def main(server=None, **kwargs):
-    app = MyTrameApp(server)
+    app = MyTrameSlicerApp(server)
     app.server.start(**kwargs)
 
 

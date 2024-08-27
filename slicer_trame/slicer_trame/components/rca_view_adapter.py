@@ -80,8 +80,12 @@ class RcaViewAdapter:
         self._view.schedule_render()
 
     def push(self, content, meta=None):
+        if not self.streamer:
+            return
+
         if content is None:
             return
+
         self.streamer.push_content(self.area_name, meta, content)
 
     def on_interaction(self, _, event):

@@ -1,16 +1,19 @@
-from typing import Optional
+from typing import Optional, Union
 
 from trame_client.widgets.core import VirtualNode
 from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLScriptedModuleNode
 
 from slicer_trame.components.layout_grid import (
     Layout,
+    LayoutDirection,
     LayoutGrid,
+    View,
     pretty_xml,
     slicer_layout_to_vue,
     vue_layout_to_slicer,
 )
 
+from .view_layout_definition import ViewLayoutDefinition
 from .view_manager import ViewManager
 
 
@@ -36,6 +39,9 @@ class LayoutManager:
         self._scene_node = scene.AddNewNodeByClass(
             "vtkMRMLScriptedModuleNode", "layout_node"
         )
+
+    def get_layout_ids(self) -> list[str]:
+        return list(self._layouts.keys())
 
     def register_layout(self, layout_id, layout: Layout) -> None:
         self._layouts[layout_id] = layout
@@ -89,3 +95,52 @@ class LayoutManager:
         if not self.has_layout(layout_id):
             raise RuntimeError(f"Layout not present in manager : {layout_id}")
         return self._layouts[layout_id]
+
+    def register_layout_dict(self, layout_dict: dict[str, Union[Layout, View]]) -> None:
+        for layout_id, layout in layout_dict.items():
+            self.register_layout(layout_id, layout)
+
+    @classmethod
+    def default_grid_configuration(cls) -> dict[str, Union[Layout, View]]:
+        axial_view = ViewLayoutDefinition.axial_view()
+        coronal_view = ViewLayoutDefinition.coronal_view()
+        sagittal_view = ViewLayoutDefinition.sagittal_view()
+        threed_view = ViewLayoutDefinition.threed_view()
+
+        return {
+            "Axial Only": axial_view,
+            "Axial Primary": Layout(
+                LayoutDirection.Horizontal,
+                [
+                    axial_view,
+                    Layout(
+                        LayoutDirection.Vertical,
+                        [threed_view, coronal_view, sagittal_view],
+                    ),
+                ],
+            ),
+            "3D Primary": Layout(
+                LayoutDirection.Horizontal,
+                [
+                    threed_view,
+                    Layout(
+                        LayoutDirection.Vertical,
+                        [axial_view, coronal_view, sagittal_view],
+                    ),
+                ],
+            ),
+            "Quad View": Layout(
+                LayoutDirection.Horizontal,
+                [
+                    Layout(
+                        LayoutDirection.Vertical,
+                        [coronal_view, sagittal_view],
+                    ),
+                    Layout(
+                        LayoutDirection.Vertical,
+                        [threed_view, axial_view],
+                    ),
+                ],
+            ),
+            "3D Only": threed_view,
+        }

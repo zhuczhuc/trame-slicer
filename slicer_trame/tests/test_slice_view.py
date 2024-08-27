@@ -70,3 +70,7 @@ def test_slice_view_can_register_modified_observers(a_slice_view, a_volume_node)
 
     a_slice_view.set_orientation("Sagittal")
     mock_obs.assert_not_called()
+
+
+def test_slice_view_foreground_background_opacity_can_be_set():
+    raise NotImplementedError()

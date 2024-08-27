@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional
 
 from vtkmodules.vtkCommonCore import reference, vtkCommand
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleUser
@@ -137,7 +137,7 @@ class SliceView(AbstractView):
         if not self.mrml_view_node:
             return
 
-        self.optional_set(
+        self._call_if_value_not_none(
             self.mrml_view_node.SetOrientation, self._view_properties.orientation
         )
 
@@ -161,7 +161,6 @@ class SliceView(AbstractView):
         self.render_manager.SetImageDataConnection(self.image_data_connection)
 
     def _update_slice_size(self, *_):
-        print("Update")
         self.logic.ResizeSliceNode(*self.render_window().GetSize())
 
     def set_orientation(
@@ -183,11 +182,17 @@ class SliceView(AbstractView):
     def start_interactor(self) -> None:
         self.interactor().Start()
 
-    def set_background_volume_id(self, volume_id: str) -> None:
+    def set_background_volume_id(self, volume_id: Optional[str]) -> None:
         self.logic.GetSliceCompositeNode().SetBackgroundVolumeID(volume_id)
 
-    def set_foreground_volume_id(self, volume_id: str) -> None:
+    def get_background_volume_id(self) -> Optional[str]:
+        return self.logic.GetSliceCompositeNode().GetBackgroundVolumeID()
+
+    def set_foreground_volume_id(self, volume_id: Optional[str]) -> None:
         self.logic.GetSliceCompositeNode().SetForegroundVolumeID(volume_id)
+
+    def get_foreground_volume_id(self) -> Optional[str]:
+        return self.logic.GetSliceCompositeNode().GetForegroundVolumeID()
 
     def get_slice_range(self) -> tuple[float, float]:
         (range_min, range_max), _ = self._get_slice_range_resolution()
