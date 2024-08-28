@@ -175,7 +175,7 @@ class SliceView(AbstractView):
     def set_background(self, *rgb_float: list[float]) -> None:
         self.first_renderer().SetBackground(*rgb_float)
 
-    def fit_slice_to_all(self) -> None:
+    def fit_view_to_content(self) -> None:
         self.logic.FitSliceToAll()
         self.schedule_render()
 

@@ -1,4 +1,12 @@
-from vtkmodules.vtkMRMLCore import vtkMRMLCrosshairNode, vtkMRMLScene, vtkMRMLViewNode
+from enum import Enum
+from typing import Optional
+
+from vtkmodules.vtkMRMLCore import (
+    vtkMRMLCameraNode,
+    vtkMRMLCrosshairNode,
+    vtkMRMLScene,
+    vtkMRMLViewNode,
+)
 from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLCameraDisplayableManager,
     vtkMRMLCrosshairDisplayableManager,
@@ -47,6 +55,15 @@ class RenderView(AbstractView):
         self.renderer().UpdateLightsGeometryToFollowCamera()
 
 
+class ViewDirection(Enum):
+    LEFT = vtkMRMLCameraNode.Left
+    RIGHT = vtkMRMLCameraNode.Right
+    POSTERIOR = vtkMRMLCameraNode.Posterior
+    ANTERIOR = vtkMRMLCameraNode.Anterior
+    INFERIOR = vtkMRMLCameraNode.Inferior
+    SUPERIOR = vtkMRMLCameraNode.Superior
+
+
 class ThreeDView(RenderView):
     """
     Copied and adapted from qMRMLThreeDView
@@ -91,6 +108,10 @@ class ThreeDView(RenderView):
 
         app_logic.GetViewLogics().AddItem(self.logic)
         self.set_mrml_scene(scene)
+
+        grey_color = (60, 60, 60)
+        self.set_background_color(*grey_color)
+        self.set_box_visible(False)
 
     def set_mrml_scene(self, scene: vtkMRMLScene) -> None:
         super().set_mrml_scene(scene)
@@ -143,3 +164,36 @@ class ThreeDView(RenderView):
 
         if self.renderer():
             self.renderer().ResetCameraClippingRange()
+
+    def set_background_color(self, *rgb_int_color):
+        if not self.mrml_view_node:
+            return
+        rgb_color = [int_color / 255.0 for int_color in rgb_int_color]
+        self.mrml_view_node.SetBackgroundColor(*rgb_color)
+        self.mrml_view_node.SetBackgroundColor2(*rgb_color)
+
+    def set_box_visible(self, is_visible):
+        if not self.mrml_view_node:
+            return
+        self.mrml_view_node.SetBoxVisible(is_visible)
+        self.mrml_view_node.SetAxisLabelsVisible(is_visible)
+
+    def rotate_to_view_direction(self, view_direction: ViewDirection) -> None:
+        camera_node = self._camera_node()
+        if not camera_node:
+            return
+
+        camera_node.RotateTo(view_direction.value)
+
+    def _camera_node(self) -> Optional[vtkMRMLCameraNode]:
+        camera_dm = self.displayable_manager_group.GetDisplayableManagerByClassName(
+            "vtkMRMLCameraDisplayableManager"
+        )
+        if not camera_dm:
+            return None
+        return camera_dm.GetCameraNode()
+
+    def fit_view_to_content(self):
+        self.rotate_to_view_direction(ViewDirection.ANTERIOR)
+        self.reset_focal_point()
+        self.reset_camera()

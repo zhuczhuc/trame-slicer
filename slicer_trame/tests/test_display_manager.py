@@ -1,6 +1,6 @@
 import pytest
 
-from slicer_trame.components.rca_slicer_view_factory import register_rca_factories
+from slicer_trame.components.rca_view_factory import register_rca_factories
 from slicer_trame.slicer import SliceView, ThreeDView
 from slicer_trame.slicer.abstract_view import ViewProps
 from slicer_trame.slicer.display_manager import DisplayManager
@@ -143,13 +143,3 @@ def test_a_display_manager_can_show_node_to_slice_foreground(
             for slice_view in slice_view_group_1
         ]
     )
-
-
-def test_a_load_logic():
-    # Drag / drop in UI > Drag / drop Vue component with connection to IO Manager
-    # Iter through all the files
-    # Given file extensions, load the different nodes
-    # If volume node is present and no volume is displayed > set last volume as visible in the default views
-    # Activate volume rendering for input volume
-
-    raise NotImplementedError()

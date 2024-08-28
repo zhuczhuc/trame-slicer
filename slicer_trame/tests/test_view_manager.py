@@ -7,7 +7,7 @@ from vtkmodules.vtkCommonCore import vtkCollection
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
-from slicer_trame.components.rca_slicer_view_factory import (
+from slicer_trame.components.rca_view_factory import (
     RemoteSliceViewFactory,
     RemoteThreeDViewFactory,
 )
@@ -196,3 +196,10 @@ def test_3d_view_factory_has_reset_camera_button(
     vuetify_view_str = str(view.vuetify_view)
     assert "VBtn" in vuetify_view_str
     a_server.start()
+
+
+@pytest.mark.xfail(
+    reason="VTKWebApplication modification required to observe stale render"
+)
+def test_rca_adapter_pushes_latest_still_render_when_available():
+    raise NotImplementedError()

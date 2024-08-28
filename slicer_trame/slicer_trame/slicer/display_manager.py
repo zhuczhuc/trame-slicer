@@ -20,6 +20,7 @@ class DisplayManager:
         volume_node: vtkMRMLVolumeNode,
         view_group: Optional[int] = None,
         vr_preset: str = "",
+        fit_view_to_content: bool = False,
     ) -> None:
         if not volume_node:
             return
@@ -38,6 +39,10 @@ class DisplayManager:
 
         vr_display.SetVisibility(True)
         self.set_node_visible_in_group(volume_node, view_group)
+
+        if fit_view_to_content:
+            for view in self._view_manager.get_views(view_group):
+                view.fit_view_to_content()
 
     def show_volume_in_slice_background(
         self,

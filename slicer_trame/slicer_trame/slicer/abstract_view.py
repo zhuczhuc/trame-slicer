@@ -193,3 +193,6 @@ class AbstractView:
 
     def get_view_node_id(self) -> str:
         return self.mrml_view_node.GetID() if self.mrml_view_node else ""
+
+    def fit_view_to_content(self):
+        self.reset_camera()

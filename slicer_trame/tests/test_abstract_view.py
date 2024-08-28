@@ -1,3 +1,4 @@
+import pytest
 import vtk
 from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLCameraDisplayableManager,
@@ -25,6 +26,9 @@ def test_abstract_view_can_render_a_simple_cone(a_slicer_app):
     view.render()
 
 
+@pytest.mark.xfail(
+    reason="VTK Object Factory :: Create Instance not available for SlicerLib yet"
+)
 def test_displayable_manager_group_can_use_displayable_string_instantiation():
     ruler_displayable_manager = (
         vtkMRMLDisplayableManagerGroup.InstantiateDisplayableManager(
@@ -34,6 +38,9 @@ def test_displayable_manager_group_can_use_displayable_string_instantiation():
     assert ruler_displayable_manager is not None
 
 
+@pytest.mark.xfail(
+    reason="VTK Object Factory :: Create Instance not available for SlicerLib yet"
+)
 def test_displayable_group_can_be_initialized_by_factories():
     managers = [
         vtkMRMLVolumeRenderingDisplayableManager,

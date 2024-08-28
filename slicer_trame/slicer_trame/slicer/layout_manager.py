@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 
 from trame_client.widgets.core import VirtualNode
 from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLScriptedModuleNode
@@ -7,7 +7,6 @@ from slicer_trame.components.layout_grid import (
     Layout,
     LayoutDirection,
     LayoutGrid,
-    View,
     pretty_xml,
     slicer_layout_to_vue,
     vue_layout_to_slicer,
@@ -96,19 +95,19 @@ class LayoutManager:
             raise RuntimeError(f"Layout not present in manager : {layout_id}")
         return self._layouts[layout_id]
 
-    def register_layout_dict(self, layout_dict: dict[str, Union[Layout, View]]) -> None:
+    def register_layout_dict(self, layout_dict: dict[str, Layout]) -> None:
         for layout_id, layout in layout_dict.items():
             self.register_layout(layout_id, layout)
 
     @classmethod
-    def default_grid_configuration(cls) -> dict[str, Union[Layout, View]]:
+    def default_grid_configuration(cls) -> dict[str, Layout]:
         axial_view = ViewLayoutDefinition.axial_view()
         coronal_view = ViewLayoutDefinition.coronal_view()
         sagittal_view = ViewLayoutDefinition.sagittal_view()
         threed_view = ViewLayoutDefinition.threed_view()
 
         return {
-            "Axial Only": axial_view,
+            "Axial Only": Layout(LayoutDirection.Vertical, [axial_view]),
             "Axial Primary": Layout(
                 LayoutDirection.Horizontal,
                 [
@@ -142,5 +141,5 @@ class LayoutManager:
                     ),
                 ],
             ),
-            "3D Only": threed_view,
+            "3D Only": Layout(LayoutDirection.Vertical, [threed_view]),
         }

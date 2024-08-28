@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Callable
 
@@ -83,46 +82,45 @@ class RemoteViewFactory(IViewFactory):
     def _create_vuetify_ui(self, view_id, slicer_view):
         with Div(
             style=(
-                "flex: 1;"
-                "display: grid;"
-                "width: 100%;"
-                "height: 100%;"
-                "grid-template-columns: 20px auto;"
-                "grid-template-rows: auto;"
-                "z-index: 0;"
-                "overflow: hidden;"
+                "position: relative;" "width: 100%;" "height: 100%;" "overflow: hidden;"
             )
         ):
+            RemoteControlledArea(
+                name=view_id,
+                display="image",
+                style="position: relative; width: 100%; height: 100%;",
+            )
+
             with Div(
-                style="display: flex; flex-flow: column; background-color: transparent;"
+                classes="rca-slider-gutter",
+                style="position: absolute;"
+                "top: 0;"
+                "left: 0;"
+                "background-color: transparent;"
+                "height: 100%;",
             ):
-                with VBtn(
-                    size="medium",
-                    variant="text",
-                    classes="py-1",
-                    click=self._get_reset_camera_f(slicer_view),
+                with Div(
+                    classes="rca-slider-gutter-content d-flex flex-column fill-height pa-2"
                 ):
-                    VIcon(
-                        icon="mdi-camera-flip-outline",
+                    with VBtn(
                         size="medium",
-                        color="white",
-                    )
-                    VTooltip(
-                        "Reset Camera",
-                        activator="parent",
-                        location="right",
-                        transition="slide-x-transition",
-                    )
+                        variant="text",
+                        click=slicer_view.fit_view_to_content,
+                    ):
+                        VIcon(
+                            icon="mdi-camera-flip-outline",
+                            size="medium",
+                            color="white",
+                        )
+                        VTooltip(
+                            "Reset Camera",
+                            activator="parent",
+                            location="right",
+                            transition="slide-x-transition",
+                        )
 
-                self._fill_gutter(view_id, slicer_view)
+                    self._fill_gutter(view_id, slicer_view)
 
-            RemoteControlledArea(name=view_id, display="image")
-
-    @abstractmethod
-    def _get_reset_camera_f(self, slicer_view) -> Callable:
-        pass
-
-    @abstractmethod
     def _fill_gutter(self, view_id, slicer_view):
         pass
 
@@ -130,12 +128,6 @@ class RemoteViewFactory(IViewFactory):
 class RemoteThreeDViewFactory(RemoteViewFactory):
     def __init__(self, server: Server):
         super().__init__(server, ThreeDView, view_type=ViewType.THREE_D_VIEW)
-
-    def _get_reset_camera_f(self, slicer_view: ThreeDView) -> Callable:
-        return slicer_view.reset_camera
-
-    def _fill_gutter(self, view_id, slicer_view):
-        pass
 
 
 class BlockSignals:
@@ -156,9 +148,6 @@ class BlockSignals:
 class RemoteSliceViewFactory(RemoteViewFactory):
     def __init__(self, server: Server):
         super().__init__(server, SliceView, view_type=ViewType.SLICE_VIEW)
-
-    def _get_reset_camera_f(self, slicer_view) -> Callable:
-        return slicer_view.fit_slice_to_all
 
     def _fill_gutter(self, view_id, slicer_view):
         slider_value_state_id = f"slider_value_{view_id}"
@@ -192,12 +181,6 @@ class RemoteSliceViewFactory(RemoteViewFactory):
 
         slicer_view.add_modified_observer(_on_slice_view_modified)
         _on_slice_view_modified(slicer_view)
-
-        """
-        .v-slider.v-input--vertical>.v-input__control {
-            min-height: 30px;
-        }
-        """
 
         VSlider(
             classes="slice-slider",

@@ -15,7 +15,7 @@ def test_slice_view_can_display_volume(
     a_slice_view.set_background_volume_id(a_volume_node.GetID())
     a_slice_view.set_background(1.0, 0.0, 0.0)
     a_slice_view.set_orientation("Coronal")
-    a_slice_view.fit_slice_to_all()
+    a_slice_view.fit_view_to_content()
 
     np.testing.assert_array_almost_equal(
         a_slice_view.get_slice_range(), [-121.1, 133.9], decimal=1
@@ -37,7 +37,7 @@ def test_a_slice_view_slice_offset_can_be_set(
     a_slice_view.set_background_volume_id(a_volume_node.GetID())
     a_slice_view.set_background(1.0, 0.0, 0.0)
     a_slice_view.set_orientation("Coronal")
-    a_slice_view.fit_slice_to_all()
+    a_slice_view.fit_view_to_content()
     a_slice_view.set_slice_value(42)
     assert a_slice_view.get_slice_value() == 42
 
