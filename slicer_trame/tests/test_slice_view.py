@@ -13,7 +13,7 @@ def test_slice_view_can_display_volume(
     render_interactive,
 ):
     a_slice_view.set_background_volume_id(a_volume_node.GetID())
-    a_slice_view.set_background(1.0, 0.0, 0.0)
+    a_slice_view.set_background_color([255, 0, 0])
     a_slice_view.set_orientation("Coronal")
     a_slice_view.fit_view_to_content()
 
@@ -35,7 +35,7 @@ def test_a_slice_view_slice_offset_can_be_set(
     render_interactive,
 ):
     a_slice_view.set_background_volume_id(a_volume_node.GetID())
-    a_slice_view.set_background(1.0, 0.0, 0.0)
+    a_slice_view.set_background_color([255, 0, 0])
     a_slice_view.set_orientation("Coronal")
     a_slice_view.fit_view_to_content()
     a_slice_view.set_slice_value(42)
@@ -72,5 +72,6 @@ def test_slice_view_can_register_modified_observers(a_slice_view, a_volume_node)
     mock_obs.assert_not_called()
 
 
+@pytest.mark.xfail(reason="API not available yet")
 def test_slice_view_foreground_background_opacity_can_be_set():
     raise NotImplementedError()

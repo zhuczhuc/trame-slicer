@@ -132,14 +132,17 @@ class SliceView(AbstractView):
         self.interactor().SetInteractorStyle(vtkInteractorStyleUser())
         self.interactor_observer.SetInteractor(self.interactor())
 
-    def _refresh_node_view_properties(self):
-        super()._refresh_node_view_properties()
+    def _reset_node_view_properties(self):
+        super()._reset_node_view_properties()
         if not self.mrml_view_node:
             return
 
-        self._call_if_value_not_none(
-            self.mrml_view_node.SetOrientation, self._view_properties.orientation
-        )
+        with self.trigger_modified_once():
+            self._call_if_value_not_none(
+                self.mrml_view_node.SetOrientation, self._view_properties.orientation
+            )
+            self.mrml_view_node.SetOrientationToDefault()
+            self.logic.RotateSliceToLowestVolumeAxes(False)
 
     def set_mrml_scene(self, scene: vtkMRMLScene) -> None:
         super().set_mrml_scene(scene)
@@ -172,12 +175,9 @@ class SliceView(AbstractView):
     def get_orientation(self) -> str:
         return self.mrml_view_node.GetOrientation()
 
-    def set_background(self, *rgb_float: list[float]) -> None:
-        self.first_renderer().SetBackground(*rgb_float)
-
     def fit_view_to_content(self) -> None:
         self.logic.FitSliceToAll()
-        self.schedule_render()
+        self.logic.SnapSliceOffsetToIJK()
 
     def start_interactor(self) -> None:
         self.interactor().Start()
@@ -214,6 +214,8 @@ class SliceView(AbstractView):
         return self.logic.GetSliceOffset()
 
     def set_slice_value(self, value: float) -> None:
-        self.logic.StartSliceOffsetInteraction()
-        self.logic.SetSliceOffset(value)
-        self.logic.EndSliceOffsetInteraction()
+        if value == self.get_slice_value():
+            return
+
+        with self.trigger_modified_once():
+            self.logic.SetSliceOffset(value)

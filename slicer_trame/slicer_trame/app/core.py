@@ -1,12 +1,17 @@
+import asyncio
 from math import floor
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Callable, Optional
 
 from trame.app import get_server
+from trame.app.file_upload import ClientFile
 from trame.decorators import TrameApp, change
 from trame.widgets import client, vuetify3
-from trame_client.widgets.html import Div, Span
-from trame_vuetify.ui.vuetify3 import SinglePageWithDrawerLayout
+from trame_client.widgets.html import Div, Input, Span
+from trame_server import Server
+from trame_server.utils.asynchronous import create_task
+from trame_vuetify.ui.vuetify3 import SinglePageLayout
 from trame_vuetify.widgets.vuetify3 import (
     Template,
     VBtn,
@@ -14,10 +19,12 @@ from trame_vuetify.widgets.vuetify3 import (
     VCardText,
     VIcon,
     VMenu,
+    VProgressCircular,
     VRadio,
     VRadioGroup,
     VTooltip,
 )
+from vtkmodules.vtkCommonCore import vtkCollection
 
 from slicer_trame.components.rca_view_factory import register_rca_factories
 from slicer_trame.slicer import LayoutManager, SlicerApp
@@ -78,13 +85,56 @@ class LayoutButton(VMenu):
 
 
 class ToolsStrip(Div):
-    def __init__(self, *, layout_list, **kwargs):
+    def __init__(
+        self,
+        *,
+        layout_list,
+        server: Server,
+        on_load_files: Callable[[list[dict]], None],
+        **kwargs,
+    ):
         super().__init__(
             classes="bg-grey-darken-4 d-flex flex-column align-center", **kwargs
         )
 
         with self:
-            ControlButton(name="Open files", icon="mdi-folder-open", click=lambda: None)
+            files_input_ref = "open_files_input"
+
+            def create_load_task(*a, **kw):
+                server.state["file_loading_busy"] = True
+                server.state.flush()
+
+                async def load():
+                    await asyncio.sleep(1)
+                    try:
+                        on_load_files(*a, **kw)
+                    finally:
+                        server.state["file_loading_busy"] = False
+                        server.state.flush()
+
+                create_task(load())
+
+            Input(
+                type="file",
+                multiple=True,
+                change=(
+                    "file_loading_busy = true;"
+                    "trigger('"
+                    f"{server.controller.trigger_name(create_load_task)}"
+                    "', [$event.target.files]"
+                    ")"
+                ),
+                __events=["change"],
+                style="display: none;",
+                ref=files_input_ref,
+            )
+            ControlButton(
+                name="Open files",
+                icon="mdi-folder-open",
+                click=lambda: server.js_call(ref=files_input_ref, method="click"),
+                v_if=("!file_loading_busy",),
+            )
+            VProgressCircular(v_if=("file_loading_busy",), indeterminate=True, size=24)
             LayoutButton(layout_list)
 
 
@@ -92,6 +142,7 @@ class ToolsStrip(Div):
 class MyTrameSlicerApp:
     def __init__(self, server=None, css_file_path: Optional[Path] = None):
         self._server = get_server(server, client_type="vue3")
+        self._server.state.setdefault("file_loading_busy", False)
         self._slicer_app = SlicerApp()
         self._css_file = Path(css_file_path or get_css_path())
 
@@ -113,18 +164,6 @@ class MyTrameSlicerApp:
         self.server.state.setdefault("current_layout_name", default_layout)
         self._layout_manager.set_layout(default_layout)
 
-        dcm_files = [
-            p.as_posix()
-            for p in Path(
-                r"C:\Work\Projects\Acandis\POC_SlicerLib_Trame\slicer_trame\tests\data\mr_head_dcm"
-            ).glob("*.dcm")
-        ]
-        volumes = self._slicer_app.io_manager.load_volumes(dcm_files)
-        if volumes:
-            self._slicer_app.display_manager.show_volume(
-                volumes[0], vr_preset="MR-Default", fit_view_to_content=True
-            )
-
     @change("current_layout_name")
     def on_current_layout_changed(self, current_layout_name, *args, **kwargs):
         self._layout_manager.set_layout(current_layout_name)
@@ -133,8 +172,47 @@ class MyTrameSlicerApp:
     def server(self):
         return self._server
 
+    def _on_load_files(self, files: list[dict]) -> None:
+        print("Let's load!")
+        if not files:
+            return
+
+        # Remove previous volume nodes
+        vol_nodes: vtkCollection = self._slicer_app.scene.GetNodesByClass(
+            "vtkMRMLVolumeNode"
+        )
+        for i_vol in range(vol_nodes.GetNumberOfItems()):
+            self._slicer_app.scene.RemoveNode(vol_nodes.GetItemAsObject(i_vol))
+
+        # Load new volumes and display the first one
+        with TemporaryDirectory() as tmp_dir:
+            file_list = []
+            for file in files:
+                file_helper = ClientFile(file)
+                file_path = Path(tmp_dir) / file_helper.name
+                with open(file_path, "wb") as f:
+                    f.write(file_helper.content)
+                file_list.append(file_path.as_posix())
+
+            volumes = self._slicer_app.io_manager.load_volumes(file_list)
+            if not volumes:
+                return
+
+            # Show the largest volume
+            def bounds_volume(v):
+                b = [0] * 6
+                v.GetImageData().GetBounds(b)
+                return (b[1] - b[0]) * (b[3] - b[2]) * (b[5] - b[4])
+
+            volumes = list(sorted(volumes, key=bounds_volume))
+            self._slicer_app.display_manager.show_volume(
+                volumes[-1],
+                vr_preset="CT-Coronary-Arteries-3",
+                do_reset_views=True,
+            )
+
     def _build_ui(self, *args, **kwargs):
-        with SinglePageWithDrawerLayout(self._server) as self.ui:
+        with SinglePageLayout(self._server) as self.ui:
             if self._css_file.is_file():
                 client.Style(self._css_file.read_text())
 
@@ -149,7 +227,9 @@ class MyTrameSlicerApp:
             # Main content
             with self.ui.content:
                 with Div(classes="fill-height d-flex flex-row flex-grow-1"):
-                    ToolsStrip(layout_list=self._layout_manager.get_layout_ids())
+                    ToolsStrip(
+                        layout_list=self._layout_manager.get_layout_ids(),
+                        server=self.server,
+                        on_load_files=self._on_load_files,
+                    )
                     self._server.ui.layout_grid(self.ui)
-
-            self.ui.footer.clear()

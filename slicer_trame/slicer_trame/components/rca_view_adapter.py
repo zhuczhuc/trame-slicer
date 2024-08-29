@@ -23,8 +23,8 @@ class RcaViewAdapter:
         view: AbstractView,
         name: str,
         web_application: Optional[vtkWebApplication] = None,
-        target_fps: float = 30.0,
-        interactive_quality: int = 20,
+        target_fps: float = 60.0,
+        interactive_quality: int = 50,
     ):
         self._view = view
         self._view.set_scheduled_render(RcaRenderScheduler(self, target_fps=target_fps))
@@ -108,7 +108,7 @@ class RcaRenderScheduler(ScheduledRenderStrategy):
         self._target_fps = target_fps
 
     def schedule_render(self):
-        if self._animate_task is None:
+        if self._animate_task is None or not self._do_animate:
             self._do_animate = True
             self._animate_task = asynchronous.create_task(self._animate())
 
@@ -121,20 +121,17 @@ class RcaRenderScheduler(ScheduledRenderStrategy):
 
     async def _animate(self):
         while self._do_animate:
-            await self._trigger_render(is_animating=True)
-
-        await self._trigger_render(is_animating=False)
-
-    async def _trigger_render(self, is_animating):
-        did_render = False
-        invalidate_once = True
-        while not did_render:
-            did_render = self._adapter.render_and_push(
-                is_animating=is_animating,
-                do_invalidate_cache=invalidate_once,
+            self._adapter.render_and_push(
+                is_animating=True,
+                do_invalidate_cache=True,
             )
-            invalidate_once = False
             await asyncio.sleep(1.0 / self._target_fps)
+
+        await asyncio.sleep(1.0)
+        self._adapter.render_and_push(
+            is_animating=False,
+            do_invalidate_cache=True,
+        )
 
     async def _cancel_animate(self):
         await asyncio.sleep(10.0 / self._target_fps)

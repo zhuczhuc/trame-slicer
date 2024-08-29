@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Callable
 
@@ -105,7 +106,7 @@ class RemoteViewFactory(IViewFactory):
                     with VBtn(
                         size="medium",
                         variant="text",
-                        click=slicer_view.fit_view_to_content,
+                        click=slicer_view.reset_view,
                     ):
                         VIcon(
                             icon="mdi-camera-flip-outline",
@@ -130,24 +131,11 @@ class RemoteThreeDViewFactory(RemoteViewFactory):
         super().__init__(server, ThreeDView, view_type=ViewType.THREE_D_VIEW)
 
 
-class BlockSignals:
-    def __init__(self):
-        self._is_blocking = False
-
-    def __enter__(self):
-        self._is_blocking = True
-        yield self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self._is_blocking = False
-
-    def __bool__(self):
-        return self._is_blocking
-
-
 class RemoteSliceViewFactory(RemoteViewFactory):
     def __init__(self, server: Server):
         super().__init__(server, SliceView, view_type=ViewType.SLICE_VIEW)
+        self._is_updating_from_trame = defaultdict(bool)
+        self._is_updating_from_slicer = defaultdict(bool)
 
     def _fill_gutter(self, view_id, slicer_view):
         slider_value_state_id = f"slider_value_{view_id}"
@@ -155,29 +143,29 @@ class RemoteSliceViewFactory(RemoteViewFactory):
         slider_max_state_id = f"slider_max_{view_id}"
         slider_step_state_id = f"slider_step_{view_id}"
 
-        update_from_slicer = BlockSignals()
-        update_from_trame = BlockSignals()
-
         @self._server.state.change(slider_value_state_id)
         def _on_view_slider_value_changed(*_, **kwargs):
-            if update_from_slicer:
+            if self._is_updating_from_slicer[slider_value_state_id]:
                 return
 
-            with update_from_trame:
-                slicer_view.set_slice_value(kwargs[slider_value_state_id])
-                slicer_view.schedule_render()
+            self._is_updating_from_trame[slider_value_state_id] = True
+            slicer_view.set_slice_value(kwargs[slider_value_state_id])
+            self._is_updating_from_trame[slider_value_state_id] = False
 
         def _on_slice_view_modified(view: SliceView):
-            if update_from_trame:
+            if self._is_updating_from_trame[slider_value_state_id]:
                 return
 
-            with self._server.state as state, update_from_slicer:
+            self._is_updating_from_slicer[slider_value_state_id] = True
+            with self._server.state as state:
                 (
                     state[slider_min_state_id],
                     state[slider_max_state_id],
                 ) = view.get_slice_range()
                 state[slider_step_state_id] = view.get_slice_step()
                 state[slider_value_state_id] = view.get_slice_value()
+                state.flush()
+            self._is_updating_from_slicer[slider_value_state_id] = False
 
         slicer_view.add_modified_observer(_on_slice_view_modified)
         _on_slice_view_modified(slicer_view)

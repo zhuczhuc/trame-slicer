@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Optional, Union, get_args
 
@@ -53,6 +54,7 @@ class VolumesReader:
     """
 
     _dcm_io_backend = Literal["GDCM", "DCMTK"]
+    dcm_read_lru_cache_size = 5000
 
     @classmethod
     def load_volumes(
@@ -359,8 +361,14 @@ class VolumesReader:
         return clean_value
 
     @classmethod
+    @lru_cache(dcm_read_lru_cache_size)
+    def _dcm_read_file(cls, dcm_file):
+        return dcmread(dcm_file, stop_before_pixels=True)
+
+    @classmethod
+    @lru_cache(dcm_read_lru_cache_size)
     def _dcm_read_tag(cls, dcm_file: str, tag) -> str:
-        val = dcmread(dcm_file, stop_before_pixels=True).get(tag)
+        val = cls._dcm_read_file(dcm_file).get(tag)
         if val is None:
             return ""
 

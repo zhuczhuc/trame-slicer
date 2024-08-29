@@ -54,4 +54,12 @@ class ViewLayoutDefinition:
 
     @classmethod
     def threed_view(cls):
-        return cls("ThreeD", ViewType.THREE_D_VIEW, ViewProps(label="1"))
+        return cls(
+            "ThreeD",
+            ViewType.THREE_D_VIEW,
+            ViewProps(
+                label="1",
+                background_color=("#1f2020", "#3c3c3c"),
+                box_visible=False,
+            ),
+        )

@@ -109,10 +109,6 @@ class ThreeDView(RenderView):
         app_logic.GetViewLogics().AddItem(self.logic)
         self.set_mrml_scene(scene)
 
-        grey_color = (60, 60, 60)
-        self.set_background_color(*grey_color)
-        self.set_box_visible(False)
-
     def set_mrml_scene(self, scene: vtkMRMLScene) -> None:
         super().set_mrml_scene(scene)
         self.logic.SetMRMLScene(scene)
@@ -165,12 +161,13 @@ class ThreeDView(RenderView):
         if self.renderer():
             self.renderer().ResetCameraClippingRange()
 
-    def set_background_color(self, *rgb_int_color):
+    def set_background_gradient_color(self, color1_rgb_int, color2_rgb_int):
+        super().set_background_gradient_color(color1_rgb_int, color2_rgb_int)
         if not self.mrml_view_node:
             return
-        rgb_color = [int_color / 255.0 for int_color in rgb_int_color]
-        self.mrml_view_node.SetBackgroundColor(*rgb_color)
-        self.mrml_view_node.SetBackgroundColor2(*rgb_color)
+
+        self.mrml_view_node.SetBackgroundColor(*self._to_float_color(color1_rgb_int))
+        self.mrml_view_node.SetBackgroundColor2(*self._to_float_color(color2_rgb_int))
 
     def set_box_visible(self, is_visible):
         if not self.mrml_view_node:
@@ -194,6 +191,16 @@ class ThreeDView(RenderView):
         return camera_dm.GetCameraNode()
 
     def fit_view_to_content(self):
-        self.rotate_to_view_direction(ViewDirection.ANTERIOR)
-        self.reset_focal_point()
-        self.reset_camera()
+        with self.trigger_modified_once():
+            self.reset_focal_point()
+            self.reset_camera()
+            self.rotate_to_view_direction(ViewDirection.ANTERIOR)
+
+    def _reset_node_view_properties(self):
+        super()._reset_node_view_properties()
+        if not self.mrml_view_node:
+            return
+
+        self._call_if_value_not_none(
+            self.set_box_visible, self._view_properties.box_visible
+        )

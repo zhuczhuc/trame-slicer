@@ -19,13 +19,20 @@ class VtkEventDispatcher:
         self._obs_id = count()
         self._trigger_args = []
         self._trigger_kwargs = {}
+        self._is_blocked = False
+
+    def set_blocked(self, is_blocked: bool) -> None:
+        self._is_blocked = is_blocked
+
+    def is_blocked(self) -> bool:
+        return self._is_blocked
 
     def attach_vtk_observer(
         self,
         vtk_obj: vtkObject,
         observed_event: Union[int, str],
     ) -> int:
-        vtk_obj_obs_id = vtk_obj.AddObserver(observed_event, self._trigger_dispatch)
+        vtk_obj_obs_id = vtk_obj.AddObserver(observed_event, self.trigger_dispatch)
         _obs_id = next(self._obs_id)
         self._vtk_obj[_obs_id] = (ref(vtk_obj), vtk_obj_obs_id)
         return _obs_id
@@ -56,7 +63,10 @@ class VtkEventDispatcher:
         self._trigger_args = args
         self._trigger_kwargs = kwargs
 
-    def _trigger_dispatch(self, *_) -> None:
+    def trigger_dispatch(self, *_) -> None:
+        if self._is_blocked:
+            return
+
         observers = [obs() for obs in self._weak_obs if obs() is not None] + list(
             self._inst_obs
         )

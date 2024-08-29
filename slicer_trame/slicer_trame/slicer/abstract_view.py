@@ -1,5 +1,6 @@
+from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Callable, List, Literal, Optional, TypeVar
+from typing import Callable, List, Literal, Optional, TypeVar, Union
 
 from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkMRMLCore import (
@@ -27,6 +28,8 @@ class ViewProps:
     orientation: Optional[ViewOrientation] = None
     color: Optional[str] = None
     group: Optional[int] = None
+    background_color: Optional[Union[str, tuple[str, str]]] = None
+    box_visible: Optional[bool] = None
 
     def __post_init__(self):
         if self.group is not None:
@@ -50,6 +53,8 @@ class ViewProps:
             "viewlabel": "label",
             "viewcolor": "color",
             "viewgroup": "group",
+            "background_color": "background_color",
+            "box_visible": "box_visible",
         }
 
     @classmethod
@@ -125,7 +130,7 @@ class AbstractView:
         self._scheduled_render.schedule_render()
 
     def render(self) -> None:
-        self._render_window.Render()
+        self._render_window_interactor.Render()
         if not self._scheduled_render:
             return
         self._scheduled_render.did_render()
@@ -143,25 +148,31 @@ class AbstractView:
         if self.mrml_view_node == node:
             return
 
-        self._modified_dispatcher.detach_vtk_observer(self._mrml_node_obs_id)
-        self.mrml_view_node = node
-        self.displayable_manager_group.SetMRMLDisplayableNode(node)
-        self._refresh_node_view_properties()
-        self._mrml_node_obs_id = self._modified_dispatcher.attach_vtk_observer(
-            node, "ModifiedEvent"
-        )
+        with self.trigger_modified_once():
+            self._modified_dispatcher.detach_vtk_observer(self._mrml_node_obs_id)
+            self.mrml_view_node = node
+            self.displayable_manager_group.SetMRMLDisplayableNode(node)
+            self._reset_node_view_properties()
+            self._mrml_node_obs_id = self._modified_dispatcher.attach_vtk_observer(
+                node, "ModifiedEvent"
+            )
 
     def set_view_properties(self, view_properties: ViewProps):
         self._view_properties = view_properties
-        self._refresh_node_view_properties()
+        self._reset_node_view_properties()
 
-    def _refresh_node_view_properties(self):
+    def _reset_node_view_properties(self):
         if not self.mrml_view_node:
             return
 
-        self._call_if_value_not_none(
-            self.mrml_view_node.SetViewGroup, self._view_properties.group
-        )
+        with self.trigger_modified_once():
+            self._call_if_value_not_none(
+                self.mrml_view_node.SetViewGroup, self._view_properties.group
+            )
+            self._call_if_value_not_none(
+                self.set_background_color_from_string,
+                self._view_properties.background_color,
+            )
 
     def get_view_group(self) -> int:
         if not self.mrml_view_node:
@@ -196,3 +207,55 @@ class AbstractView:
 
     def fit_view_to_content(self):
         self.reset_camera()
+
+    def reset_view(self):
+        with self.trigger_modified_once():
+            self._reset_node_view_properties()
+            self.fit_view_to_content()
+            self.schedule_render()
+            self._trigger_modified()
+
+    def set_background_color(self, rgb_int_color: list[int]) -> None:
+        self.set_background_gradient_color(rgb_int_color, rgb_int_color)
+
+    def set_background_gradient_color(
+        self, color1_rgb_int: list[int], color2_rgb_int: list[int]
+    ) -> None:
+        self.first_renderer().SetBackground(*self._to_float_color(color1_rgb_int))
+        self.first_renderer().SetBackground2(*self._to_float_color(color2_rgb_int))
+
+    def set_background_color_from_string(self, color: Union[str, tuple[str, str]]):
+        if isinstance(color, str):
+            c1 = c2 = color
+        else:
+            c1, c2 = color
+        self.set_background_gradient_color(
+            self._str_to_color(c1), (self._str_to_color(c2))
+        )
+
+    @staticmethod
+    def _to_float_color(rgb_int_color: list[int]) -> list[float]:
+        return [int_color / 255.0 for int_color in rgb_int_color]
+
+    @classmethod
+    def _str_to_color(cls, color: str) -> list[int]:
+        from webcolors import hex_to_rgb, name_to_rgb
+
+        try:
+            int_color = hex_to_rgb(color)
+        except ValueError:
+            int_color = name_to_rgb(color)
+        return [int_color.red, int_color.green, int_color.blue]
+
+    def _trigger_modified(self) -> None:
+        self._modified_dispatcher.trigger_dispatch()
+
+    @contextmanager
+    def trigger_modified_once(self):
+        prev_blocked = self._modified_dispatcher.is_blocked()
+        self._modified_dispatcher.set_blocked(True)
+        try:
+            yield
+        finally:
+            self._modified_dispatcher.set_blocked(prev_blocked)
+            self._trigger_modified()
