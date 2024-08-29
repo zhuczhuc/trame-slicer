@@ -173,7 +173,6 @@ class MyTrameSlicerApp:
         return self._server
 
     def _on_load_files(self, files: list[dict]) -> None:
-        print("Let's load!")
         if not files:
             return
 
