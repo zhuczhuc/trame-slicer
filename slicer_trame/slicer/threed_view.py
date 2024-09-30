@@ -20,6 +20,9 @@ from vtkmodules.vtkMRMLDisplayableManager import (
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLViewLogic
 from vtkmodules.vtkRenderingCore import vtkInteractorStyle3D
+from vtkmodules.vtkSlicerMarkupsModuleMRMLDisplayableManager import (
+    vtkMRMLMarkupsDisplayableManager,
+)
 from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
     vtkMRMLSegmentationsDisplayableManager3D,
 )
@@ -89,6 +92,7 @@ class ThreeDView(RenderView):
             vtkMRMLOrientationMarkerDisplayableManager,
             vtkMRMLRulerDisplayableManager,
             vtkMRMLSegmentationsDisplayableManager3D,
+            vtkMRMLMarkupsDisplayableManager,
         ]
 
         for manager in managers:

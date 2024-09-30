@@ -6,6 +6,7 @@ from vtkmodules.vtkMRMLDisplayableManager import (
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLColorLogic
 from vtkmodules.vtkSlicerBaseLogic import vtkSlicerApplicationLogic
+from vtkmodules.vtkSlicerMarkupsModuleLogic import vtkSlicerMarkupsLogic
 
 from .display_manager import DisplayManager
 from .io_manager import IOManager
@@ -60,10 +61,18 @@ class SlicerApp:
         # Create volume rendering
         self.volume_rendering = VolumeRendering(self.scene, self.app_logic)
 
+        # Create markups logic
+        self.markups_logic = vtkSlicerMarkupsLogic()
+        self.markups_logic.SetMRMLApplicationLogic(self.app_logic)
+        self.markups_logic.SetMRMLScene(self.scene)
+        self.markups_logic.SetAutoCreateDisplayNodes(True)
+        self.app_logic.SetModuleLogic("Markups", self.markups_logic)
+
         # Initialize orientation definitions
         patient_right_is_screen_left = True
         vtkMRMLSliceNode.AddDefaultSliceOrientationPresets(
-            self.scene, patient_right_is_screen_left
+            self.scene,
+            patient_right_is_screen_left,
         )
 
         # initialize view manager responsible for creating new views in the app

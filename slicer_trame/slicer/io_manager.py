@@ -1,4 +1,5 @@
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Optional, Union
 
 from vtkmodules.vtkCommonDataModel import vtkPolyData
@@ -9,8 +10,9 @@ from vtkmodules.vtkMRMLCore import (
     vtkMRMLSegmentationNode,
     vtkMRMLVolumeNode,
 )
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
+from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLRemoteIOLogic
 from vtkmodules.vtkSegmentationCore import vtkSegment, vtkSegmentationConverter
+from vtkmodules.vtkSlicerBaseLogic import vtkDataIOManagerLogic
 from vtkmodules.vtkSlicerSegmentationsModuleLogic import (
     vtkSlicerSegmentationsModuleLogic,
 )
@@ -26,6 +28,22 @@ class IOManager:
     def __init__(self, scene: vtkMRMLScene, app_logic: vtkMRMLApplicationLogic):
         self.scene = scene
         self.app_logic = app_logic
+
+        # Configure IO logic to enable loading from MRB format
+        self.cache_dir = TemporaryDirectory()
+
+        self.remote_io = vtkMRMLRemoteIOLogic()
+        self.remote_io.SetMRMLScene(self.scene)
+        self.remote_io.SetMRMLApplicationLogic(self.app_logic)
+        self.remote_io.GetCacheManager().SetRemoteCacheDirectory(self.cache_dir.name)
+
+        self.vtk_io_manager_logic = vtkDataIOManagerLogic()
+        self.vtk_io_manager_logic.SetMRMLScene(scene)
+        self.vtk_io_manager_logic.SetMRMLApplicationLogic(app_logic)
+        self.vtk_io_manager_logic.SetAndObserveDataIOManager(
+            self.remote_io.GetDataIOManager()
+        )
+        self.remote_io.AddDataIOToScene()
 
     def load_volumes(
         self,

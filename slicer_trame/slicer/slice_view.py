@@ -15,6 +15,9 @@ from vtkmodules.vtkMRMLDisplayableManager import (
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLSliceLogic
 from vtkmodules.vtkRenderingCore import vtkActor2D, vtkImageMapper, vtkRenderer
+from vtkmodules.vtkSlicerMarkupsModuleMRMLDisplayableManager import (
+    vtkMRMLMarkupsDisplayableManager,
+)
 from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
     vtkMRMLSegmentationsDisplayableManager2D,
 )
@@ -102,6 +105,7 @@ class SliceView(AbstractView):
             vtkMRMLRulerDisplayableManager,
             vtkMRMLScalarBarDisplayableManager,
             vtkMRMLSegmentationsDisplayableManager2D,
+            vtkMRMLMarkupsDisplayableManager,
         ]
 
         for manager in managers:
