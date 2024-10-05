@@ -136,6 +136,7 @@ class ToolsStrip(Div):
             )
             VProgressCircular(v_if=("file_loading_busy",), indeterminate=True, size=24)
             LayoutButton(layout_list)
+            VBtn("", icon="mdi-dots-square", click=server.controller.markups_clicked)
 
 
 @TrameApp()
@@ -143,6 +144,10 @@ class MyTrameSlicerApp:
     def __init__(self, server=None, css_file_path: Optional[Path] = None):
         self._server = get_server(server, client_type="vue3")
         self._server.state.setdefault("file_loading_busy", False)
+        self._server.controller.markups_clicked = self.on_markups_clicked
+
+        self._markups_node = None
+
         self._slicer_app = SlicerApp()
         self._css_file = Path(css_file_path or get_css_path())
 
@@ -163,6 +168,15 @@ class MyTrameSlicerApp:
         default_layout = "Axial Primary"
         self.server.state.setdefault("current_layout_name", default_layout)
         self._layout_manager.set_layout(default_layout)
+
+    def on_markups_clicked(self):
+        if self._markups_node is None:
+            self._markups_node = self._slicer_app.scene.AddNewNodeByClass(
+                "vtkMRMLMarkupsFiducialNode"
+            )
+
+        self._slicer_app.markups_logic.SetActiveList(self._markups_node)
+        self._slicer_app.markups_logic.StartPlaceMode(True)
 
     @change("current_layout_name")
     def on_current_layout_changed(self, current_layout_name, *args, **kwargs):

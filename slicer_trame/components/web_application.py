@@ -1,3 +1,4 @@
+from concurrent.futures.process import ProcessPoolExecutor
 from typing import Any
 
 from vtkmodules.vtkWebCore import vtkWebApplication
@@ -21,3 +22,12 @@ class WebApplication(metaclass=Singleton):
     @classmethod
     def get_singleton(cls):
         return cls()._web_app
+
+
+class RenderingPool(metaclass=Singleton):
+    def __init__(self):
+        self._pool = ProcessPoolExecutor()
+
+    @classmethod
+    def get_singleton(cls) -> ProcessPoolExecutor:
+        return cls()._pool
