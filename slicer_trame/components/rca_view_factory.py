@@ -90,6 +90,7 @@ class RemoteViewFactory(IViewFactory):
                 name=view_id,
                 display="image",
                 style="position: relative; width: 100%; height: 100%;",
+                send_mouse_move=True,
             )
 
             with Div(

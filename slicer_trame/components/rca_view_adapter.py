@@ -38,6 +38,7 @@ class RcaViewAdapter:
         self._iren = self._window.GetInteractor()
         self._iren.EnableRenderOff()
         self._window.ShowWindowOff()
+        self._press_set = set()
 
     def set_streamer(self, stream_manager):
         self.streamer = stream_manager
@@ -58,9 +59,31 @@ class RcaViewAdapter:
 
         self.streamer.push_content(self.area_name, meta, content)
 
+    def do_discard_extra_release_event(self, event):
+        """
+        Ignores mouse release events which have not been preceded by a previous mouse press.
+        """
+        event_type = event["type"]
+        if "Press" in event_type:
+            self._press_set.add(event_type)
+            return False
+
+        if not event_type.endswith("Release"):
+            return False
+
+        press_event = event_type.replace("Release", "Press")
+        if press_event in self._press_set:
+            self._press_set.remove(press_event)
+            return False
+
+        return True
+
     def on_interaction(self, _, event):
         event_type = event["type"]
         if event_type in ["StartInteractionEvent", "EndInteractionEvent"]:
+            return
+
+        if self.do_discard_extra_release_event(event):
             return
 
         vtkRemoteInteractionAdapter.ProcessEvent(self._iren, json.dumps(event))
