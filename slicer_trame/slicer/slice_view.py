@@ -223,3 +223,12 @@ class SliceView(AbstractView):
 
         with self.trigger_modified_once():
             self.logic.SetSliceOffset(value)
+
+    def set_visible_in_3d(self, is_visible: bool):
+        self.mrml_view_node.SetSliceVisible(is_visible)
+
+    def is_visible_in_3d(self) -> bool:
+        return self.mrml_view_node.GetSliceVisible()
+
+    def toggle_visible_in_3d(self):
+        self.set_visible_in_3d(not self.is_visible_in_3d())

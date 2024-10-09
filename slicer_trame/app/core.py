@@ -27,8 +27,9 @@ from trame_vuetify.widgets.vuetify3 import (
 from vtkmodules.vtkCommonCore import vtkCollection
 
 from slicer_trame.components.rca_view_factory import register_rca_factories
-from slicer_trame.slicer import LayoutManager, SlicerApp
+from slicer_trame.slicer.layout_manager import LayoutManager
 from slicer_trame.slicer.resources import get_css_path
+from slicer_trame.slicer.slicer_app import SlicerApp
 
 
 class ControlButton(VBtn):
@@ -136,7 +137,11 @@ class ToolsStrip(Div):
             )
             VProgressCircular(v_if=("file_loading_busy",), indeterminate=True, size=24)
             LayoutButton(layout_list)
-            VBtn("", icon="mdi-dots-square", click=server.controller.markups_clicked)
+            ControlButton(
+                name="Place Points",
+                icon="mdi-dots-square",
+                click=server.controller.markups_clicked,
+            )
 
 
 @TrameApp()
@@ -223,6 +228,7 @@ class MyTrameSlicerApp:
                 vr_preset="CT-Coronary-Arteries-3",
                 do_reset_views=True,
             )
+            self._slicer_app.display_manager.set_slice_visible_in_3d(True)
 
     def _build_ui(self, *args, **kwargs):
         with SinglePageLayout(self._server) as self.ui:

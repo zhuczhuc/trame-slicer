@@ -10,9 +10,10 @@ from slicer_trame.components.layout_grid import (
     pretty_xml,
     vue_layout_to_slicer,
 )
-from slicer_trame.slicer import LayoutManager, ViewManager
 from slicer_trame.slicer.abstract_view import ViewProps
+from slicer_trame.slicer.layout_manager import LayoutManager
 from slicer_trame.slicer.view_layout_definition import ViewLayoutDefinition, ViewType
+from slicer_trame.slicer.view_manager import ViewManager
 
 
 @pytest.fixture()

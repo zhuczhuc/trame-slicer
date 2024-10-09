@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, unique
 
-from slicer_trame.slicer.abstract_view import ViewOrientation, ViewProps
+from .abstract_view import ViewOrientation, ViewProps
 
 
 @unique

@@ -10,11 +10,10 @@ from trame_vuetify.widgets.vuetify3 import VBtn, VIcon, VSlider, VTooltip
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
-from slicer_trame.slicer.abstract_view import AbstractView, AbstractViewChild
-from slicer_trame.slicer.slice_view import SliceView
-from slicer_trame.slicer.threed_view import ThreeDView
-from slicer_trame.slicer.view_factory import IViewFactory
-
+from ..slicer.abstract_view import AbstractView, AbstractViewChild
+from ..slicer.slice_view import SliceView
+from ..slicer.threed_view import ThreeDView
+from ..slicer.view_factory import IViewFactory
 from ..slicer.view_layout_definition import ViewLayoutDefinition, ViewType
 from ..slicer.view_manager import ViewManager
 from .rca_view_adapter import RcaViewAdapter
@@ -170,6 +169,23 @@ class RemoteSliceViewFactory(RemoteViewFactory):
 
         slicer_view.add_modified_observer(_on_slice_view_modified)
         _on_slice_view_modified(slicer_view)
+
+        with VBtn(
+            size="medium",
+            variant="text",
+            click=slicer_view.toggle_visible_in_3d,
+        ):
+            VIcon(
+                icon="mdi-video-3d",
+                size="medium",
+                color="white",
+            )
+            VTooltip(
+                "Show in 3D",
+                activator="parent",
+                location="right",
+                transition="slide-x-transition",
+            )
 
         VSlider(
             classes="slice-slider",

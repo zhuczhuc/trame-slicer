@@ -41,8 +41,11 @@ class DisplayManager:
         self.set_node_visible_in_group(volume_node, view_group)
 
         if do_reset_views:
-            for view in self._view_manager.get_views(view_group):
-                view.reset_view()
+            self.reset_views(view_group)
+
+    def reset_views(self, view_group: Optional[int] = None):
+        for view in self._view_manager.get_views(view_group):
+            view.reset_view()
 
     def show_volume_in_slice_background(
         self,

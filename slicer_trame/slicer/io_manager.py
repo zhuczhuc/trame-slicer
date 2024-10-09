@@ -8,6 +8,7 @@ from vtkmodules.vtkMRMLCore import (
     vtkMRMLModelStorageNode,
     vtkMRMLScene,
     vtkMRMLSegmentationNode,
+    vtkMRMLSegmentationStorageNode,
     vtkMRMLVolumeNode,
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLRemoteIOLogic
@@ -51,7 +52,7 @@ class IOManager:
     ) -> list[vtkMRMLVolumeNode]:
         return VolumesReader.load_volumes(self.scene, self.app_logic, volume_files)
 
-    def load_model(self, model_file: str) -> Optional[vtkMRMLModelNode]:
+    def load_model(self, model_file: Union[str, Path]) -> Optional[vtkMRMLModelNode]:
         model_file = Path(model_file).resolve()
         if not model_file.is_file():
             return None
@@ -66,9 +67,13 @@ class IOManager:
         model_node.CreateDefaultDisplayNodes()
         return model_node
 
+    @classmethod
+    def write_model(cls, model_node, model_file: Union[str, Path]) -> None:
+        cls._write_node(model_node, model_file, vtkMRMLModelStorageNode)
+
     def load_segmentation(
         self,
-        segmentation_file: str,
+        segmentation_file: Union[str, Path],
     ) -> Optional[vtkMRMLSegmentationNode]:
         """
         Adapted from Modules/Loadable/Segmentations/qSlicerSegmentationsReader.cxx
@@ -86,6 +91,12 @@ class IOManager:
         logic.SetMRMLScene(self.scene)
         return logic.LoadSegmentationFromFile(
             segmentation_file.as_posix(), True, node_name
+        )
+
+    @classmethod
+    def write_segmentation(cls, segmentation_node, segmentation_file: Union[str, Path]):
+        cls._write_node(
+            segmentation_node, segmentation_file, vtkMRMLSegmentationStorageNode
         )
 
     def _load_segmentation_from_model_file(
@@ -136,3 +147,13 @@ class IOManager:
             display_node.SetPreferredDisplayRepresentationName2D(closed_surface_tag)
 
         return segmentation_node
+
+    @classmethod
+    def _write_node(cls, node, node_file, storage_type: type) -> None:
+        if not node:
+            return
+
+        node_file = Path(node_file).resolve().as_posix()
+        storage_node = storage_type()
+        storage_node.SetFileName(node_file)
+        storage_node.WriteData(node)

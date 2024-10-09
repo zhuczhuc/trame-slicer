@@ -1,4 +1,5 @@
 from itertools import chain
+from pathlib import Path
 
 import pytest
 from vtkmodules.vtkMRMLCore import (
@@ -122,3 +123,24 @@ def test_an_io_manager_can_load_segmentations_in_stl_format(
     assert a_slicer_app.scene.GetNodeByID(segmentation_node.GetID()) is not None
     segmentation: vtkSegmentation = segmentation_node.GetSegmentation()
     assert segmentation.GetNumberOfSegments() == 1
+
+
+def test_an_io_manager_can_write_models(an_io_manager, a_model_node, tmpdir):
+    out_path = Path(tmpdir, "out.obj")
+    an_io_manager.write_model(a_model_node, out_path)
+
+    src_n_points = a_model_node.GetPolyData().GetNumberOfPoints()
+    assert out_path.exists()
+    read_model = an_io_manager.load_model(out_path)
+    assert read_model.GetPolyData().GetNumberOfPoints() == src_n_points
+
+
+def test_an_io_manager_can_write_segmentation_as_nifti(
+    an_io_manager, a_segmentation_stl_file_path, tmpdir
+):
+    segmentation_node = an_io_manager.load_segmentation(
+        a_segmentation_stl_file_path.as_posix()
+    )
+    out_path = Path(tmpdir, "out.nii.gz")
+    an_io_manager.write_segmentation(segmentation_node, out_path)
+    assert out_path.exists()

@@ -7,9 +7,17 @@ from vtkmodules.vtkMRMLDisplayableManager import (
 from vtkmodules.vtkMRMLLogic import vtkMRMLColorLogic
 from vtkmodules.vtkSlicerBaseLogic import vtkSlicerApplicationLogic
 from vtkmodules.vtkSlicerMarkupsModuleLogic import vtkSlicerMarkupsLogic
+from vtkmodules.vtkSlicerSubjectHierarchyModuleLogic import (
+    vtkSlicerSubjectHierarchyModuleLogic,
+)
+from vtkmodules.vtkSlicerTerminologiesModuleLogic import (
+    vtkSlicerTerminologiesModuleLogic,
+)
+from vtkmodules.vtkSlicerVolumesModuleLogic import vtkSlicerVolumesLogic
 
 from .display_manager import DisplayManager
 from .io_manager import IOManager
+from .resources import resources_path
 from .view_manager import ViewManager
 from .volume_rendering import VolumeRendering
 
@@ -67,6 +75,26 @@ class SlicerApp:
         self.markups_logic.SetMRMLScene(self.scene)
         self.markups_logic.SetAutoCreateDisplayNodes(True)
         self.app_logic.SetModuleLogic("Markups", self.markups_logic)
+
+        # Initialize volumes logic
+        self.volumes_logic = vtkSlicerVolumesLogic()
+        self.volumes_logic.SetMRMLScene(self.scene)
+        self.volumes_logic.SetMRMLApplicationLogic(self.app_logic)
+        self.app_logic.SetModuleLogic("Volumes", self.volumes_logic)
+
+        # Set up Terminologies logic (needed for subject hierarchy tree view color/terminology selector)
+        self.terminologies_logic = vtkSlicerTerminologiesModuleLogic()
+        self.terminologies_logic.SetModuleShareDirectory(
+            resources_path().joinpath("terminologies").as_posix()
+        )
+        self.terminologies_logic.SetMRMLScene(self.scene)
+        self.terminologies_logic.SetMRMLApplicationLogic(self.app_logic)
+        self.app_logic.SetModuleLogic("Terminologies", self.terminologies_logic)
+
+        # Initialize subject hierarchy logic
+        self.sh_module_logic = vtkSlicerSubjectHierarchyModuleLogic()
+        self.sh_module_logic.SetMRMLScene(self.scene)
+        self.sh_module_logic.SetMRMLApplicationLogic(self.app_logic)
 
         # Initialize orientation definitions
         patient_right_is_screen_left = True

@@ -12,8 +12,8 @@ from vtkmodules.vtkCommonDataModel import vtkImageData
 from vtkmodules.vtkIOImage import vtkJPEGWriter
 from vtkmodules.vtkRenderingCore import vtkRenderWindow, vtkWindowToImageFilter
 
-from slicer_trame.components.web_application import RenderingPool
-from slicer_trame.slicer.render_scheduler import ScheduledRenderStrategy
+from ..slicer.render_scheduler import ScheduledRenderStrategy
+from .web_application import RenderingPool
 
 
 def encode_np_img_to_jpg(image: NDArray, cols: int, rows: int, quality: int) -> bytes:
@@ -109,7 +109,7 @@ class RcaRenderScheduler(ScheduledRenderStrategy):
 
     def __init__(
         self,
-        push_callback: Callable[[memoryview, dict], None],
+        push_callback: Callable[[bytes, dict], None],
         window: vtkRenderWindow,
         target_fps: float,
         interactive_quality: int,
@@ -204,4 +204,4 @@ class RcaRenderScheduler(ScheduledRenderStrategy):
             img, meta, m_time = await result
             if m_time >= self._last_push_time_ms:
                 self._last_push_time_ms = m_time
-                self._push_callback(memoryview(img), meta)
+                self._push_callback(img, meta)

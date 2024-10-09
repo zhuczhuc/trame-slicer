@@ -75,3 +75,19 @@ def test_slice_view_can_register_modified_observers(a_slice_view, a_volume_node)
 @pytest.mark.xfail(reason="API not available yet")
 def test_slice_view_foreground_background_opacity_can_be_set():
     raise NotImplementedError()
+
+
+def test_slice_view_can_be_set_visible_in_3d(
+    a_slice_view,
+    a_threed_view,
+    a_volume_node,
+    render_interactive,
+):
+    a_slice_view.set_background_volume_id(a_volume_node.GetID())
+
+    assert not a_slice_view.is_visible_in_3d()
+    a_slice_view.set_visible_in_3d(True)
+    assert a_slice_view.is_visible_in_3d()
+
+    if render_interactive:
+        a_slice_view.start_interactor()

@@ -2,8 +2,7 @@ import json
 
 from vtkmodules.vtkWebCore import vtkRemoteInteractionAdapter
 
-from slicer_trame.slicer import AbstractView
-
+from ..slicer.abstract_view import AbstractView
 from .rca_render_scheduler import RcaRenderScheduler
 
 

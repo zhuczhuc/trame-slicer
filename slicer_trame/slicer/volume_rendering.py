@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Optional
 
 from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLVolumeNode
@@ -8,9 +7,7 @@ from vtkmodules.vtkSlicerVolumeRenderingModuleMRML import (
     vtkMRMLVolumeRenderingDisplayNode,
 )
 
-
-def resources_folder() -> Path:
-    return Path(__file__).parent.joinpath("../../resources").resolve()
+from .resources import resources_path
 
 
 class VolumeRendering:
@@ -22,7 +19,7 @@ class VolumeRendering:
         self._logic = vtkSlicerVolumeRenderingLogic()
         self._logic.SetMRMLApplicationLogic(app_logic)
         self._logic.SetMRMLScene(scene)
-        self._logic.SetModuleShareDirectory(resources_folder().as_posix())
+        self._logic.SetModuleShareDirectory(resources_path().as_posix())
         self._logic.ChangeVolumeRenderingMethod(
             "vtkMRMLGPURayCastVolumeRenderingDisplayNode"
         )

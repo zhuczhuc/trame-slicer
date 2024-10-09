@@ -3,7 +3,7 @@ from typing import Optional
 from trame_client.widgets.core import VirtualNode
 from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLScriptedModuleNode
 
-from slicer_trame.components.layout_grid import (
+from ..components.layout_grid import (
     Layout,
     LayoutDirection,
     LayoutGrid,
@@ -11,7 +11,6 @@ from slicer_trame.components.layout_grid import (
     slicer_layout_to_vue,
     vue_layout_to_slicer,
 )
-
 from .view_layout_definition import ViewLayoutDefinition
 from .view_manager import ViewManager
 

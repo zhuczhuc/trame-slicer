@@ -11,11 +11,12 @@ from slicer_trame.components.rca_view_factory import (
     RemoteSliceViewFactory,
     RemoteThreeDViewFactory,
 )
-from slicer_trame.slicer import AbstractView, SlicerApp, ViewManager
-from slicer_trame.slicer.abstract_view import AbstractViewChild, ViewProps
+from slicer_trame.slicer.abstract_view import AbstractView, AbstractViewChild, ViewProps
 from slicer_trame.slicer.slice_view import SliceView
+from slicer_trame.slicer.slicer_app import SlicerApp
 from slicer_trame.slicer.view_factory import IViewFactory
 from slicer_trame.slicer.view_layout_definition import ViewLayoutDefinition, ViewType
+from slicer_trame.slicer.view_manager import ViewManager
 
 
 @pytest.fixture()
@@ -196,10 +197,3 @@ def test_3d_view_factory_has_reset_camera_button(
     vuetify_view_str = str(view.vuetify_view)
     assert "VBtn" in vuetify_view_str
     a_server.start()
-
-
-@pytest.mark.xfail(
-    reason="VTKWebApplication modification required to observe stale render"
-)
-def test_rca_adapter_pushes_latest_still_render_when_available():
-    raise NotImplementedError()

@@ -25,9 +25,3 @@ repos:
       - id: isort
         name: isort (python)
         args: [ --profile=black ]
-
-#  - repo: https://github.com/pre-commit/mirrors-mypy
-#    rev: v1.11.1
-#    hooks:
-#      - id: mypy
-#        args: [ --disable-error-code, annotation-unchecked, --ignore-missing-imports ]
