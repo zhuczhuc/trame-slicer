@@ -2,6 +2,7 @@ import asyncio
 import time
 from asyncio import Queue
 from concurrent.futures.process import ProcessPoolExecutor
+from enum import Enum, auto
 from multiprocessing import Pool
 from typing import Callable
 
@@ -16,9 +17,30 @@ from ..slicer.render_scheduler import ScheduledRenderStrategy
 from .web_application import RenderingPool
 
 
-def encode_np_img_to_jpg(image: NDArray, cols: int, rows: int, quality: int) -> bytes:
+class RcaEncoder(Enum):
+    WEBP = auto()
+    JPEG = auto()
+
+
+def encode_np_img_to_webp(image: NDArray, cols: int, rows: int, quality: int) -> bytes:
     """
     Numpy implementation of JPEG conversion of the input image.
+    Input image should be a numpy array as extracted from the render to image function.
+    This method uses numpy arrays as input for compatibility with Python's multiprocessing.
+    """
+    import cv2
+
+    if not (cols and rows):
+        return b""
+
+    image = image.reshape((cols, rows, -1))
+    image = image[::-1, :, ::-1]
+    retval, buf = cv2.imencode(".webp", image, [cv2.IMWRITE_WEBP_QUALITY, quality])
+    return buf.tobytes()
+
+
+def encode_np_img_to_jpg(image: NDArray, cols: int, rows: int, quality: int) -> bytes:
+    """
     Input image should be a numpy array as extracted from the render to image function.
     This method uses numpy arrays as input for compatibility with Python's multiprocessing.
     """
@@ -45,6 +67,52 @@ def time_now_ms() -> int:
     return int(time.time_ns() / 1000000)
 
 
+def encode_np_img_with_meta(
+    np_image: NDArray,
+    cols: int,
+    rows: int,
+    quality: int,
+    now_ms: int,
+    im_type: str,
+    encoder: Callable,
+) -> tuple[bytes, dict, int]:
+    """
+    Encodes the input numpy image.
+    Input image should be a numpy array as extracted from the render to image function.
+    This method is compatible with Python's multiprocessing.
+
+    Returns encoded image with the meta information and timestamp for usage in trame.
+    """
+    meta = dict(
+        type=im_type,
+        codec="",
+        w=cols,
+        h=rows,
+        st=now_ms,
+        key="key",
+        quality=quality,
+    )
+    return encoder(np_image, cols, rows, quality), meta, now_ms
+
+
+def encode_np_img_to_webp_with_meta(
+    np_image: NDArray,
+    cols: int,
+    rows: int,
+    quality: int,
+    now_ms: int,
+) -> tuple[bytes, dict, int]:
+    return encode_np_img_with_meta(
+        np_image,
+        cols,
+        rows,
+        quality,
+        now_ms,
+        im_type="image/webp",
+        encoder=encode_np_img_to_webp,
+    )
+
+
 def encode_np_img_to_jpg_with_meta(
     np_image: NDArray,
     cols: int,
@@ -52,23 +120,15 @@ def encode_np_img_to_jpg_with_meta(
     quality: int,
     now_ms: int,
 ) -> tuple[bytes, dict, int]:
-    """
-    Encodes the input numpy image to JPEG.
-    Input image should be a numpy array as extracted from the render to image function.
-    This method is compatible with Python's multiprocessing.
-
-    Returns encoded image with the meta information and timestamp for usage in trame.
-    """
-    meta = dict(
-        type="image/jpeg",  # mime type
-        codec="",  # video codec, not relevant here
-        w=cols,
-        h=rows,
-        st=now_ms,
-        key="key",  # jpegs are always keyframes
-        quality=quality,
+    return encode_np_img_with_meta(
+        np_image,
+        cols,
+        rows,
+        quality,
+        now_ms,
+        im_type="image/jpeg",
+        encoder=encode_np_img_to_jpg,
     )
-    return encode_np_img_to_jpg(np_image, cols, rows, quality), meta, now_ms
 
 
 def render_to_image(view) -> vtkImageData:
@@ -114,6 +174,7 @@ class RcaRenderScheduler(ScheduledRenderStrategy):
         target_fps: float,
         interactive_quality: int,
         encode_pool: ProcessPoolExecutor = None,
+        encoder: RcaEncoder = RcaEncoder.WEBP,
     ):
         super().__init__()
 
@@ -123,6 +184,7 @@ class RcaRenderScheduler(ScheduledRenderStrategy):
                 "RcaRenderScheduler is only compatible with VTK RenderWindows."
             )
 
+        self._encoder = encoder
         self._push_callback = push_callback
         self._window = window
         self._target_fps = target_fps
@@ -181,6 +243,11 @@ class RcaRenderScheduler(ScheduledRenderStrategy):
             await self._request_render_queue.get()
 
     async def _render(self):
+        if self._encoder == RcaEncoder.JPEG:
+            encoder = encode_np_img_to_jpg_with_meta
+        else:
+            encoder = encode_np_img_to_webp_with_meta
+
         while not self._is_closing:
             quality = await self._render_quality_queue.get()
             now_ms = time_now_ms()
@@ -188,7 +255,7 @@ class RcaRenderScheduler(ScheduledRenderStrategy):
             await self._push_queue.put(
                 asyncio.wrap_future(
                     self._encode_pool.submit(
-                        encode_np_img_to_jpg_with_meta,
+                        encoder,
                         np_img,
                         cols,
                         rows,

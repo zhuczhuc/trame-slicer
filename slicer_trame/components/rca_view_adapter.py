@@ -2,6 +2,8 @@ import json
 
 from vtkmodules.vtkWebCore import vtkRemoteInteractionAdapter
 
+from slicer_trame.components.rca_render_scheduler import RcaEncoder
+
 from ..slicer.abstract_view import AbstractView
 from .rca_render_scheduler import RcaRenderScheduler
 
@@ -18,6 +20,7 @@ class RcaViewAdapter:
         name: str,
         target_fps: float = 30.0,
         interactive_quality: int = 50,
+        rca_encoder: RcaEncoder = RcaEncoder.WEBP,
     ):
         self._view = view
         self._view.set_scheduled_render(
@@ -26,6 +29,7 @@ class RcaViewAdapter:
                 view.render_window(),
                 target_fps=target_fps,
                 interactive_quality=interactive_quality,
+                encoder=rca_encoder,
             )
         )
         self._window = view.render_window()

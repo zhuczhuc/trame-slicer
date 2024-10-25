@@ -10,9 +10,12 @@ import pytest
 from trame_server.utils.asynchronous import create_task
 
 from slicer_trame.components.rca_render_scheduler import (
+    RcaEncoder,
     RcaRenderScheduler,
     encode_np_img_to_jpg,
     encode_np_img_to_jpg_with_meta,
+    encode_np_img_to_webp,
+    encode_np_img_to_webp_with_meta,
     render_to_image,
     time_now_ms,
     vtk_img_to_numpy_array,
@@ -27,7 +30,18 @@ def test_a_view_can_be_encoded_to_jpg(a_threed_view, tmpdir):
         f.write(img)
 
 
-def test_np_encode_can_be_done_using_multiprocess(a_threed_view):
+def test_a_view_can_be_encoded_to_webp(a_threed_view, tmpdir):
+    img = encode_np_img_to_webp(
+        *vtk_img_to_numpy_array(render_to_image(a_threed_view.render_window())), 100
+    )
+    with open(Path(tmpdir).joinpath("test_img.webp"), "wb") as f:
+        f.write(img)
+
+
+@pytest.mark.parametrize(
+    "encoder", [encode_np_img_to_jpg_with_meta, encode_np_img_to_webp_with_meta]
+)
+def test_np_encode_can_be_done_using_multiprocess(encoder, a_threed_view):
     array, cols, rows = vtk_img_to_numpy_array(
         render_to_image(a_threed_view.render_window())
     )
@@ -35,7 +49,7 @@ def test_np_encode_can_be_done_using_multiprocess(a_threed_view):
 
     with Pool(1) as p:
         encoded, meta, ret_now_ms = p.apply(
-            encode_np_img_to_jpg_with_meta,
+            encoder,
             args=(array, cols, rows, 100, now_ms),
         )
         assert meta
@@ -84,7 +98,9 @@ async def test_multi_processing_apply_async_is_compatible_with_async_queue():
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("encoder", [RcaEncoder.WEBP, RcaEncoder.JPEG])
 async def test_after_request_render_pushes_render_followed_by_still_render(
+    encoder,
     a_threed_view,
 ):
     a_mock_push = MagicMock()
@@ -93,6 +109,7 @@ async def test_after_request_render_pushes_render_followed_by_still_render(
         a_threed_view.render_window(),
         target_fps=20,
         interactive_quality=0,
+        encoder=encoder,
     )
 
     try:
@@ -106,7 +123,9 @@ async def test_after_request_render_pushes_render_followed_by_still_render(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("encoder", [RcaEncoder.WEBP, RcaEncoder.JPEG])
 async def test_when_schedule_render_called_before_still_render_keeps_animating(
+    encoder,
     a_threed_view,
 ):
     a_mock_push = MagicMock()
@@ -115,6 +134,7 @@ async def test_when_schedule_render_called_before_still_render_keeps_animating(
         a_threed_view.render_window(),
         target_fps=20,
         interactive_quality=0,
+        encoder=encoder,
     )
 
     try:
@@ -130,7 +150,9 @@ async def test_when_schedule_render_called_before_still_render_keeps_animating(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("encoder", [RcaEncoder.WEBP, RcaEncoder.JPEG])
 async def test_if_no_render_is_scheduled_doesnt_push(
+    encoder,
     a_threed_view,
 ):
     a_mock_push = MagicMock()
@@ -139,6 +161,7 @@ async def test_if_no_render_is_scheduled_doesnt_push(
         a_threed_view.render_window(),
         target_fps=20,
         interactive_quality=0,
+        encoder=encoder,
     )
 
     try:
@@ -149,7 +172,9 @@ async def test_if_no_render_is_scheduled_doesnt_push(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("encoder", [RcaEncoder.WEBP, RcaEncoder.JPEG])
 async def test_groups_close_request_render_together(
+    encoder,
     a_threed_view,
 ):
     a_mock_push = MagicMock()
@@ -158,6 +183,7 @@ async def test_groups_close_request_render_together(
         a_threed_view.render_window(),
         target_fps=20,
         interactive_quality=0,
+        encoder=encoder,
     )
 
     try:

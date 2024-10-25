@@ -29,6 +29,7 @@ def a_threed_view(a_slicer_app):
         "ThreeD",
         scheduled_render_strategy=DirectRendering(),
     )
+    three_d_view.interactor().UpdateSize(400, 300)
     yield three_d_view
     three_d_view.finalize()
 
