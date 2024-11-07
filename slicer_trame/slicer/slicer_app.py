@@ -1,3 +1,4 @@
+import vtk
 from vtkmodules.vtkCommonCore import vtkCollection, vtkOutputWindow
 from vtkmodules.vtkMRMLCore import vtkMRMLCrosshairNode, vtkMRMLScene, vtkMRMLSliceNode
 from vtkmodules.vtkMRMLDisplayableManager import (
@@ -36,6 +37,10 @@ class SlicerApp:
         vtkOutputWindow.SetInstance(vtk_out)
 
         self.scene = vtkMRMLScene()
+        self.scene.AddObserver(
+            vtkMRMLScene.NodeAboutToBeRemovedEvent,
+            self._remove_attached_displayable_nodes,
+        )
 
         # Add one crosshair to the scene
         # Copied from qSlicerCoreApplication::setMRMLScene
@@ -73,7 +78,6 @@ class SlicerApp:
         self.markups_logic = vtkSlicerMarkupsLogic()
         self.markups_logic.SetMRMLApplicationLogic(self.app_logic)
         self.markups_logic.SetMRMLScene(self.scene)
-        self.markups_logic.SetAutoCreateDisplayNodes(True)
         self.app_logic.SetModuleLogic("Markups", self.markups_logic)
 
         # Initialize volumes logic
@@ -111,3 +115,14 @@ class SlicerApp:
 
         # Initialize display manager
         self.display_manager = DisplayManager(self.view_manager, self.volume_rendering)
+
+    @vtk.calldata_type(vtk.VTK_OBJECT)
+    def _remove_attached_displayable_nodes(self, scene, eventid, node):
+        if not scene:
+            return
+
+        if not hasattr(node, "GetNumberOfDisplayNodes"):
+            return
+
+        for i_display_node in range(node.GetNumberOfDisplayNodes()):
+            scene.RemoveNode(node.GetNthDisplayNode(i_display_node))

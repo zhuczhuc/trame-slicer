@@ -228,7 +228,6 @@ class MyTrameSlicerApp:
                 vr_preset="CT-Coronary-Arteries-3",
                 do_reset_views=True,
             )
-            self._slicer_app.display_manager.set_slice_visible_in_3d(True)
 
     def _build_ui(self, *args, **kwargs):
         with SinglePageLayout(self._server) as self.ui:

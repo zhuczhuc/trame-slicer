@@ -39,3 +39,21 @@ def test_markups_nodes_can_be_placed_interactively(
 
     if render_interactive:
         a_threed_view.interactor().Start()
+
+
+def test_markups_node_added_then_removed_from_scene_removes_displayable_node(
+    a_slicer_app,
+    a_threed_view,
+    render_interactive,
+):
+    markups_node: vtkMRMLMarkupsFiducialNode = a_slicer_app.scene.AddNewNodeByClass(
+        "vtkMRMLMarkupsFiducialNode"
+    )
+    markups_node.CreateDefaultDisplayNodes()
+    markups_node.AddControlPointWorld([-60, -40, 44], "F")
+    d_node = markups_node.GetDisplayNode()
+    assert d_node is not None
+    a_slicer_app.scene.RemoveNode(markups_node)
+    assert a_slicer_app.scene.GetNodeByID(d_node.GetID()) is None
+    if render_interactive:
+        a_threed_view.interactor().Start()

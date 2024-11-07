@@ -10,6 +10,7 @@ from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLOrientationMarkerDisplayableManager,
     vtkMRMLRulerDisplayableManager,
     vtkMRMLScalarBarDisplayableManager,
+    vtkMRMLSliceViewDisplayableManagerFactory,
     vtkMRMLSliceViewInteractorStyle,
     vtkMRMLVolumeGlyphSliceDisplayableManager,
 )
@@ -20,6 +21,10 @@ from vtkmodules.vtkSlicerMarkupsModuleMRMLDisplayableManager import (
 )
 from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
     vtkMRMLSegmentationsDisplayableManager2D,
+)
+from vtkmodules.vtkSlicerTransformsModuleMRMLDisplayableManager import (
+    vtkMRMLLinearTransformsDisplayableManager3D,
+    vtkMRMLTransformsDisplayableManager2D,
 )
 
 from .abstract_view import AbstractView
@@ -97,25 +102,30 @@ class SliceView(AbstractView):
 
         self.image_data_connection = None
 
+        factory = vtkMRMLSliceViewDisplayableManagerFactory.GetInstance()
+        factory.SetMRMLApplicationLogic(app_logic)
+
         managers = [
-            vtkMRMLCrosshairDisplayableManager,
-            vtkMRMLVolumeGlyphSliceDisplayableManager,
-            vtkMRMLModelSliceDisplayableManager,
-            vtkMRMLOrientationMarkerDisplayableManager,
-            vtkMRMLRulerDisplayableManager,
-            vtkMRMLScalarBarDisplayableManager,
-            vtkMRMLSegmentationsDisplayableManager2D,
-            vtkMRMLMarkupsDisplayableManager,
+            vtkMRMLCrosshairDisplayableManager.__name__,
+            vtkMRMLVolumeGlyphSliceDisplayableManager.__name__,
+            vtkMRMLModelSliceDisplayableManager.__name__,
+            vtkMRMLOrientationMarkerDisplayableManager.__name__,
+            vtkMRMLRulerDisplayableManager.__name__,
+            vtkMRMLScalarBarDisplayableManager.__name__,
+            vtkMRMLSegmentationsDisplayableManager2D.__name__,
+            vtkMRMLMarkupsDisplayableManager.__name__,
+            vtkMRMLTransformsDisplayableManager2D.__name__,
+            vtkMRMLLinearTransformsDisplayableManager3D.__name__,
         ]
 
         for manager in managers:
-            manager = manager()
-            manager.SetMRMLApplicationLogic(app_logic)
-            self.displayable_manager_group.AddDisplayableManager(manager)
+            if not factory.IsDisplayableManagerRegistered(manager):
+                factory.RegisterDisplayableManager(manager)
 
         self.displayable_manager_group.SetLightBoxRendererManagerProxy(
             self.render_manager
         )
+        self.displayable_manager_group.Initialize(factory, self.renderer())
         self.interactor_observer = vtkMRMLSliceViewInteractorStyle()
         self.name = name
 

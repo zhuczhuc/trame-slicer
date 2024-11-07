@@ -15,6 +15,7 @@ from vtkmodules.vtkMRMLDisplayableManager import (
     vtkMRMLOrientationMarkerDisplayableManager,
     vtkMRMLRulerDisplayableManager,
     vtkMRMLThreeDReformatDisplayableManager,
+    vtkMRMLThreeDViewDisplayableManagerFactory,
     vtkMRMLThreeDViewInteractorStyle,
     vtkMRMLViewDisplayableManager,
 )
@@ -25,6 +26,10 @@ from vtkmodules.vtkSlicerMarkupsModuleMRMLDisplayableManager import (
 )
 from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
     vtkMRMLSegmentationsDisplayableManager3D,
+)
+from vtkmodules.vtkSlicerTransformsModuleMRMLDisplayableManager import (
+    vtkMRMLLinearTransformsDisplayableManager3D,
+    vtkMRMLTransformsDisplayableManager3D,
 )
 from vtkmodules.vtkSlicerVolumeRenderingModuleMRMLDisplayableManager import (
     vtkMRMLVolumeRenderingDisplayableManager,
@@ -82,25 +87,29 @@ class ThreeDView(RenderView):
     ):
         super().__init__(*args, **kwargs)
 
+        factory = vtkMRMLThreeDViewDisplayableManagerFactory.GetInstance()
+        factory.SetMRMLApplicationLogic(app_logic)
+
         managers = [
-            vtkMRMLVolumeRenderingDisplayableManager,
-            vtkMRMLCameraDisplayableManager,
-            vtkMRMLViewDisplayableManager,
-            vtkMRMLModelDisplayableManager,
-            vtkMRMLThreeDReformatDisplayableManager,
-            vtkMRMLCrosshairDisplayableManager3D,
-            vtkMRMLOrientationMarkerDisplayableManager,
-            vtkMRMLRulerDisplayableManager,
-            vtkMRMLSegmentationsDisplayableManager3D,
-            vtkMRMLMarkupsDisplayableManager,
+            vtkMRMLVolumeRenderingDisplayableManager.__name__,
+            vtkMRMLCameraDisplayableManager.__name__,
+            vtkMRMLViewDisplayableManager.__name__,
+            vtkMRMLModelDisplayableManager.__name__,
+            vtkMRMLThreeDReformatDisplayableManager.__name__,
+            vtkMRMLCrosshairDisplayableManager3D.__name__,
+            vtkMRMLOrientationMarkerDisplayableManager.__name__,
+            vtkMRMLRulerDisplayableManager.__name__,
+            vtkMRMLSegmentationsDisplayableManager3D.__name__,
+            vtkMRMLMarkupsDisplayableManager.__name__,
+            vtkMRMLTransformsDisplayableManager3D.__name__,
+            vtkMRMLLinearTransformsDisplayableManager3D.__name__,
         ]
 
         for manager in managers:
-            manager = manager()
-            manager.SetMRMLApplicationLogic(app_logic)
-            self.displayable_manager_group.AddDisplayableManager(manager)
+            if not factory.IsDisplayableManagerRegistered(manager):
+                factory.RegisterDisplayableManager(manager)
 
-        self.displayable_manager_group.GetInteractor().Initialize()
+        self.displayable_manager_group.Initialize(factory, self.renderer())
         self.interactor_observer = vtkMRMLThreeDViewInteractorStyle()
         self.interactor_observer.SetDisplayableManagers(self.displayable_manager_group)
         self.interactor_observer.SetInteractor(self.interactor())
