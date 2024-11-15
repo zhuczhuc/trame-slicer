@@ -3,8 +3,6 @@ from unittest.mock import MagicMock
 import numpy as np
 import pytest
 
-from slicer_trame.components.web_application import WebApplication
-
 
 def test_slice_view_can_display_volume(
     a_slice_view,
@@ -49,11 +47,6 @@ def test_slice_view_can_display_empty(a_slice_view, render_interactive):
 
     if render_interactive:
         a_slice_view.start_interactor()
-
-
-def test_slice_view_is_compatible_with_rca_capture(a_slice_view):
-    data = WebApplication().get_singleton().StillRender(a_slice_view.render_window())
-    assert data is not None
 
 
 def test_slice_view_can_register_modified_observers(a_slice_view, a_volume_node):

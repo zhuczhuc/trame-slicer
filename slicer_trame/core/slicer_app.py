@@ -18,7 +18,6 @@ from vtkmodules.vtkSlicerVolumesModuleLogic import vtkSlicerVolumesLogic
 
 from .display_manager import DisplayManager
 from .io_manager import IOManager
-from .resources import resources_path
 from .view_manager import ViewManager
 from .volume_rendering import VolumeRendering
 
@@ -31,6 +30,8 @@ class SlicerApp:
     """
 
     def __init__(self):
+        from slicer_trame.resources import resources_path
+
         # Output VTK warnings to console by default
         vtk_out = vtkOutputWindow()
         vtk_out.SetDisplayModeToAlwaysStdErr()

@@ -12,8 +12,7 @@ from vtkmodules.util.numpy_support import vtk_to_numpy
 from vtkmodules.vtkCommonDataModel import vtkImageData
 from vtkmodules.vtkRenderingCore import vtkRenderWindow, vtkWindowToImageFilter
 
-from ..slicer.render_scheduler import ScheduledRenderStrategy
-from .web_application import RenderingPool
+from slicer_trame.views import ScheduledRenderStrategy
 
 
 class RcaEncoder(str, Enum):
@@ -127,6 +126,8 @@ class RcaRenderScheduler(ScheduledRenderStrategy):
         interactive_quality: Optional[int] = None,
         rca_encoder: Optional[RcaEncoder | str] = None,
     ):
+        from .rendering_pool import RenderingPool
+
         super().__init__()
 
         if not isinstance(window, vtkRenderWindow):

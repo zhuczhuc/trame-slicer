@@ -1,16 +1,12 @@
 import asyncio
-from asyncio import Queue
-from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import Pool
 from pathlib import Path
-from time import sleep
 from unittest.mock import MagicMock
 
 import pytest
 from PIL import Image
-from trame_server.utils.asynchronous import create_task
 
-from slicer_trame.components.rca_render_scheduler import (
+from slicer_trame.rca_view import (
     RcaEncoder,
     RcaRenderScheduler,
     encode_np_img_to_bytes,
@@ -53,45 +49,6 @@ def test_np_encode_can_be_done_using_multiprocess(a_threed_view, img_format):
         assert meta["st"] == now_ms
         assert ret_now_ms == now_ms
         assert encoded
-
-
-def pool_sleep(t_sleep_s):
-    sleep(t_sleep_s)
-    return 1, 2, 3
-
-
-@pytest.mark.asyncio
-async def test_multi_processing_apply_async_is_compatible_with_async_queue():
-    q = Queue()
-    running = Queue()
-    await running.put(True)
-    mock = MagicMock()
-    pool_result_mock = MagicMock()
-
-    with ProcessPoolExecutor(1) as p:
-
-        async def wait_pool():
-            result = await q.get()
-            result = await result
-            pool_result_mock(*result)
-
-        async def push_to_pool():
-            await q.put(asyncio.wrap_future(p.submit(pool_sleep, 3)))
-
-        async def proc():
-            while not running.empty():
-                mock()
-                await asyncio.sleep(0.1)
-
-        create_task(push_to_pool())
-        create_task(wait_pool())
-        proc_task = create_task(proc())
-
-        await asyncio.sleep(4)
-        await running.get()
-        await proc_task
-        assert mock.call_count > 10
-        pool_result_mock.assert_called_with(1, 2, 3)
 
 
 @pytest.mark.asyncio

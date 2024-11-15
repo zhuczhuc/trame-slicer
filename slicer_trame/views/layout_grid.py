@@ -5,7 +5,7 @@ from typing import Protocol, Union, runtime_checkable
 
 from trame.widgets import client, html
 
-from ..slicer.view_layout_definition import ViewLayoutDefinition
+from .view_layout_definition import ViewLayoutDefinition
 
 
 class LayoutDirection(Enum):

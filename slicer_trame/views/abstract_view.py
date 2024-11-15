@@ -16,8 +16,9 @@ from vtkmodules.vtkRenderingCore import (
     vtkRenderWindowInteractor,
 )
 
+from slicer_trame.utils import VtkEventDispatcher
+
 from .render_scheduler import DirectRendering, ScheduledRenderStrategy
-from .vtk_event_dispatcher import VtkEventDispatcher
 
 ViewOrientation = Literal["Axial", "Coronal", "Sagittal"]
 

@@ -7,16 +7,17 @@ from vtkmodules.vtkCommonCore import vtkCollection
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
-from slicer_trame.components.rca_view_factory import (
-    RemoteSliceViewFactory,
-    RemoteThreeDViewFactory,
+from slicer_trame.core import SlicerApp, ViewManager
+from slicer_trame.rca_view import RemoteSliceViewFactory, RemoteThreeDViewFactory
+from slicer_trame.views import (
+    AbstractView,
+    AbstractViewChild,
+    IViewFactory,
+    SliceView,
+    ViewLayoutDefinition,
+    ViewProps,
+    ViewType,
 )
-from slicer_trame.slicer.abstract_view import AbstractView, AbstractViewChild, ViewProps
-from slicer_trame.slicer.slice_view import SliceView
-from slicer_trame.slicer.slicer_app import SlicerApp
-from slicer_trame.slicer.view_factory import IViewFactory
-from slicer_trame.slicer.view_layout_definition import ViewLayoutDefinition, ViewType
-from slicer_trame.slicer.view_manager import ViewManager
 
 
 @pytest.fixture()

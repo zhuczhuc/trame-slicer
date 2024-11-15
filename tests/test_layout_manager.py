@@ -4,16 +4,16 @@ import pytest
 from trame_client.widgets.core import VirtualNode
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 
-from slicer_trame.components.layout_grid import (
+from slicer_trame.core import LayoutManager, ViewManager
+from slicer_trame.views import (
     Layout,
     LayoutDirection,
+    ViewLayoutDefinition,
+    ViewProps,
+    ViewType,
     pretty_xml,
     vue_layout_to_slicer,
 )
-from slicer_trame.slicer.abstract_view import ViewProps
-from slicer_trame.slicer.layout_manager import LayoutManager
-from slicer_trame.slicer.view_layout_definition import ViewLayoutDefinition, ViewType
-from slicer_trame.slicer.view_manager import ViewManager
 
 
 @pytest.fixture()

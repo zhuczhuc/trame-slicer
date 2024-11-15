@@ -4,7 +4,7 @@ from weakref import ref
 
 from vtkmodules.vtkFiltersSources import vtkSphereSource
 
-from slicer_trame.slicer.vtk_event_dispatcher import VtkEventDispatcher
+from slicer_trame.utils.vtk_event_dispatcher import VtkEventDispatcher
 
 
 class AClass:

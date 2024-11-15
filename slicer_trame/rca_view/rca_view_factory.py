@@ -10,15 +10,20 @@ from trame_vuetify.widgets.vuetify3 import VBtn, VIcon, VSlider, VTooltip
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
-from ..slicer.abstract_view import AbstractView, AbstractViewChild
-from ..slicer.slice_view import SliceView
-from ..slicer.threed_view import ThreeDView
-from ..slicer.view_factory import IViewFactory
-from ..slicer.view_layout_definition import ViewLayoutDefinition, ViewType
-from ..slicer.view_manager import ViewManager
+from slicer_trame.core import ViewManager
+from slicer_trame.views import (
+    AbstractView,
+    AbstractViewChild,
+    IViewFactory,
+    SliceView,
+    ThreeDView,
+    ViewLayout,
+    ViewLayoutDefinition,
+    ViewType,
+)
+
 from .rca_render_scheduler import RcaEncoder
 from .rca_view_adapter import RcaViewAdapter
-from .view_layout import ViewLayout
 
 
 @dataclass

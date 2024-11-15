@@ -3,9 +3,9 @@ from typing import Optional
 
 from vtkmodules.vtkWebCore import vtkRemoteInteractionAdapter
 
-from slicer_trame.components.rca_render_scheduler import RcaEncoder
+from slicer_trame.rca_view.rca_render_scheduler import RcaEncoder
+from slicer_trame.views.abstract_view import AbstractView
 
-from ..slicer.abstract_view import AbstractView
 from .rca_render_scheduler import RcaRenderScheduler
 
 

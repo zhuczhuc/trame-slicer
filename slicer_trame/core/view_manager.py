@@ -4,11 +4,14 @@ from typing import Optional, TypeVar
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
-from .abstract_view import AbstractView, AbstractViewChild
-from .slice_view import SliceView
-from .threed_view import ThreeDView
-from .view_factory import IViewFactory
-from .view_layout_definition import ViewLayoutDefinition
+from slicer_trame.views import (
+    AbstractView,
+    AbstractViewChild,
+    IViewFactory,
+    SliceView,
+    ThreeDView,
+    ViewLayoutDefinition,
+)
 
 T = TypeVar("T")
 

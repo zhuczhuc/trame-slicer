@@ -26,10 +26,9 @@ from trame_vuetify.widgets.vuetify3 import (
 )
 from vtkmodules.vtkCommonCore import vtkCollection
 
-from slicer_trame.components.rca_view_factory import register_rca_factories
-from slicer_trame.slicer.layout_manager import LayoutManager
-from slicer_trame.slicer.resources import get_css_path
-from slicer_trame.slicer.slicer_app import SlicerApp
+from slicer_trame.core import LayoutManager, SlicerApp
+from slicer_trame.rca_view import register_rca_factories
+from slicer_trame.resources import get_css_path
 
 
 class ControlButton(VBtn):
@@ -251,3 +250,12 @@ class MyTrameSlicerApp:
                         on_load_files=self._on_load_files,
                     )
                     self._server.ui.layout_grid(self.ui)
+
+
+def main(server=None, **kwargs):
+    app = MyTrameSlicerApp(server)
+    app.server.start(**kwargs)
+
+
+if __name__ == "__main__":
+    main()

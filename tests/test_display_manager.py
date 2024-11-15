@@ -1,11 +1,14 @@
 import pytest
 
-from slicer_trame.components.rca_view_factory import register_rca_factories
-from slicer_trame.slicer.abstract_view import ViewProps
-from slicer_trame.slicer.display_manager import DisplayManager
-from slicer_trame.slicer.slice_view import SliceView
-from slicer_trame.slicer.threed_view import ThreeDView
-from slicer_trame.slicer.view_layout_definition import ViewLayoutDefinition, ViewType
+from slicer_trame.core import DisplayManager
+from slicer_trame.rca_view.rca_view_factory import register_rca_factories
+from slicer_trame.views import (
+    SliceView,
+    ThreeDView,
+    ViewLayoutDefinition,
+    ViewProps,
+    ViewType,
+)
 
 
 def view_name(group: int, i_view: int, view_type: ViewType):

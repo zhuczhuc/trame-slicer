@@ -1,4 +1,0 @@
-trame: # Default app under /index.html
-  app: slicer_trame
-slicer_trame: # /slicer_trame.html
-  app: slicer_trame

@@ -10,10 +10,8 @@ from vtkmodules.vtkMRMLCore import (
     vtkMRMLVolumeArchetypeStorageNode,
 )
 
-from slicer_trame.slicer.render_scheduler import DirectRendering
-from slicer_trame.slicer.slice_view import SliceView
-from slicer_trame.slicer.slicer_app import SlicerApp
-from slicer_trame.slicer.threed_view import ThreeDView
+from slicer_trame.core import SlicerApp
+from slicer_trame.views import DirectRendering, SliceView, ThreeDView
 
 
 @pytest.fixture

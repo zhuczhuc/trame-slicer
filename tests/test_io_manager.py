@@ -9,8 +9,8 @@ from vtkmodules.vtkMRMLCore import (
 )
 from vtkmodules.vtkSegmentationCore import vtkSegmentation
 
-from slicer_trame.slicer.io_manager import IOManager
-from slicer_trame.slicer.volumes_reader import VolumesReader
+from slicer_trame.core.io_manager import IOManager
+from slicer_trame.core.volumes_reader import VolumesReader
 
 
 @pytest.fixture()

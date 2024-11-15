@@ -7,7 +7,7 @@ from vtkmodules.vtkSlicerVolumeRenderingModuleMRML import (
     vtkMRMLVolumeRenderingDisplayNode,
 )
 
-from .resources import resources_path
+from slicer_trame.resources import resources_path
 
 
 class VolumeRendering:
