@@ -1,6 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional
 
 from trame_client.widgets.html import Div
 from trame_rca.widgets.rca import RemoteControlledArea
@@ -16,6 +16,7 @@ from ..slicer.threed_view import ThreeDView
 from ..slicer.view_factory import IViewFactory
 from ..slicer.view_layout_definition import ViewLayoutDefinition, ViewType
 from ..slicer.view_manager import ViewManager
+from .rca_render_scheduler import RcaEncoder
 from .rca_view_adapter import RcaViewAdapter
 from .view_layout import ViewLayout
 
@@ -27,20 +28,46 @@ class RcaView:
     view_adapter: RcaViewAdapter
 
 
-def register_rca_factories(view_manager: ViewManager, server: Server) -> None:
+def register_rca_factories(
+    view_manager: ViewManager,
+    server: Server,
+    rca_encoder: RcaEncoder = RcaEncoder.JPEG,
+    target_fps: float = 20.0,
+    interactive_quality: int = 50,
+) -> None:
     """
     Helper function to register all RCA factories to a view manager.
     """
     for f_type in [RemoteSliceViewFactory, RemoteThreeDViewFactory]:
-        view_manager.register_factory(f_type(server))
+        view_manager.register_factory(
+            f_type(
+                server,
+                rca_encoder=rca_encoder,
+                target_fps=target_fps,
+                interactive_quality=interactive_quality,
+            )
+        )
 
 
 class RemoteViewFactory(IViewFactory):
-    def __init__(self, server: Server, view_ctor: Callable, view_type: ViewType):
+    def __init__(
+        self,
+        server: Server,
+        view_ctor: Callable,
+        view_type: ViewType,
+        *,
+        target_fps: Optional[float] = None,
+        interactive_quality: Optional[int] = None,
+        rca_encoder: Optional[RcaEncoder | str] = None,
+    ):
         super().__init__()
         self._server = server
         self._view_ctor = view_ctor
         self._view_type = view_type
+
+        self._target_fps = target_fps
+        self._interactive_quality = interactive_quality
+        self._rca_encoder = rca_encoder
 
     def _get_slicer_view(self, view: RcaView) -> AbstractView:
         return view.slicer_view
@@ -69,6 +96,9 @@ class RemoteViewFactory(IViewFactory):
         rca_view_adapter = RcaViewAdapter(
             view=slicer_view,
             name=view_id,
+            target_fps=self._target_fps,
+            rca_encoder=self._rca_encoder,
+            interactive_quality=self._interactive_quality,
         )
 
         async def init_rca():
@@ -127,13 +157,13 @@ class RemoteViewFactory(IViewFactory):
 
 
 class RemoteThreeDViewFactory(RemoteViewFactory):
-    def __init__(self, server: Server):
-        super().__init__(server, ThreeDView, view_type=ViewType.THREE_D_VIEW)
+    def __init__(self, server: Server, **kwargs):
+        super().__init__(server, ThreeDView, view_type=ViewType.THREE_D_VIEW, **kwargs)
 
 
 class RemoteSliceViewFactory(RemoteViewFactory):
-    def __init__(self, server: Server):
-        super().__init__(server, SliceView, view_type=ViewType.SLICE_VIEW)
+    def __init__(self, server: Server, **kwargs):
+        super().__init__(server, SliceView, view_type=ViewType.SLICE_VIEW, **kwargs)
         self._is_updating_from_trame = defaultdict(bool)
         self._is_updating_from_slicer = defaultdict(bool)
 

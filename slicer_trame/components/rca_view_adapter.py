@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 from vtkmodules.vtkWebCore import vtkRemoteInteractionAdapter
 
@@ -18,9 +19,10 @@ class RcaViewAdapter:
         self,
         view: AbstractView,
         name: str,
-        target_fps: float = 30.0,
-        interactive_quality: int = 50,
-        rca_encoder: RcaEncoder = RcaEncoder.WEBP,
+        *,
+        target_fps: Optional[float] = None,
+        interactive_quality: Optional[int] = None,
+        rca_encoder: Optional[RcaEncoder | str] = None,
     ):
         self._view = view
         self._view.set_scheduled_render(
@@ -29,14 +31,13 @@ class RcaViewAdapter:
                 view.render_window(),
                 target_fps=target_fps,
                 interactive_quality=interactive_quality,
-                encoder=rca_encoder,
+                rca_encoder=rca_encoder,
             )
         )
         self._window = view.render_window()
         self.area_name = name
         self.streamer = None
         self._prev_data_m_time = None
-        self._interactive_quality = interactive_quality
 
         self._iren = self._window.GetInteractor()
         self._iren.EnableRenderOff()
