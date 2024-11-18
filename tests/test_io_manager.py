@@ -1,7 +1,11 @@
 from itertools import chain
 from pathlib import Path
 
+import numpy as np
 import pytest
+from vtkmodules.vtkCommonCore import vtkPoints
+from vtkmodules.vtkCommonDataModel import vtkPolyData
+from vtkmodules.vtkIOGeometry import vtkSTLReader
 from vtkmodules.vtkMRMLCore import (
     vtkMRMLModelNode,
     vtkMRMLSegmentationNode,
@@ -144,3 +148,67 @@ def test_an_io_manager_can_write_segmentation_as_nifti(
     out_path = Path(tmpdir, "out.nii.gz")
     an_io_manager.write_segmentation(segmentation_node, out_path)
     assert out_path.exists()
+
+
+def get_np_points(poly: vtkPolyData):
+    array = np.zeros((poly.GetNumberOfPoints(), 3))
+    vtk_points: vtkPoints = poly.GetPoints()
+    for i_pt in range(array.shape[0]):
+        array[i_pt, :] = vtk_points.GetPoint(i_pt)
+    return array
+
+
+def read_stl_file_points_as_numpy(stl_file):
+    stl_reader = vtkSTLReader()
+    stl_reader.SetFileName(Path(stl_file).as_posix())
+    stl_reader.Update()
+    return get_np_points(stl_reader.GetOutput())
+
+
+def test_an_io_manager_can_load_save_models_without_changing_their_ref(
+    an_io_manager, a_model_file_path, tmpdir
+):
+    # Load using STL reader
+    exp_points = read_stl_file_points_as_numpy(a_model_file_path)
+
+    # Load in slicer with conversion disabled
+    model = an_io_manager.load_model(
+        a_model_file_path, do_convert_to_slicer_coord=False
+    )
+    model_poly = model.GetPolyData()
+    act_points = get_np_points(model_poly)
+
+    # Verify points equal
+    np.testing.assert_allclose(act_points, exp_points)
+
+    # Write file to stl and verify written points are as expected
+    out_file = Path(tmpdir) / "out.stl"
+    an_io_manager.write_model(model, out_file, do_convert_from_slicer_coord=False)
+
+    assert out_file.exists()
+    act_points = read_stl_file_points_as_numpy(out_file)
+    np.testing.assert_allclose(act_points, exp_points)
+
+
+def test_an_io_manager_by_default_loads_and_saves_models_as_lps(
+    an_io_manager, a_model_file_path, tmpdir
+):
+    # Load using STL reader
+    exp_points = read_stl_file_points_as_numpy(a_model_file_path)
+
+    # Load in slicer with conversion disabled
+    model = an_io_manager.load_model(a_model_file_path)
+    model_poly = model.GetPolyData()
+    act_points = get_np_points(model_poly)
+
+    # Verify points not equal
+    with np.testing.assert_raises(AssertionError):
+        np.testing.assert_allclose(act_points, exp_points)
+
+    # Write file to stl and verify written points are as source file
+    out_file = Path(tmpdir) / "out.stl"
+    an_io_manager.write_model(model, out_file)
+
+    assert out_file.exists()
+    act_points = read_stl_file_points_as_numpy(out_file)
+    np.testing.assert_allclose(act_points, exp_points)

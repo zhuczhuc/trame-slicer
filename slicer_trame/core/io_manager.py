@@ -10,6 +10,7 @@ from vtkmodules.vtkMRMLCore import (
     vtkMRMLScene,
     vtkMRMLSegmentationNode,
     vtkMRMLSegmentationStorageNode,
+    vtkMRMLStorageNode,
     vtkMRMLVolumeNode,
 )
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLRemoteIOLogic
@@ -53,7 +54,11 @@ class IOManager:
     ) -> list[vtkMRMLVolumeNode]:
         return VolumesReader.load_volumes(self.scene, self.app_logic, volume_files)
 
-    def load_model(self, model_file: Union[str, Path]) -> Optional[vtkMRMLModelNode]:
+    def load_model(
+        self,
+        model_file: Union[str, Path],
+        do_convert_to_slicer_coord: bool = True,
+    ) -> Optional[vtkMRMLModelNode]:
         model_file = Path(model_file).resolve()
         if not model_file.is_file():
             return None
@@ -65,12 +70,34 @@ class IOManager:
             "vtkMRMLModelNode", model_name
         )
         storage_node.ReadData(model_node)
+
+        # Check if RAS / LPS conversion is required
+        # Slicer will read coordinates in the file header during load regarding of preferred load format
+        # Check if coordinate change occurred to rollback change if requested
+        did_convert_coord = (
+            storage_node.GetCoordinateSystem() != vtkMRMLStorageNode.CoordinateSystemRAS
+        )
+        if not do_convert_to_slicer_coord and did_convert_coord:
+            storage_node.ConvertBetweenRASAndLPS(
+                model_node.GetPolyData(), model_node.GetPolyData()
+            )
+
         model_node.CreateDefaultDisplayNodes()
         return model_node
 
     @classmethod
-    def write_model(cls, model_node, model_file: Union[str, Path]) -> None:
-        cls._write_node(model_node, model_file, vtkMRMLModelStorageNode)
+    def write_model(
+        cls,
+        model_node,
+        model_file: Union[str, Path],
+        do_convert_from_slicer_coord: bool = True,
+    ) -> None:
+        cls._write_node(
+            model_node,
+            model_file,
+            vtkMRMLModelStorageNode,
+            do_convert_from_slicer_coord,
+        )
 
     def load_segmentation(
         self,
@@ -95,9 +122,17 @@ class IOManager:
         )
 
     @classmethod
-    def write_segmentation(cls, segmentation_node, segmentation_file: Union[str, Path]):
+    def write_segmentation(
+        cls,
+        segmentation_node,
+        segmentation_file: Union[str, Path],
+        do_convert_from_slicer_coord: bool = True,
+    ):
         cls._write_node(
-            segmentation_node, segmentation_file, vtkMRMLSegmentationStorageNode
+            segmentation_node,
+            segmentation_file,
+            vtkMRMLSegmentationStorageNode,
+            do_convert_from_slicer_coord,
         )
 
     def _load_segmentation_from_model_file(
@@ -150,12 +185,25 @@ class IOManager:
         return segmentation_node
 
     @classmethod
-    def _write_node(cls, node, node_file, storage_type: type) -> None:
+    def _write_node(
+        cls,
+        node,
+        node_file,
+        storage_type: type,
+        do_convert_from_slicer_coord: bool,
+    ) -> None:
         if not node:
             return
 
         node_file = Path(node_file).resolve().as_posix()
         storage_node = storage_type()
+
+        if hasattr(storage_node, "SetCoordinateSystem"):
+            storage_node.SetCoordinateSystem(
+                vtkMRMLStorageNode.CoordinateSystemLPS
+                if do_convert_from_slicer_coord
+                else vtkMRMLStorageNode.CoordinateSystemRAS
+            )
         storage_node.SetFileName(node_file)
         storage_node.WriteData(node)
 
