@@ -23,7 +23,6 @@ from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
     vtkMRMLSegmentationsDisplayableManager2D,
 )
 from vtkmodules.vtkSlicerTransformsModuleMRMLDisplayableManager import (
-    vtkMRMLLinearTransformsDisplayableManager3D,
     vtkMRMLTransformsDisplayableManager2D,
 )
 
@@ -115,7 +114,6 @@ class SliceView(AbstractView):
             vtkMRMLSegmentationsDisplayableManager2D.__name__,
             vtkMRMLMarkupsDisplayableManager.__name__,
             vtkMRMLTransformsDisplayableManager2D.__name__,
-            vtkMRMLLinearTransformsDisplayableManager3D.__name__,
         ]
 
         for manager in managers:

@@ -1,6 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional, Union
+from zipfile import ZipFile
 
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 from vtkmodules.vtkMRMLCore import (
@@ -157,3 +158,27 @@ class IOManager:
         storage_node = storage_type()
         storage_node.SetFileName(node_file)
         storage_node.WriteData(node)
+
+    def load_scene(self, scene_path) -> bool:
+        scene_path = Path(scene_path)
+        if not scene_path.is_file():
+            return False
+
+        if scene_path.name.endswith("mrb"):
+            return self._load_mrb_scene(scene_path)
+        return self._load_mrml_scene(scene_path)
+
+    def _load_mrml_scene(self, scene_path: Path) -> bool:
+        if not scene_path.is_file():
+            return False
+        self.scene.SetURL(scene_path.as_posix())
+        return self.scene.Import(None)
+
+    def _load_mrb_scene(self, scene_path: Path) -> bool:
+        try:
+            with TemporaryDirectory() as tmpdir:
+                with ZipFile(scene_path, "r") as zip_file:
+                    zip_file.extractall(tmpdir)
+                    return self._load_mrml_scene(next(Path(tmpdir).rglob("*.mrml")))
+        except StopIteration:
+            return False

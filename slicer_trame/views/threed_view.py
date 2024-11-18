@@ -28,7 +28,6 @@ from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
     vtkMRMLSegmentationsDisplayableManager3D,
 )
 from vtkmodules.vtkSlicerTransformsModuleMRMLDisplayableManager import (
-    vtkMRMLLinearTransformsDisplayableManager3D,
     vtkMRMLTransformsDisplayableManager3D,
 )
 from vtkmodules.vtkSlicerVolumeRenderingModuleMRMLDisplayableManager import (
@@ -102,7 +101,6 @@ class ThreeDView(RenderView):
             vtkMRMLSegmentationsDisplayableManager3D.__name__,
             vtkMRMLMarkupsDisplayableManager.__name__,
             vtkMRMLTransformsDisplayableManager3D.__name__,
-            vtkMRMLLinearTransformsDisplayableManager3D.__name__,
         ]
 
         for manager in managers:

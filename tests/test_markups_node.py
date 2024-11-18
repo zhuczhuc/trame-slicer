@@ -7,8 +7,8 @@ def test_can_load_scene_with_markups(
     render_interactive,
     a_data_folder,
 ):
-    a_slicer_app.scene.ReadFromMRB(
-        a_data_folder.joinpath("markups_scene.mrb").as_posix()
+    assert a_slicer_app.io_manager.load_scene(
+        a_data_folder.joinpath("markups_scene.mrb")
     )
 
     assert list(a_slicer_app.scene.GetNodesByClass("vtkMRMLMarkupsFiducialNode"))
