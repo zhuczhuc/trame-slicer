@@ -17,6 +17,8 @@ from slicer_trame.views import (
     ViewLayoutDefinition,
     ViewProps,
     ViewType,
+    create_vertical_slice_view_gutter_ui,
+    create_vertical_view_gutter_ui,
 )
 
 
@@ -155,7 +157,9 @@ def test_2d_factory_views_have_sliders_and_reset_camera_connected_to_slicer(
     a_2d_view,
     a_volume_node,
 ):
-    factory = RemoteSliceViewFactory(a_server)
+    factory = RemoteSliceViewFactory(
+        a_server, populate_view_ui_f=create_vertical_slice_view_gutter_ui
+    )
     a_view_manager.register_factory(factory)
     view: SliceView = a_view_manager.create_view(a_2d_view)
     view.set_background_volume_id(a_volume_node.GetID())
@@ -191,7 +195,9 @@ def test_3d_view_factory_has_reset_camera_button(
     a_3d_view,
     a_volume_node,
 ):
-    factory = RemoteThreeDViewFactory(a_server)
+    factory = RemoteThreeDViewFactory(
+        a_server, populate_view_ui_f=create_vertical_view_gutter_ui
+    )
     a_view_manager.register_factory(factory)
     a_view_manager.create_view(a_3d_view)
     view = factory.get_factory_view(a_3d_view.singleton_tag)

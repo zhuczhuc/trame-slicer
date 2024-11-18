@@ -1,4 +1,0 @@
-/* Override default min height for Slicer vertical slider */
-.slice-slider.v-slider.v-input--vertical > .v-input__control {
-    min-height: 30px;
-}

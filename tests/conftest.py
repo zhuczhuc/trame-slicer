@@ -20,26 +20,31 @@ def a_slicer_app():
 
 
 @pytest.fixture
-def a_threed_view(a_slicer_app):
+def a_threed_view(a_slicer_app, render_interactive):
     three_d_view = ThreeDView(
         a_slicer_app.scene,
         a_slicer_app.app_logic,
         "ThreeD",
         scheduled_render_strategy=DirectRendering(),
     )
+    if render_interactive:
+        three_d_view.render_window().ShowWindowOn()
     three_d_view.interactor().UpdateSize(400, 300)
     yield three_d_view
     three_d_view.finalize()
 
 
 @pytest.fixture
-def a_slice_view(a_slicer_app):
-    return SliceView(
+def a_slice_view(a_slicer_app, render_interactive):
+    view = SliceView(
         a_slicer_app.scene,
         a_slicer_app.app_logic,
         "Red",
         scheduled_render_strategy=DirectRendering(),
     )
+    if render_interactive:
+        view.render_window().ShowWindowOn()
+    return view
 
 
 @pytest.fixture()

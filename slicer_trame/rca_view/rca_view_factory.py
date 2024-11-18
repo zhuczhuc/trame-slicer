@@ -1,4 +1,3 @@
-from collections import defaultdict
 from dataclasses import dataclass
 from typing import Callable, Optional
 
@@ -6,7 +5,6 @@ from trame_client.widgets.html import Div
 from trame_rca.widgets.rca import RemoteControlledArea
 from trame_server import Server
 from trame_server.utils.asynchronous import create_task
-from trame_vuetify.widgets.vuetify3 import VBtn, VIcon, VSlider, VTooltip
 from vtkmodules.vtkMRMLCore import vtkMRMLScene
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
@@ -20,6 +18,8 @@ from slicer_trame.views import (
     ViewLayout,
     ViewLayoutDefinition,
     ViewType,
+    create_vertical_slice_view_gutter_ui,
+    create_vertical_view_gutter_ui,
 )
 
 from .rca_render_scheduler import RcaEncoder
@@ -36,20 +36,29 @@ class RcaView:
 def register_rca_factories(
     view_manager: ViewManager,
     server: Server,
+    slice_view_ui_f: Callable[[Server, str, AbstractViewChild], None] = None,
+    three_d_view_ui_f: Callable[[Server, str, AbstractViewChild], None] = None,
     rca_encoder: RcaEncoder = RcaEncoder.JPEG,
-    target_fps: float = 20.0,
+    target_fps: float = 30.0,
     interactive_quality: int = 50,
 ) -> None:
     """
     Helper function to register all RCA factories to a view manager.
     """
-    for f_type in [RemoteSliceViewFactory, RemoteThreeDViewFactory]:
+    slice_view_ui_f = slice_view_ui_f or create_vertical_slice_view_gutter_ui
+    three_d_view_ui_f = three_d_view_ui_f or create_vertical_view_gutter_ui
+
+    for f_type, populate_view_ui_f in [
+        (RemoteSliceViewFactory, slice_view_ui_f),
+        (RemoteThreeDViewFactory, three_d_view_ui_f),
+    ]:
         view_manager.register_factory(
             f_type(
                 server,
                 rca_encoder=rca_encoder,
                 target_fps=target_fps,
                 interactive_quality=interactive_quality,
+                populate_view_ui_f=populate_view_ui_f,
             )
         )
 
@@ -61,6 +70,9 @@ class RemoteViewFactory(IViewFactory):
         view_ctor: Callable,
         view_type: ViewType,
         *,
+        populate_view_ui_f: Optional[
+            Callable[[Server, str, AbstractViewChild], None]
+        ] = None,
         target_fps: Optional[float] = None,
         interactive_quality: Optional[int] = None,
         rca_encoder: Optional[RcaEncoder | str] = None,
@@ -73,6 +85,7 @@ class RemoteViewFactory(IViewFactory):
         self._target_fps = target_fps
         self._interactive_quality = interactive_quality
         self._rca_encoder = rca_encoder
+        self._populate_view_ui_f = populate_view_ui_f
 
     def _get_slicer_view(self, view: RcaView) -> AbstractView:
         return view.slicer_view
@@ -114,7 +127,7 @@ class RemoteViewFactory(IViewFactory):
         create_task(init_rca())
         return RcaView(vuetify_view, slicer_view, rca_view_adapter)
 
-    def _create_vuetify_ui(self, view_id, slicer_view):
+    def _create_vuetify_ui(self, view_id: str, slicer_view: AbstractView):
         with Div(
             style=(
                 "position: relative;" "width: 100%;" "height: 100%;" "overflow: hidden;"
@@ -127,38 +140,8 @@ class RemoteViewFactory(IViewFactory):
                 send_mouse_move=True,
             )
 
-            with Div(
-                classes="rca-slider-gutter",
-                style="position: absolute;"
-                "top: 0;"
-                "left: 0;"
-                "background-color: transparent;"
-                "height: 100%;",
-            ):
-                with Div(
-                    classes="rca-slider-gutter-content d-flex flex-column fill-height pa-2"
-                ):
-                    with VBtn(
-                        size="medium",
-                        variant="text",
-                        click=slicer_view.reset_view,
-                    ):
-                        VIcon(
-                            icon="mdi-camera-flip-outline",
-                            size="medium",
-                            color="white",
-                        )
-                        VTooltip(
-                            "Reset Camera",
-                            activator="parent",
-                            location="right",
-                            transition="slide-x-transition",
-                        )
-
-                    self._fill_gutter(view_id, slicer_view)
-
-    def _fill_gutter(self, view_id, slicer_view):
-        pass
+            if self._populate_view_ui_f is not None:
+                self._populate_view_ui_f(self._server, view_id, slicer_view)
 
 
 class RemoteThreeDViewFactory(RemoteViewFactory):
@@ -169,67 +152,3 @@ class RemoteThreeDViewFactory(RemoteViewFactory):
 class RemoteSliceViewFactory(RemoteViewFactory):
     def __init__(self, server: Server, **kwargs):
         super().__init__(server, SliceView, view_type=ViewType.SLICE_VIEW, **kwargs)
-        self._is_updating_from_trame = defaultdict(bool)
-        self._is_updating_from_slicer = defaultdict(bool)
-
-    def _fill_gutter(self, view_id, slicer_view):
-        slider_value_state_id = f"slider_value_{view_id}"
-        slider_min_state_id = f"slider_min_{view_id}"
-        slider_max_state_id = f"slider_max_{view_id}"
-        slider_step_state_id = f"slider_step_{view_id}"
-
-        @self._server.state.change(slider_value_state_id)
-        def _on_view_slider_value_changed(*_, **kwargs):
-            if self._is_updating_from_slicer[slider_value_state_id]:
-                return
-
-            self._is_updating_from_trame[slider_value_state_id] = True
-            slicer_view.set_slice_value(kwargs[slider_value_state_id])
-            self._is_updating_from_trame[slider_value_state_id] = False
-
-        def _on_slice_view_modified(view: SliceView):
-            if self._is_updating_from_trame[slider_value_state_id]:
-                return
-
-            self._is_updating_from_slicer[slider_value_state_id] = True
-            with self._server.state as state:
-                (
-                    state[slider_min_state_id],
-                    state[slider_max_state_id],
-                ) = view.get_slice_range()
-                state[slider_step_state_id] = view.get_slice_step()
-                state[slider_value_state_id] = view.get_slice_value()
-                state.flush()
-            self._is_updating_from_slicer[slider_value_state_id] = False
-
-        slicer_view.add_modified_observer(_on_slice_view_modified)
-        _on_slice_view_modified(slicer_view)
-
-        with VBtn(
-            size="medium",
-            variant="text",
-            click=slicer_view.toggle_visible_in_3d,
-        ):
-            VIcon(
-                icon="mdi-video-3d",
-                size="medium",
-                color="white",
-            )
-            VTooltip(
-                "Show in 3D",
-                activator="parent",
-                location="right",
-                transition="slide-x-transition",
-            )
-
-        VSlider(
-            classes="slice-slider",
-            direction="vertical",
-            hide_details=True,
-            theme="dark",
-            v_model=(slider_value_state_id,),
-            min=(slider_min_state_id,),
-            max=(slider_max_state_id,),
-            step=(slider_step_state_id,),
-            dense=True,
-        )

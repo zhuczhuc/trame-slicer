@@ -7,7 +7,7 @@ from typing import Callable, Optional
 from trame.app import get_server
 from trame.app.file_upload import ClientFile
 from trame.decorators import TrameApp, change
-from trame.widgets import client, vuetify3
+from trame.widgets import vuetify3
 from trame_client.widgets.html import Div, Input, Span
 from trame_server import Server
 from trame_server.utils.asynchronous import create_task
@@ -28,7 +28,6 @@ from vtkmodules.vtkCommonCore import vtkCollection
 
 from slicer_trame.core import LayoutManager, SlicerApp
 from slicer_trame.rca_view import register_rca_factories
-from slicer_trame.resources import get_css_path
 
 
 class ControlButton(VBtn):
@@ -145,7 +144,7 @@ class ToolsStrip(Div):
 
 @TrameApp()
 class MyTrameSlicerApp:
-    def __init__(self, server=None, css_file_path: Optional[Path] = None):
+    def __init__(self, server=None):
         self._server = get_server(server, client_type="vue3")
         self._server.state.setdefault("file_loading_busy", False)
         self._server.controller.markups_clicked = self.on_markups_clicked
@@ -153,7 +152,6 @@ class MyTrameSlicerApp:
         self._markups_node = None
 
         self._slicer_app = SlicerApp()
-        self._css_file = Path(css_file_path or get_css_path())
 
         register_rca_factories(self._slicer_app.view_manager, self._server)
 
@@ -230,9 +228,6 @@ class MyTrameSlicerApp:
 
     def _build_ui(self, *args, **kwargs):
         with SinglePageLayout(self._server) as self.ui:
-            if self._css_file.is_file():
-                client.Style(self._css_file.read_text())
-
             self.ui.root.theme = "dark"
 
             # Toolbar

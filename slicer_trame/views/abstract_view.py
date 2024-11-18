@@ -81,6 +81,7 @@ class AbstractView:
     ):
         self._renderer = vtkRenderer()
         self._render_window = vtkRenderWindow()
+        self._render_window.ShowWindowOff()
         self._render_window.SetMultiSamples(0)
         self._render_window.AddRenderer(self._renderer)
 
