@@ -1,13 +1,18 @@
 from contextlib import contextmanager
 from dataclasses import dataclass
+from sys import float_info
 from typing import Callable, List, Literal, Optional, TypeVar, Union
 
 from slicer import (
+    vtkMRMLAbstractDisplayableManager,
     vtkMRMLAbstractViewNode,
     vtkMRMLDisplayableManagerGroup,
+    vtkMRMLInteractionEventData,
     vtkMRMLScene,
     vtkMRMLViewNode,
 )
+from vtkmodules import vtkRenderingCore
+from vtkmodules.vtkCommonCore import reference as vtkref
 from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkRenderingCore import (
     vtkInteractorStyle,
@@ -18,6 +23,7 @@ from vtkmodules.vtkRenderingCore import (
 
 from trame_slicer.utils import VtkEventDispatcher
 
+from .abstract_view_interactor import AbstractViewInteractor
 from .render_scheduler import DirectRendering, ScheduledRenderStrategy
 
 ViewOrientation = Literal["Axial", "Coronal", "Sagittal"]
@@ -103,6 +109,192 @@ class AbstractView:
         self._modified_dispatcher = VtkEventDispatcher()
         self._modified_dispatcher.set_dispatch_information(self)
         self._mrml_node_obs_id = None
+
+        self._user_interactors: list[AbstractViewInteractor] = []
+        self._focused_displayable_manager: Optional[
+            vtkMRMLAbstractDisplayableManager
+        ] = None
+
+        self._add_observers()
+
+    def add_user_interactor(self, observer: "AbstractView"):
+        self._user_interactors.append(observer)
+
+    def remove_user_interactor(self, observer: "AbstractView"):
+        self._user_interactors.remove(observer)
+
+    def _add_observers(self):
+        iren = self.interactor()
+
+        commands = [
+            vtkCommand.MouseMoveEvent,
+            vtkCommand.RightButtonDoubleClickEvent,
+            vtkCommand.RightButtonPressEvent,
+            vtkCommand.RightButtonReleaseEvent,
+            vtkCommand.MiddleButtonDoubleClickEvent,
+            vtkCommand.MiddleButtonPressEvent,
+            vtkCommand.MiddleButtonReleaseEvent,
+            vtkCommand.LeftButtonDoubleClickEvent,
+            vtkCommand.LeftButtonPressEvent,
+            vtkCommand.LeftButtonReleaseEvent,
+            vtkCommand.EnterEvent,
+            vtkCommand.LeaveEvent,
+            vtkCommand.MouseWheelForwardEvent,
+            vtkCommand.MouseWheelBackwardEvent,
+            vtkCommand.StartPinchEvent,
+            vtkCommand.PinchEvent,
+            vtkCommand.EndPinchEvent,
+            vtkCommand.StartRotateEvent,
+            vtkCommand.RotateEvent,
+            vtkCommand.EndRotateEvent,
+            vtkCommand.StartPanEvent,
+            vtkCommand.PanEvent,
+            vtkCommand.EndPanEvent,
+            vtkCommand.TapEvent,
+            vtkCommand.LongTapEvent,
+            vtkCommand.KeyPressEvent,
+            vtkCommand.KeyReleaseEvent,
+            vtkCommand.CharEvent,
+            vtkCommand.ExposeEvent,
+            vtkCommand.ConfigureEvent,
+        ]
+
+        for command in commands:
+            iren.AddObserver(command, self._event_delegate, 0.0)
+
+    def _event_delegate(self, caller, ev):
+        event_id = vtkCommand.GetEventIdFromString(ev)
+
+        position = self.interactor().GetEventPosition()
+        poked_renderer = self.interactor().FindPokedRenderer(position[0], position[1])
+        if not poked_renderer:
+            return
+
+        origin = poked_renderer.GetOrigin()
+
+        # Fill basic information
+        ed = vtkMRMLInteractionEventData()
+        ed.SetType(event_id)
+        ed.SetDisplayPosition([position[0] - origin[0], position[1] - origin[1]])
+        ed.SetMouseMovedSinceButtonDown(True)
+        ed.SetAttributesFromInteractor(self.interactor())
+        ed.SetRenderer(poked_renderer)
+
+        # Let subclasses add information to event data
+        self.process_event_data(ed)
+
+        # Then let user interactors process it. They can abort event processing earlier.
+        for interactor in self._user_interactors:
+            if interactor.process_event(ed):
+                return
+
+        processed = self._delegate_interaction_event_data_to_displayable_managers(ed)
+        iren_state = self.interactor().GetInteractorStyle().GetState()
+        if not processed or iren_state != vtkRenderingCore.VTKIS_NONE:
+            self._process_events(event_id)
+
+    def process_event_data(self, ed: vtkMRMLInteractionEventData):
+        pass  # default implementation does nothing
+
+    def _delegate_interaction_event_data_to_displayable_managers(
+        self, event_data: vtkMRMLInteractionEventData
+    ):
+        manager_count = self.displayable_manager_group.GetDisplayableManagerCount()
+        if manager_count == 0:
+            return
+
+        # Invalidate display position if 3D event
+        if event_data.GetType() in [vtkCommand.Button3DEvent, vtkCommand.Move3DEvent]:
+            event_data.SetDisplayPositionInvalid()
+
+        # Find the most suitable displayable manager
+        closest_distance = float_info.max
+        closest_displayable_manager: Optional[vtkMRMLAbstractDisplayableManager] = None
+        for i in range(manager_count):
+            manager = self.displayable_manager_group.GetNthDisplayableManager(i)
+            if manager is None:
+                continue
+            distance = vtkref(float_info.max)
+            if manager.CanProcessInteractionEvent(event_data, distance):
+                if not closest_displayable_manager or distance < closest_distance:
+                    closest_displayable_manager = manager
+                    closest_distance = distance
+
+        if not closest_displayable_manager:
+            # None of the displayable managers can process the event, just ignore it
+            return False
+
+        # Notify displayable managers about focus change
+        old_focus = self._focused_displayable_manager
+        if old_focus != closest_displayable_manager:
+            if old_focus is not None:
+                closest_displayable_manager.SetHasFocus(False, event_data)
+            self._focused_displayable_manager = closest_displayable_manager
+            if closest_displayable_manager is not None:
+                closest_displayable_manager.SetHasFocus(True, event_data)
+
+        # Process event with new displayable manager
+        if self._focused_displayable_manager is None:
+            return False
+
+        # This prevents desynchronized update of displayable managers during user interaction
+        # (ie. slice intersection widget or segmentations lagging behind during slice translation)
+        app_logic = self._focused_displayable_manager.GetMRMLApplicationLogic()
+        if app_logic is not None:
+            self._focused_displayable_manager.GetMRMLApplicationLogic().PauseRender()
+
+        processed = self._focused_displayable_manager.ProcessInteractionEvent(
+            event_data
+        )
+
+        # Restore rendering
+        if app_logic is not None:
+            self._focused_displayable_manager.GetMRMLApplicationLogic().ResumeRender()
+
+        return processed
+
+    def _process_events(self, event_id):
+        style = self.interactor_style()
+        if not style:
+            return
+
+        jump_table = {
+            int(vtkCommand.MouseMoveEvent): style.OnMouseMove,
+            int(vtkCommand.RightButtonDoubleClickEvent): style.OnRightButtonDoubleClick,
+            int(vtkCommand.RightButtonPressEvent): style.OnRightButtonDown,
+            int(vtkCommand.RightButtonReleaseEvent): style.OnRightButtonUp,
+            int(
+                vtkCommand.MiddleButtonDoubleClickEvent
+            ): style.OnMiddleButtonDoubleClick,
+            int(vtkCommand.MiddleButtonPressEvent): style.OnMiddleButtonDown,
+            int(vtkCommand.MiddleButtonReleaseEvent): style.OnMiddleButtonUp,
+            int(vtkCommand.LeftButtonDoubleClickEvent): style.OnLeftButtonDoubleClick,
+            int(vtkCommand.LeftButtonPressEvent): style.OnLeftButtonDown,
+            int(vtkCommand.LeftButtonReleaseEvent): style.OnLeftButtonUp,
+            int(vtkCommand.EnterEvent): style.OnEnter,
+            int(vtkCommand.LeaveEvent): style.OnLeave,
+            int(vtkCommand.MouseWheelForwardEvent): style.OnMouseWheelForward,
+            int(vtkCommand.MouseWheelBackwardEvent): style.OnMouseWheelBackward,
+            int(vtkCommand.StartPinchEvent): style.OnStartPinch,
+            int(vtkCommand.PinchEvent): style.OnPinch,
+            int(vtkCommand.EndPinchEvent): style.OnEndPinch,
+            int(vtkCommand.StartRotateEvent): style.OnStartRotate,
+            int(vtkCommand.RotateEvent): style.OnRotate,
+            int(vtkCommand.EndRotateEvent): style.OnEndRotate,
+            int(vtkCommand.StartPanEvent): style.OnStartPan,
+            int(vtkCommand.PanEvent): style.OnPan,
+            int(vtkCommand.EndPanEvent): style.OnEndPan,
+            int(vtkCommand.TapEvent): style.OnTap,
+            int(vtkCommand.LongTapEvent): style.OnLongTap,
+            int(vtkCommand.KeyPressEvent): style.OnConfigure,
+            int(vtkCommand.KeyReleaseEvent): style.OnKeyRelease,
+            int(vtkCommand.CharEvent): style.OnChar,
+            int(vtkCommand.ExposeEvent): style.OnExpose,
+            int(vtkCommand.ConfigureEvent): style.OnConfigure,
+        }
+
+        if event_id in jump_table:
+            jump_table[event_id]()
 
     def set_scheduled_render(
         self, scheduled_render_strategy: ScheduledRenderStrategy

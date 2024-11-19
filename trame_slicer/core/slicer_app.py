@@ -11,6 +11,7 @@ from slicer import (
     vtkMRMLThreeDViewDisplayableManagerFactory,
     vtkSlicerApplicationLogic,
     vtkSlicerMarkupsLogic,
+    vtkSlicerSegmentationsModuleLogic,
     vtkSlicerSubjectHierarchyModuleLogic,
     vtkSlicerTerminologiesModuleLogic,
     vtkSlicerVolumesLogic,
@@ -19,6 +20,7 @@ from vtkmodules.vtkCommonCore import vtkCollection, vtkOutputWindow
 
 from .display_manager import DisplayManager
 from .io_manager import IOManager
+from .segmentation_manager import SegmentationManager
 from .view_manager import ViewManager
 from .volume_rendering import VolumeRendering
 
@@ -101,6 +103,12 @@ class SlicerApp:
         self.terminologies_logic.SetMRMLApplicationLogic(self.app_logic)
         self.app_logic.SetModuleLogic("Terminologies", self.terminologies_logic)
 
+        # Set up Segmentation logic
+        self.segmentation_logic = vtkSlicerSegmentationsModuleLogic()
+        self.segmentation_logic.SetMRMLScene(self.scene)
+        self.segmentation_logic.SetMRMLApplicationLogic(self.app_logic)
+        self.app_logic.SetModuleLogic("Segmentation", self.segmentation_logic)
+
         # Initialize subject hierarchy logic
         self.sh_module_logic = vtkSlicerSubjectHierarchyModuleLogic()
         self.sh_module_logic.SetMRMLScene(self.scene)
@@ -121,6 +129,11 @@ class SlicerApp:
 
         # Initialize display manager
         self.display_manager = DisplayManager(self.view_manager, self.volume_rendering)
+
+        # Initialize segmentation manager
+        self.segmentation_manager = SegmentationManager(
+            self.segmentation_logic, self.view_manager, self.scene
+        )
 
     @vtk.calldata_type(vtk.VTK_OBJECT)
     def _remove_attached_displayable_nodes(self, scene, eventid, node):
