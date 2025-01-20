@@ -7,22 +7,25 @@ from vtkmodules.vtkSlicerVolumeRenderingModuleMRML import (
     vtkMRMLVolumeRenderingDisplayNode,
 )
 
-from slicer_trame.resources import resources_path
-
 
 class VolumeRendering:
     """
     Simple facade for volume rendering logic.
     """
 
-    def __init__(self, scene: vtkMRMLScene, app_logic: vtkMRMLApplicationLogic):
+    def __init__(
+        self,
+        scene: vtkMRMLScene,
+        app_logic: vtkMRMLApplicationLogic,
+        share_directory: str,
+    ):
         self._logic = vtkSlicerVolumeRenderingLogic()
         self._logic.SetMRMLApplicationLogic(app_logic)
         self._logic.SetMRMLScene(scene)
-        self._logic.SetModuleShareDirectory(resources_path().as_posix())
         self._logic.ChangeVolumeRenderingMethod(
             "vtkMRMLGPURayCastVolumeRenderingDisplayNode"
         )
+        self._logic.SetModuleShareDirectory(share_directory)
 
     def create_display_node(
         self,

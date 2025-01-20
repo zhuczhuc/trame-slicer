@@ -1,3 +1,6 @@
+from pathlib import Path
+from typing import Optional
+
 import vtk
 from vtkmodules.vtkCommonCore import vtkCollection, vtkOutputWindow
 from vtkmodules.vtkMRMLCore import vtkMRMLCrosshairNode, vtkMRMLScene, vtkMRMLSliceNode
@@ -29,8 +32,10 @@ class SlicerApp:
     Configures the default nodes present in the scene.
     """
 
-    def __init__(self):
+    def __init__(self, share_directory: Optional[str] = None):
         from slicer_trame.resources import resources_path
+
+        share_directory = Path(share_directory or resources_path())
 
         # Output VTK warnings to console by default
         vtk_out = vtkOutputWindow()
@@ -73,7 +78,9 @@ class SlicerApp:
         self.app_logic.SetModuleLogic("Colors", self.color_logic)
 
         # Create volume rendering
-        self.volume_rendering = VolumeRendering(self.scene, self.app_logic)
+        self.volume_rendering = VolumeRendering(
+            self.scene, self.app_logic, share_directory.as_posix()
+        )
 
         # Create markups logic
         self.markups_logic = vtkSlicerMarkupsLogic()
@@ -90,7 +97,7 @@ class SlicerApp:
         # Set up Terminologies logic (needed for subject hierarchy tree view color/terminology selector)
         self.terminologies_logic = vtkSlicerTerminologiesModuleLogic()
         self.terminologies_logic.SetModuleShareDirectory(
-            resources_path().joinpath("terminologies").as_posix()
+            share_directory.joinpath("terminologies").as_posix()
         )
         self.terminologies_logic.SetMRMLScene(self.scene)
         self.terminologies_logic.SetMRMLApplicationLogic(self.app_logic)
