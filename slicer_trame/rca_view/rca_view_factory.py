@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional
 
 from trame_client.widgets.html import Div
+from trame_rca.utils import RcaEncoder, RcaRenderScheduler, RcaViewAdapter
 from trame_rca.widgets.rca import RemoteControlledArea
 from trame_server import Server
 from trame_server.utils.asynchronous import create_task
@@ -13,6 +14,7 @@ from slicer_trame.views import (
     AbstractView,
     AbstractViewChild,
     IViewFactory,
+    ScheduledRenderStrategy,
     SliceView,
     ThreeDView,
     ViewLayout,
@@ -21,9 +23,6 @@ from slicer_trame.views import (
     create_vertical_slice_view_gutter_ui,
     create_vertical_view_gutter_ui,
 )
-
-from .rca_render_scheduler import RcaEncoder
-from .rca_view_adapter import RcaViewAdapter
 
 
 @dataclass
@@ -61,6 +60,16 @@ def register_rca_factories(
                 populate_view_ui_f=populate_view_ui_f,
             )
         )
+
+
+class RcaRenderStrategy(ScheduledRenderStrategy):
+    def __init__(self, rca_scheduler: RcaRenderScheduler):
+        super().__init__()
+        self._scheduler = rca_scheduler
+
+    def schedule_render(self):
+        super().schedule_render()
+        self._scheduler.schedule_render()
 
 
 class RemoteViewFactory(IViewFactory):
@@ -111,13 +120,20 @@ class RemoteViewFactory(IViewFactory):
         with ViewLayout(self._server, template_name=view_id) as vuetify_view:
             self._create_vuetify_ui(view_id, slicer_view)
 
-        rca_view_adapter = RcaViewAdapter(
-            view=slicer_view,
-            name=view_id,
-            target_fps=self._target_fps,
-            rca_encoder=self._rca_encoder,
+        rca_scheduler = RcaRenderScheduler(
+            window=slicer_view.render_window(),
             interactive_quality=self._interactive_quality,
+            rca_encoder=self._rca_encoder,
+            target_fps=self._target_fps,
         )
+
+        rca_view_adapter = RcaViewAdapter(
+            window=slicer_view.render_window(),
+            name=view_id,
+            scheduler=rca_scheduler,
+            do_schedule_render_on_interaction=False,
+        )
+        slicer_view.set_scheduled_render(RcaRenderStrategy(rca_scheduler))
 
         async def init_rca():
             # RCA protocol needs to be registered before the RCA adapter can be added to the server
