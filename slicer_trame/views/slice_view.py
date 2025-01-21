@@ -191,9 +191,6 @@ class SliceView(AbstractView):
         self.logic.FitSliceToAll()
         self.logic.SnapSliceOffsetToIJK()
 
-    def start_interactor(self) -> None:
-        self.interactor().Start()
-
     def set_background_volume_id(self, volume_id: Optional[str]) -> None:
         self.logic.GetSliceCompositeNode().SetBackgroundVolumeID(volume_id)
 

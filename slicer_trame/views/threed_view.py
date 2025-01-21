@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional
 
 from vtkmodules.vtkMRMLCore import (
+    vtkMRMLAbstractViewNode,
     vtkMRMLCameraNode,
     vtkMRMLCrosshairNode,
     vtkMRMLScene,
@@ -215,3 +216,19 @@ class ThreeDView(RenderView):
         self._call_if_value_not_none(
             self.set_box_visible, self._view_properties.box_visible
         )
+
+    def set_ruler(
+        self, ruler_type: Optional[int] = None, ruler_color: Optional[int] = None
+    ):
+        if ruler_type and ruler_type != vtkMRMLAbstractViewNode.RulerTypeNone:
+            self.set_render_mode_to_orthographic()
+        super().set_ruler(ruler_type, ruler_color)
+
+    def set_render_mode_to_orthographic(self):
+        self.mrml_view_node.SetRenderMode(1)
+
+    def set_render_mode_to_perspective(self):
+        self.mrml_view_node.SetRenderMode(0)
+
+    def is_render_mode_perspective(self) -> bool:
+        return self.mrml_view_node.GetRenderMode() == 0

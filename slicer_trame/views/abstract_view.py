@@ -261,3 +261,34 @@ class AbstractView:
         finally:
             self._modified_dispatcher.set_blocked(prev_blocked)
             self._trigger_modified()
+
+    def set_orientation_marker(
+        self,
+        orientation_marker: Optional[int] = None,
+        orientation_marker_size: Optional[int] = None,
+    ):
+        """
+        Sets the orientation marker and size.
+        Orientation Enums are defined in the vtkMRMLAbstractViewNode class.
+        """
+        if orientation_marker is not None:
+            self.mrml_view_node.SetOrientationMarkerType(orientation_marker)
+
+        if orientation_marker_size is not None:
+            self.mrml_view_node.SetOrientationMarkerSize(orientation_marker_size)
+
+    def set_ruler(
+        self, ruler_type: Optional[int] = None, ruler_color: Optional[int] = None
+    ):
+        """
+        Sets the ruler type and color.
+        Ruler Enums are defined in the vtkMRMLAbstractViewNode class.
+        """
+        if ruler_type is not None:
+            self.mrml_view_node.SetRulerType(ruler_type)
+
+        if ruler_color is not None:
+            self.mrml_view_node.SetRulerColor(ruler_color)
+
+    def start_interactor(self) -> None:
+        self.interactor().Start()

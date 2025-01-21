@@ -2,6 +2,7 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
+from vtkmodules.vtkMRMLCore import vtkMRMLAbstractViewNode
 
 
 def test_slice_view_can_display_volume(
@@ -81,6 +82,32 @@ def test_slice_view_can_be_set_visible_in_3d(
     assert not a_slice_view.is_visible_in_3d()
     a_slice_view.set_visible_in_3d(True)
     assert a_slice_view.is_visible_in_3d()
+
+    if render_interactive:
+        a_slice_view.start_interactor()
+
+
+def test_slice_view_can_display_orientation_marker(
+    a_slice_view,
+    render_interactive,
+):
+    a_slice_view.set_orientation_marker(
+        vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes,
+        vtkMRMLAbstractViewNode.OrientationMarkerSizeMedium,
+    )
+
+    if render_interactive:
+        a_slice_view.start_interactor()
+
+
+def test_slice_view_can_display_rulers(
+    a_slice_view,
+    render_interactive,
+):
+    a_slice_view.set_ruler(
+        vtkMRMLAbstractViewNode.RulerTypeThick,
+        vtkMRMLAbstractViewNode.RulerColorWhite,
+    )
 
     if render_interactive:
         a_slice_view.start_interactor()

@@ -1,3 +1,6 @@
+from vtkmodules.vtkMRMLCore import vtkMRMLAbstractViewNode
+
+
 def test_threed_view_can_render_mrml_models(
     a_threed_view, a_model_node, render_interactive
 ):
@@ -6,7 +9,7 @@ def test_threed_view_can_render_mrml_models(
     a_threed_view.render()
 
     if render_interactive:
-        a_threed_view.interactor().Start()
+        a_threed_view.start_interactor()
 
 
 def test_threed_view_can_set_background(
@@ -18,7 +21,7 @@ def test_threed_view_can_set_background(
     a_threed_view.set_background_color_from_string(("red", "blue"))
 
     if render_interactive:
-        a_threed_view.interactor().Start()
+        a_threed_view.start_interactor()
 
 
 def test_threed_view_can_render_mrml_volumes(
@@ -37,4 +40,42 @@ def test_threed_view_can_render_mrml_volumes(
     a_threed_view.render()
 
     if render_interactive:
-        a_threed_view.interactor().Start()
+        a_threed_view.start_interactor()
+
+
+def test_threed_view_can_show_orientation_marker(
+    a_threed_view,
+    render_interactive,
+):
+    a_threed_view.set_orientation_marker(
+        vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes,
+        vtkMRMLAbstractViewNode.OrientationMarkerSizeMedium,
+    )
+
+    if render_interactive:
+        a_threed_view.start_interactor()
+
+
+def test_three_d_view_can_display_rulers_but_forces_ortho_render_mode(
+    a_threed_view,
+    render_interactive,
+):
+    a_threed_view.set_ruler(
+        vtkMRMLAbstractViewNode.RulerTypeThick,
+        vtkMRMLAbstractViewNode.RulerColorWhite,
+    )
+
+    assert not a_threed_view.is_render_mode_perspective()
+
+    if render_interactive:
+        a_threed_view.start_interactor()
+
+
+def test_three_d_view_can_toggle_between_perspective_and_orthographic(
+    a_threed_view,
+    render_interactive,
+):
+    a_threed_view.set_render_mode_to_orthographic()
+    assert not a_threed_view.is_render_mode_perspective()
+    a_threed_view.set_render_mode_to_perspective()
+    assert a_threed_view.is_render_mode_perspective()
