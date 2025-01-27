@@ -1,6 +1,6 @@
 from typing import Optional
 
-from vtkmodules.vtkMRMLCore import vtkMRMLDisplayableNode, vtkMRMLVolumeNode
+from slicer import vtkMRMLDisplayableNode, vtkMRMLVolumeNode
 
 from slicer_trame.core.view_manager import ViewManager
 

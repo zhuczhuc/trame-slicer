@@ -1,8 +1,8 @@
-from vtkmodules.vtkMRMLCore import vtkMRMLSegmentationNode
-from vtkmodules.vtkSlicerSegmentationsModuleLogic import (
+from slicer import (
+    vtkMRMLSegmentationNode,
+    vtkMRMLSegmentEditorNode,
     vtkSlicerSegmentationsModuleLogic,
 )
-from vtkmodules.vtkSlicerSegmentationsModuleMRML import vtkMRMLSegmentEditorNode
 
 
 def test_a_volume_is_compatible_with_segmentation(

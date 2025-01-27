@@ -1,7 +1,7 @@
 from typing import Optional
 
+from slicer import vtkMRMLVolumeNode
 from trame_server import Server
-from vtkmodules.vtkMRMLCore import vtkMRMLVolumeNode
 
 from slicer_trame.core import SlicerApp
 

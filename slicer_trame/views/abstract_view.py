@@ -2,13 +2,13 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Callable, List, Literal, Optional, TypeVar, Union
 
-from vtkmodules.vtkCommonCore import vtkCommand
-from vtkmodules.vtkMRMLCore import (
+from slicer import (
     vtkMRMLAbstractViewNode,
+    vtkMRMLDisplayableManagerGroup,
     vtkMRMLScene,
     vtkMRMLViewNode,
 )
-from vtkmodules.vtkMRMLDisplayableManager import vtkMRMLDisplayableManagerGroup
+from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkRenderingCore import (
     vtkInteractorStyle,
     vtkRenderer,

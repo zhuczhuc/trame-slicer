@@ -1,7 +1,7 @@
 from typing import Optional
 
+from slicer import vtkMRMLScene, vtkMRMLScriptedModuleNode
 from trame_client.widgets.core import VirtualNode
-from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLScriptedModuleNode
 
 from slicer_trame.views import ViewLayoutDefinition
 from slicer_trame.views.layout_grid import (

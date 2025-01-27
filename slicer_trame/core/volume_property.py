@@ -1,9 +1,9 @@
 from enum import Flag, auto
 from typing import Callable, Optional
 
+from slicer import vtkMRMLVolumePropertyNode
 from vtkmodules.vtkCommonDataModel import vtkPiecewiseFunction
 from vtkmodules.vtkRenderingCore import vtkColorTransferFunction, vtkVolumeProperty
-from vtkmodules.vtkSlicerVolumeRenderingModuleMRML import vtkMRMLVolumePropertyNode
 
 
 class VRShiftMode(Flag):

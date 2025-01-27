@@ -1,4 +1,4 @@
-from vtkmodules.vtkSlicerMarkupsModuleMRML import vtkMRMLMarkupsFiducialNode
+from slicer import vtkMRMLMarkupsFiducialNode
 
 
 def test_can_load_scene_with_markups(

@@ -2,14 +2,14 @@ import asyncio
 from pathlib import Path
 
 import pytest
-from trame.app import get_server
-from trame_client.utils.testing import FixtureHelper
-from trame_server.utils.asynchronous import create_task
-from vtkmodules.vtkMRMLCore import (
+from slicer import (
     vtkMRMLModelNode,
     vtkMRMLModelStorageNode,
     vtkMRMLVolumeArchetypeStorageNode,
 )
+from trame.app import get_server
+from trame_client.utils.testing import FixtureHelper
+from trame_server.utils.asynchronous import create_task
 
 from slicer_trame.core import SlicerApp
 from slicer_trame.views import DirectRendering, SliceView, ThreeDView

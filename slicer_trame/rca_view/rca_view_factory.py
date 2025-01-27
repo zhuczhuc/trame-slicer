@@ -1,13 +1,12 @@
 from dataclasses import dataclass
 from typing import Callable, Optional
 
+from slicer import vtkMRMLApplicationLogic, vtkMRMLScene
 from trame_client.widgets.html import Div
 from trame_rca.utils import RcaEncoder, RcaRenderScheduler, RcaViewAdapter
 from trame_rca.widgets.rca import RemoteControlledArea
 from trame_server import Server
 from trame_server.utils.asynchronous import create_task
-from vtkmodules.vtkMRMLCore import vtkMRMLScene
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
 from slicer_trame.core import ViewManager
 from slicer_trame.views import (

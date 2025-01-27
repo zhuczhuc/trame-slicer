@@ -1,8 +1,8 @@
 from unittest import mock
 
 import pytest
+from slicer import vtkMRMLScene
 from trame_client.widgets.core import VirtualNode
-from vtkmodules.vtkMRMLCore import vtkMRMLScene
 
 from slicer_trame.core import LayoutManager, ViewManager
 from slicer_trame.views import (

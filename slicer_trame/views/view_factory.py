@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, TypeVar
 
-from vtkmodules.vtkMRMLCore import vtkMRMLScene
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
+from slicer import vtkMRMLApplicationLogic, vtkMRMLScene
 
 from .abstract_view import AbstractView, AbstractViewChild
 from .view_layout_definition import ViewLayoutDefinition

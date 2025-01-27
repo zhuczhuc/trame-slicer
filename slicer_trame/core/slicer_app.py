@@ -2,22 +2,20 @@ from pathlib import Path
 from typing import Optional
 
 import vtk
-from vtkmodules.vtkCommonCore import vtkCollection, vtkOutputWindow
-from vtkmodules.vtkMRMLCore import vtkMRMLCrosshairNode, vtkMRMLScene, vtkMRMLSliceNode
-from vtkmodules.vtkMRMLDisplayableManager import (
+from slicer import (
+    vtkMRMLColorLogic,
+    vtkMRMLCrosshairNode,
+    vtkMRMLScene,
+    vtkMRMLSliceNode,
     vtkMRMLSliceViewDisplayableManagerFactory,
     vtkMRMLThreeDViewDisplayableManagerFactory,
-)
-from vtkmodules.vtkMRMLLogic import vtkMRMLColorLogic
-from vtkmodules.vtkSlicerBaseLogic import vtkSlicerApplicationLogic
-from vtkmodules.vtkSlicerMarkupsModuleLogic import vtkSlicerMarkupsLogic
-from vtkmodules.vtkSlicerSubjectHierarchyModuleLogic import (
+    vtkSlicerApplicationLogic,
+    vtkSlicerMarkupsLogic,
     vtkSlicerSubjectHierarchyModuleLogic,
-)
-from vtkmodules.vtkSlicerTerminologiesModuleLogic import (
     vtkSlicerTerminologiesModuleLogic,
+    vtkSlicerVolumesLogic,
 )
-from vtkmodules.vtkSlicerVolumesModuleLogic import vtkSlicerVolumesLogic
+from vtkmodules.vtkCommonCore import vtkCollection, vtkOutputWindow
 
 from .display_manager import DisplayManager
 from .io_manager import IOManager

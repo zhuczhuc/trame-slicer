@@ -3,22 +3,22 @@ from tempfile import TemporaryDirectory
 from typing import Optional, Union
 from zipfile import ZipFile
 
-from vtkmodules.vtkCommonDataModel import vtkPolyData
-from vtkmodules.vtkMRMLCore import (
+from slicer import (
+    vtkDataIOManagerLogic,
+    vtkMRMLApplicationLogic,
     vtkMRMLModelNode,
     vtkMRMLModelStorageNode,
+    vtkMRMLRemoteIOLogic,
     vtkMRMLScene,
     vtkMRMLSegmentationNode,
     vtkMRMLSegmentationStorageNode,
     vtkMRMLStorageNode,
     vtkMRMLVolumeNode,
-)
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLRemoteIOLogic
-from vtkmodules.vtkSegmentationCore import vtkSegment, vtkSegmentationConverter
-from vtkmodules.vtkSlicerBaseLogic import vtkDataIOManagerLogic
-from vtkmodules.vtkSlicerSegmentationsModuleLogic import (
+    vtkSegment,
+    vtkSegmentationConverter,
     vtkSlicerSegmentationsModuleLogic,
 )
+from vtkmodules.vtkCommonDataModel import vtkPolyData
 
 from .volumes_reader import VolumesReader
 

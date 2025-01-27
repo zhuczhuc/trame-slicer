@@ -1,8 +1,7 @@
 from itertools import chain
 from typing import Optional, TypeVar
 
-from vtkmodules.vtkMRMLCore import vtkMRMLScene
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
+from slicer import vtkMRMLApplicationLogic, vtkMRMLScene
 
 from slicer_trame.views import (
     AbstractView,

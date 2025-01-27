@@ -7,21 +7,29 @@ import numpy as np
 import pydicom.multival
 from pydicom import dcmread
 from pydicom.errors import InvalidDicomError
-from vtkmodules.vtkCommonCore import vtkStringArray
-from vtkmodules.vtkCommonMisc import vtkErrorCode
-from vtkmodules.vtkImagingCore import vtkImageChangeInformation
-from vtkmodules.vtkITK import (
-    vtkITKArchetypeImageSeriesScalarReader,
-    vtkITKArchetypeImageSeriesVectorReaderFile,
-    vtkITKArchetypeImageSeriesVectorReaderSeries,
-)
-from vtkmodules.vtkMRMLCore import (
+from slicer import (
+    vtkMRMLApplicationLogic,
     vtkMRMLScene,
     vtkMRMLVolumeArchetypeStorageNode,
     vtkMRMLVolumeNode,
+    vtkSlicerVolumesLogic,
 )
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
-from vtkmodules.vtkSlicerVolumesModuleLogic import vtkSlicerVolumesLogic
+from vtkmodules.vtkCommonCore import vtkStringArray
+from vtkmodules.vtkCommonMisc import vtkErrorCode
+from vtkmodules.vtkImagingCore import vtkImageChangeInformation
+
+try:
+    from vtkITK import (
+        vtkITKArchetypeImageSeriesScalarReader,
+        vtkITKArchetypeImageSeriesVectorReaderFile,
+        vtkITKArchetypeImageSeriesVectorReaderSeries,
+    )
+except ImportError:
+    from vtkmodules.vtkITK import (
+        vtkITKArchetypeImageSeriesScalarReader,
+        vtkITKArchetypeImageSeriesVectorReaderFile,
+        vtkITKArchetypeImageSeriesVectorReaderSeries,
+    )
 
 
 class _DCMTag:

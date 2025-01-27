@@ -1,39 +1,30 @@
 from enum import Enum
 from typing import Optional
 
-from vtkmodules.vtkMRMLCore import (
+from slicer import (
     vtkMRMLAbstractViewNode,
-    vtkMRMLCameraNode,
-    vtkMRMLCrosshairNode,
-    vtkMRMLScene,
-    vtkMRMLViewNode,
-)
-from vtkmodules.vtkMRMLDisplayableManager import (
+    vtkMRMLApplicationLogic,
     vtkMRMLCameraDisplayableManager,
+    vtkMRMLCameraNode,
     vtkMRMLCrosshairDisplayableManager,
     vtkMRMLCrosshairDisplayableManager3D,
+    vtkMRMLCrosshairNode,
+    vtkMRMLMarkupsDisplayableManager,
     vtkMRMLModelDisplayableManager,
     vtkMRMLOrientationMarkerDisplayableManager,
     vtkMRMLRulerDisplayableManager,
+    vtkMRMLScene,
+    vtkMRMLSegmentationsDisplayableManager3D,
     vtkMRMLThreeDReformatDisplayableManager,
     vtkMRMLThreeDViewDisplayableManagerFactory,
     vtkMRMLThreeDViewInteractorStyle,
-    vtkMRMLViewDisplayableManager,
-)
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLViewLogic
-from vtkmodules.vtkRenderingCore import vtkInteractorStyle3D
-from vtkmodules.vtkSlicerMarkupsModuleMRMLDisplayableManager import (
-    vtkMRMLMarkupsDisplayableManager,
-)
-from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
-    vtkMRMLSegmentationsDisplayableManager3D,
-)
-from vtkmodules.vtkSlicerTransformsModuleMRMLDisplayableManager import (
     vtkMRMLTransformsDisplayableManager3D,
-)
-from vtkmodules.vtkSlicerVolumeRenderingModuleMRMLDisplayableManager import (
+    vtkMRMLViewDisplayableManager,
+    vtkMRMLViewLogic,
+    vtkMRMLViewNode,
     vtkMRMLVolumeRenderingDisplayableManager,
 )
+from vtkmodules.vtkRenderingCore import vtkInteractorStyle3D
 
 from .abstract_view import AbstractView
 

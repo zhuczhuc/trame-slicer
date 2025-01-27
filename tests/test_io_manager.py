@@ -3,15 +3,15 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from vtkmodules.vtkCommonCore import vtkPoints
-from vtkmodules.vtkCommonDataModel import vtkPolyData
-from vtkmodules.vtkIOGeometry import vtkSTLReader
-from vtkmodules.vtkMRMLCore import (
+from slicer import (
     vtkMRMLModelNode,
     vtkMRMLSegmentationNode,
     vtkMRMLVolumeNode,
+    vtkSegmentation,
 )
-from vtkmodules.vtkSegmentationCore import vtkSegmentation
+from vtkmodules.vtkCommonCore import vtkPoints
+from vtkmodules.vtkCommonDataModel import vtkPolyData
+from vtkmodules.vtkIOGeometry import vtkSTLReader
 
 from slicer_trame.core.io_manager import IOManager
 from slicer_trame.core.volumes_reader import VolumesReader

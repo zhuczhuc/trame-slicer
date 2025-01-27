@@ -1,30 +1,25 @@
 from typing import Literal, Optional
 
-from vtkmodules.vtkCommonCore import reference, vtkCommand
-from vtkmodules.vtkInteractionStyle import vtkInteractorStyleUser
-from vtkmodules.vtkMRMLCore import vtkMRMLScene
-from vtkmodules.vtkMRMLDisplayableManager import (
+from slicer import (
+    vtkMRMLApplicationLogic,
     vtkMRMLCrosshairDisplayableManager,
     vtkMRMLLightBoxRendererManagerProxy,
+    vtkMRMLMarkupsDisplayableManager,
     vtkMRMLModelSliceDisplayableManager,
     vtkMRMLOrientationMarkerDisplayableManager,
     vtkMRMLRulerDisplayableManager,
     vtkMRMLScalarBarDisplayableManager,
+    vtkMRMLScene,
+    vtkMRMLSegmentationsDisplayableManager2D,
+    vtkMRMLSliceLogic,
     vtkMRMLSliceViewDisplayableManagerFactory,
     vtkMRMLSliceViewInteractorStyle,
+    vtkMRMLTransformsDisplayableManager2D,
     vtkMRMLVolumeGlyphSliceDisplayableManager,
 )
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic, vtkMRMLSliceLogic
+from vtkmodules.vtkCommonCore import reference, vtkCommand
+from vtkmodules.vtkInteractionStyle import vtkInteractorStyleUser
 from vtkmodules.vtkRenderingCore import vtkActor2D, vtkImageMapper, vtkRenderer
-from vtkmodules.vtkSlicerMarkupsModuleMRMLDisplayableManager import (
-    vtkMRMLMarkupsDisplayableManager,
-)
-from vtkmodules.vtkSlicerSegmentationsModuleMRMLDisplayableManager import (
-    vtkMRMLSegmentationsDisplayableManager2D,
-)
-from vtkmodules.vtkSlicerTransformsModuleMRMLDisplayableManager import (
-    vtkMRMLTransformsDisplayableManager2D,
-)
 
 from .abstract_view import AbstractView
 

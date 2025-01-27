@@ -1,4 +1,4 @@
-from vtkmodules.vtkMRMLCore import vtkMRMLAbstractViewNode
+from slicer import vtkMRMLAbstractViewNode
 
 
 def test_threed_view_can_render_mrml_models(

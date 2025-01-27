@@ -1,11 +1,12 @@
 from typing import Optional
 
-from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLVolumeNode
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
-from vtkmodules.vtkSlicerVolumeRenderingModuleLogic import vtkSlicerVolumeRenderingLogic
-from vtkmodules.vtkSlicerVolumeRenderingModuleMRML import (
+from slicer import (
+    vtkMRMLApplicationLogic,
+    vtkMRMLScene,
+    vtkMRMLVolumeNode,
     vtkMRMLVolumePropertyNode,
     vtkMRMLVolumeRenderingDisplayNode,
+    vtkSlicerVolumeRenderingLogic,
 )
 
 from .volume_property import VolumeProperty, VRShiftMode

@@ -1,11 +1,10 @@
 from dataclasses import dataclass, field
 
 import pytest
+from slicer import vtkMRMLApplicationLogic, vtkMRMLScene
 from trame.widgets import client
 from trame_vuetify.ui.vuetify3 import VAppLayout
 from vtkmodules.vtkCommonCore import vtkCollection
-from vtkmodules.vtkMRMLCore import vtkMRMLScene
-from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 
 from slicer_trame.core import SlicerApp, ViewManager
 from slicer_trame.rca_view import RemoteSliceViewFactory, RemoteThreeDViewFactory

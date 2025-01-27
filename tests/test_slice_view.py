@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
-from vtkmodules.vtkMRMLCore import vtkMRMLAbstractViewNode
+from slicer import vtkMRMLAbstractViewNode
 
 
 def test_slice_view_can_display_volume(

@@ -1,10 +1,8 @@
 import vtk
-from vtkmodules.vtkMRMLDisplayableManager import (
+from slicer import (
     vtkMRMLCameraDisplayableManager,
     vtkMRMLDisplayableManagerGroup,
     vtkMRMLThreeDViewDisplayableManagerFactory,
-)
-from vtkmodules.vtkSlicerVolumeRenderingModuleMRMLDisplayableManager import (
     vtkMRMLVolumeRenderingDisplayableManager,
 )
 
