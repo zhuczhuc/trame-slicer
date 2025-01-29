@@ -4,8 +4,11 @@ from vtkmodules.vtkMRMLCore import vtkMRMLScene, vtkMRMLVolumeNode
 from vtkmodules.vtkMRMLLogic import vtkMRMLApplicationLogic
 from vtkmodules.vtkSlicerVolumeRenderingModuleLogic import vtkSlicerVolumeRenderingLogic
 from vtkmodules.vtkSlicerVolumeRenderingModuleMRML import (
+    vtkMRMLVolumePropertyNode,
     vtkMRMLVolumeRenderingDisplayNode,
 )
+
+from .volume_property import VolumeProperty, VRShiftMode
 
 
 class VolumeRendering:
@@ -50,14 +53,19 @@ class VolumeRendering:
         if not display:
             return
 
+        display.GetVolumePropertyNode().Copy(
+            self.get_preset_property(preset_name).property_node
+        )
+
+    def get_preset_property(self, preset_name) -> VolumeProperty:
         preset_names = self.preset_names()
         if not preset_names:
-            return
+            return VolumeProperty(None)
 
         if preset_name not in preset_names:
             preset_name = preset_names[0]
 
-        display.GetVolumePropertyNode().Copy(self._logic.GetPresetByName(preset_name))
+        return VolumeProperty(self._logic.GetPresetByName(preset_name))
 
     def get_vr_display_node(
         self,
@@ -68,9 +76,74 @@ class VolumeRendering:
     def has_vr_display_node(self, volume_node: vtkMRMLVolumeNode) -> bool:
         return self.get_vr_display_node(volume_node) is not None
 
-    def preset_names(self) -> list[str]:
-        preset_nodes = self._logic.GetPresetsScene().GetNodes()
+    def _get_preset_nodes(self) -> list[vtkMRMLVolumePropertyNode]:
+        preset_nodes_collection = self._logic.GetPresetsScene().GetNodes()
         return [
-            preset_nodes.GetItemAsObject(i_node).GetName()
-            for i_node in range(preset_nodes.GetNumberOfItems())
+            preset_nodes_collection.GetItemAsObject(i_node)
+            for i_node in range(preset_nodes_collection.GetNumberOfItems())
         ]
+
+    def preset_names(self) -> list[str]:
+        preset_nodes = self._get_preset_nodes()
+        return [preset_node.GetName() for preset_node in preset_nodes]
+
+    def get_preset_node(self, preset_name: str) -> Optional[vtkMRMLVolumePropertyNode]:
+        preset_nodes = self._get_preset_nodes()
+        for i in range(len(preset_nodes)):
+            if preset_nodes[i].GetName() == preset_name:
+                return preset_nodes[i]
+        return None
+
+    def set_absolute_vr_shift_from_preset(
+        self,
+        volume_node: vtkMRMLVolumeNode,
+        preset_name: str,
+        shift: float,
+        shift_mode: VRShiftMode = VRShiftMode.BOTH,
+    ) -> None:
+        """
+        Shift the volume rendering opacity and colors by a given value.
+        The shift is a scalar value representing how much the preset should be
+        moved compared to a preset default.
+
+        Which
+
+        See also:
+            :ref: `set_relative_vr_shift`
+        """
+        vr_prop = self.get_volume_node_property(volume_node)
+        vr_prop.set_vr_shift(shift, shift_mode, self.get_preset_property(preset_name))
+
+    def set_relative_vr_shift(
+        self,
+        volume_node: vtkMRMLVolumeNode,
+        shift: float,
+        shift_mode: VRShiftMode = VRShiftMode.BOTH,
+    ) -> None:
+        """
+        Shift the volume rendering opacity and colors by a given value for the current scalar/opacity values.
+
+        See also:
+            :ref: `set_absolute_vr_shift_from_preset`
+        """
+        vr_prop = self._get_vr_volume_property(self.get_vr_display_node(volume_node))
+        vr_prop.set_vr_shift(shift, shift_mode)
+
+    def get_vr_shift_range(self, volume_node: vtkMRMLVolumeNode) -> tuple[float, float]:
+        return self.get_volume_node_property(volume_node).get_effective_range()
+
+    def get_preset_vr_shift_range(self, preset_name: str) -> tuple[float, float]:
+        return self.get_preset_property(preset_name).get_effective_range()
+
+    def get_volume_node_property(
+        self, volume_node: vtkMRMLVolumeNode
+    ) -> VolumeProperty:
+        return self._get_vr_volume_property(self.get_vr_display_node(volume_node))
+
+    @classmethod
+    def _get_vr_volume_property(
+        cls, vr_display_node: Optional[vtkMRMLVolumeRenderingDisplayNode]
+    ) -> VolumeProperty:
+        return VolumeProperty(
+            vr_display_node.GetVolumePropertyNode() if vr_display_node else None
+        )

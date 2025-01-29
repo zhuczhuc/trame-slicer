@@ -35,7 +35,7 @@ class SlicerApp:
     def __init__(self, share_directory: Optional[str] = None):
         from slicer_trame.resources import resources_path
 
-        share_directory = Path(share_directory or resources_path())
+        self.share_directory = Path(share_directory or resources_path())
 
         # Output VTK warnings to console by default
         vtk_out = vtkOutputWindow()
@@ -79,7 +79,7 @@ class SlicerApp:
 
         # Create volume rendering
         self.volume_rendering = VolumeRendering(
-            self.scene, self.app_logic, share_directory.as_posix()
+            self.scene, self.app_logic, self.share_directory.as_posix()
         )
 
         # Create markups logic
@@ -97,7 +97,7 @@ class SlicerApp:
         # Set up Terminologies logic (needed for subject hierarchy tree view color/terminology selector)
         self.terminologies_logic = vtkSlicerTerminologiesModuleLogic()
         self.terminologies_logic.SetModuleShareDirectory(
-            share_directory.joinpath("terminologies").as_posix()
+            self.share_directory.joinpath("terminologies").as_posix()
         )
         self.terminologies_logic.SetMRMLScene(self.scene)
         self.terminologies_logic.SetMRMLApplicationLogic(self.app_logic)
