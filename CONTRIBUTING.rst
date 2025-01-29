@@ -1,6 +1,6 @@
-===========================
-Contributing to SlicerTrame
-===========================
+============================
+Contributing to trame-slicer
+============================
 
 #. Clone the repository using ``git clone``
 #. Install pre-commit via ``pip install pre-commit``
@@ -8,6 +8,33 @@ Contributing to SlicerTrame
 #. Make changes to the code, and commit your changes to a separate branch
 #. Create a fork of the repository on GitHub
 #. Push your branch to your fork, and open a pull request
+
+Testing
+#######
+
+Configuring the test environment
+--------------------------------
+
+The library testing rely on the trame-slicer test data.
+To setup your testing environment :
+
+#. Clone the `trame-slicer-test-data` repository using ``git clone`` to the `tests/data` sub folder
+#. Install the test requirements using pip using the `tests/requirements.txt` file
+
+Running the tests
+-----------------
+
+Run the tests using the pytest module ``python -m pytest tests``
+
+Interactivity
+-------------
+
+Some tests allow for interactive interaction with the views and can be activated by using the following arguments :
+
+``python -m pytest tests --render_interactive=<interaction_time_limit_s>``
+
+The interactivity time limit will apply to tests using a trame server in an asyncio tasks.
+Interactivity for VTK render window logic will require manually closing the windows to stop the interaction.
 
 Tips
 ####
