@@ -1,11 +1,11 @@
 import math
 from typing import Callable, Optional
 
+from slicer import vtkMRMLInteractionEventData
 from vtkmodules.vtkCommonCore import reference as vtkref
 from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput
-from vtkmodules.vtkMRMLDisplayableManager import vtkMRMLInteractionEventData
 from vtkmodules.vtkRenderingCore import (
     vtkActor,
     vtkGlyph3DMapper,

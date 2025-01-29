@@ -1,6 +1,6 @@
-from vtkmodules.vtkMRMLCore import vtkMRMLSegmentationNode
-from vtkmodules.vtkSegmentationCore import vtkSegmentation
-from vtkmodules.vtkSlicerSegmentationsModuleLogic import (
+from slicer import (
+    vtkMRMLSegmentationNode,
+    vtkSegmentation,
     vtkSlicerSegmentationsModuleLogic,
 )
 

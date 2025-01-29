@@ -1,15 +1,14 @@
 import numpy as np
 import pytest
-from vtkmodules.vtkCommonCore import VTK_UNSIGNED_CHAR
-from vtkmodules.vtkCommonDataModel import vtkImageData
-from vtkmodules.vtkMRMLCore import (
+from slicer import (
     vtkMRMLSegmentationDisplayNode,
     vtkMRMLSegmentationNode,
-)
-from vtkmodules.vtkSegmentationCore import vtkSegmentation, vtkSegmentationConverter
-from vtkmodules.vtkSlicerSegmentationsModuleLogic import (
+    vtkSegmentation,
+    vtkSegmentationConverter,
     vtkSlicerSegmentationsModuleLogic,
 )
+from vtkmodules.vtkCommonCore import VTK_UNSIGNED_CHAR
+from vtkmodules.vtkCommonDataModel import vtkImageData
 
 from trame_slicer.segmentation import (
     LabelMapOverwriteMode,

@@ -1,5 +1,6 @@
 import math
 
+from slicer import vtkMRMLInteractionEventData
 from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkCommonDataModel import vtkPlane, vtkPolyData
 from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput
@@ -7,7 +8,6 @@ from vtkmodules.vtkCommonMath import vtkMatrix4x4
 from vtkmodules.vtkCommonTransforms import vtkTransform
 from vtkmodules.vtkFiltersCore import vtkCutter, vtkGlyph3D
 from vtkmodules.vtkFiltersGeneral import vtkTransformPolyDataFilter
-from vtkmodules.vtkMRMLDisplayableManager import vtkMRMLInteractionEventData
 from vtkmodules.vtkRenderingCore import (
     vtkActor2D,
     vtkPolyDataMapper2D,

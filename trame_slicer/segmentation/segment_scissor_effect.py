@@ -1,6 +1,7 @@
 from enum import IntEnum
 from typing import Callable, Optional
 
+from slicer import vtkMRMLInteractionEventData
 from vtkmodules.vtkCommonCore import vtkCommand, vtkPoints
 from vtkmodules.vtkCommonDataModel import vtkCellArray, vtkPolyData, vtkQuad
 from vtkmodules.vtkInteractionWidgets import (
@@ -9,7 +10,6 @@ from vtkmodules.vtkInteractionWidgets import (
     vtkLinearContourLineInterpolator,
     vtkOrientedGlyphContourRepresentation,
 )
-from vtkmodules.vtkMRMLDisplayableManager import vtkMRMLInteractionEventData
 from vtkmodules.vtkRenderingCore import vtkCoordinate, vtkRenderWindow
 
 from trame_slicer.views import AbstractView, AbstractViewInteractor

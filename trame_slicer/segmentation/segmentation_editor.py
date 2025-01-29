@@ -5,6 +5,14 @@ from typing import Optional
 import numpy as np
 import vtkmodules.util.numpy_support as vtknp
 from numpy.typing import NDArray
+from slicer import (
+    vtkMRMLScalarVolumeNode,
+    vtkMRMLSegmentationDisplayNode,
+    vtkMRMLSegmentationNode,
+    vtkMRMLTransformNode,
+    vtkSegmentation,
+    vtkSegmentationConverter,
+)
 from vtkmodules.vtkCommonCore import VTK_UNSIGNED_CHAR, vtkPoints
 from vtkmodules.vtkCommonDataModel import vtkImageData, vtkPolyData
 from vtkmodules.vtkCommonMath import vtkMatrix4x4
@@ -16,13 +24,6 @@ from vtkmodules.vtkImagingStencil import (
     vtkImageStencilToImage,
     vtkPolyDataToImageStencil,
 )
-from vtkmodules.vtkMRMLCore import (
-    vtkMRMLScalarVolumeNode,
-    vtkMRMLSegmentationDisplayNode,
-    vtkMRMLSegmentationNode,
-    vtkMRMLTransformNode,
-)
-from vtkmodules.vtkSegmentationCore import vtkSegmentation, vtkSegmentationConverter
 
 
 def vtk_image_to_np(image: vtkImageData) -> np.ndarray:

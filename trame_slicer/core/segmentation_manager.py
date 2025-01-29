@@ -1,13 +1,11 @@
 from typing import Optional
 
-from vtkmodules.vtkMRMLCore import (
+from slicer import (
     vtkMRMLLabelMapVolumeNode,
     vtkMRMLModelNode,
     vtkMRMLScalarVolumeNode,
     vtkMRMLScene,
     vtkMRMLSegmentationNode,
-)
-from vtkmodules.vtkSlicerSegmentationsModuleLogic import (
     vtkSlicerSegmentationsModuleLogic,
 )
 
