@@ -7,8 +7,8 @@ from trame_server import Server
 from trame_vuetify.ui.vuetify3 import SinglePageLayout
 from widgets import StateId, ToolsStrip
 
-from slicer_trame.core import LayoutManager, SlicerApp
-from slicer_trame.rca_view import register_rca_factories
+from trame_slicer.core import LayoutManager, SlicerApp
+from trame_slicer.rca_view import register_rca_factories
 
 
 @TrameApp()
@@ -55,7 +55,7 @@ class MyTrameSlicerApp:
             self.ui.root.theme = "dark"
 
             # Toolbar
-            self.ui.title.set_text("Slicer Trame")
+            self.ui.title.set_text("trame Slicer")
 
             with self.ui.toolbar:
                 vuetify3.VSpacer()

@@ -1,2 +1,2 @@
 [codespell]
-skip = **/package-lock.json,slicer_trame/resources/*
+skip = **/package-lock.json,trame_slicer/resources/*

@@ -2,7 +2,7 @@ from trame_client.widgets.core import Template
 from trame_server import Server
 from trame_vuetify.widgets.vuetify3 import VCard, VCardText, VMenu, VRow
 
-from slicer_trame.core import SlicerApp
+from trame_slicer.core import SlicerApp
 
 from .control_button import ControlButton
 from .vr_preset_select import VRPresetSelect

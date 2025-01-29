@@ -4,8 +4,8 @@ import pytest
 from slicer import vtkMRMLScene
 from trame_client.widgets.core import VirtualNode
 
-from slicer_trame.core import LayoutManager, ViewManager
-from slicer_trame.views import (
+from trame_slicer.core import LayoutManager, ViewManager
+from trame_slicer.views import (
     Layout,
     LayoutDirection,
     ViewLayoutDefinition,

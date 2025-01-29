@@ -11,8 +11,8 @@ from trame.app import get_server
 from trame_client.utils.testing import FixtureHelper
 from trame_server.utils.asynchronous import create_task
 
-from slicer_trame.core import SlicerApp
-from slicer_trame.views import DirectRendering, SliceView, ThreeDView
+from trame_slicer.core import SlicerApp
+from trame_slicer.views import DirectRendering, SliceView, ThreeDView
 
 
 @pytest.fixture

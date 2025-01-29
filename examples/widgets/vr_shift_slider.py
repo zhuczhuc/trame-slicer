@@ -2,7 +2,7 @@ from trame.decorators import TrameApp, change
 from trame_server import Server
 from trame_vuetify.widgets.vuetify3 import VSlider
 
-from slicer_trame.core import SlicerApp
+from trame_slicer.core import SlicerApp
 
 from .utils import StateId, get_current_volume_node
 

@@ -4,8 +4,8 @@ from trame_client.widgets.html import Span
 from trame_server import Server
 from trame_vuetify.widgets.vuetify3 import VImg, VListItem, VSelect
 
-from slicer_trame.core import SlicerApp
-from slicer_trame.resources import get_volume_rendering_presets_icon_url
+from trame_slicer.core import SlicerApp
+from trame_slicer.resources import get_volume_rendering_presets_icon_url
 
 from .utils import StateId, get_current_volume_node
 

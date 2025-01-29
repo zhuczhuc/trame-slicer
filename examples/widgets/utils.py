@@ -3,7 +3,7 @@ from typing import Optional
 from slicer import vtkMRMLVolumeNode
 from trame_server import Server
 
-from slicer_trame.core import SlicerApp
+from trame_slicer.core import SlicerApp
 
 
 class _IdName:

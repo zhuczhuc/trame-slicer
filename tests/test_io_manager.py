@@ -13,8 +13,8 @@ from vtkmodules.vtkCommonCore import vtkPoints
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 from vtkmodules.vtkIOGeometry import vtkSTLReader
 
-from slicer_trame.core.io_manager import IOManager
-from slicer_trame.core.volumes_reader import VolumesReader
+from trame_slicer.core.io_manager import IOManager
+from trame_slicer.core.volumes_reader import VolumesReader
 
 
 @pytest.fixture()

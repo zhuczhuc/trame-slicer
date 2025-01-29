@@ -3,7 +3,7 @@ from typing import Optional, TypeVar
 
 from slicer import vtkMRMLApplicationLogic, vtkMRMLScene
 
-from slicer_trame.views import (
+from trame_slicer.views import (
     AbstractView,
     AbstractViewChild,
     IViewFactory,

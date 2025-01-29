@@ -4,7 +4,7 @@ import pytest
 from trame_client.widgets.html import Div
 from trame_vuetify.ui.vuetify3 import VAppLayout
 
-from slicer_trame.views import (
+from trame_slicer.views import (
     Layout,
     LayoutDirection,
     LayoutGrid,

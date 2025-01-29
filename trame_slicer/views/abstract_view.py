@@ -16,7 +16,7 @@ from vtkmodules.vtkRenderingCore import (
     vtkRenderWindowInteractor,
 )
 
-from slicer_trame.utils import VtkEventDispatcher
+from trame_slicer.utils import VtkEventDispatcher
 
 from .render_scheduler import DirectRendering, ScheduledRenderStrategy
 

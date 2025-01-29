@@ -2,8 +2,7 @@ from typing import Optional
 
 from slicer import vtkMRMLDisplayableNode, vtkMRMLVolumeNode
 
-from slicer_trame.core.view_manager import ViewManager
-
+from .view_manager import ViewManager
 from .volume_rendering import VolumeRendering
 
 

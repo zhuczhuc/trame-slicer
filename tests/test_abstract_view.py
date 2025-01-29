@@ -6,7 +6,7 @@ from slicer import (
     vtkMRMLVolumeRenderingDisplayableManager,
 )
 
-from slicer_trame.views import AbstractView
+from trame_slicer.views import AbstractView
 
 
 def test_abstract_view_can_render_a_simple_cone(a_slicer_app):

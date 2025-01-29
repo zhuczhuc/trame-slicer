@@ -2,7 +2,7 @@ from pathlib import Path
 
 from trame.assets.local import LocalFileManager
 
-from slicer_trame.core import VolumeRendering
+from trame_slicer.core import VolumeRendering
 
 
 def resources_path() -> Path:

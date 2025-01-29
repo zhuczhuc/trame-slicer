@@ -1,4 +1,4 @@
-from slicer_trame.core import SlicerApp
+from trame_slicer.core import SlicerApp
 
 from .control_button import ControlButton
 

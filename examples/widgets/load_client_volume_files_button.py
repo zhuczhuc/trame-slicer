@@ -7,8 +7,8 @@ from trame_server.utils.asynchronous import create_task
 from trame_vuetify.widgets.vuetify3 import VProgressCircular
 from vtkmodules.vtkCommonCore import vtkCollection
 
-from slicer_trame.core import SlicerApp
-from slicer_trame.utils import write_client_files_to_dir
+from trame_slicer.core import SlicerApp
+from trame_slicer.utils import write_client_files_to_dir
 
 from .control_button import ControlButton
 from .utils import StateId

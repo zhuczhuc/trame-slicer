@@ -8,8 +8,8 @@ from trame_rca.widgets.rca import RemoteControlledArea
 from trame_server import Server
 from trame_server.utils.asynchronous import create_task
 
-from slicer_trame.core import ViewManager
-from slicer_trame.views import (
+from trame_slicer.core import ViewManager
+from trame_slicer.views import (
     AbstractView,
     AbstractViewChild,
     IViewFactory,

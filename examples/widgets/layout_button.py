@@ -3,7 +3,7 @@ from trame_client.widgets.core import Template
 from trame_server import Server
 from trame_vuetify.widgets.vuetify3 import VCard, VCardText, VMenu, VRadio, VRadioGroup
 
-from slicer_trame.core import LayoutManager, SlicerApp
+from trame_slicer.core import LayoutManager, SlicerApp
 
 from .control_button import ControlButton
 from .utils import StateId

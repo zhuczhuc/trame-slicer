@@ -3,7 +3,7 @@ from copy import deepcopy
 import numpy as np
 import pytest
 
-from slicer_trame.core.volume_property import VRShiftMode
+from trame_slicer.core.volume_property import VRShiftMode
 
 
 @pytest.fixture

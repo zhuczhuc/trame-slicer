@@ -31,7 +31,7 @@ class SlicerApp:
     """
 
     def __init__(self, share_directory: Optional[str] = None):
-        from slicer_trame.resources import resources_path
+        from trame_slicer.resources import resources_path
 
         self.share_directory = Path(share_directory or resources_path())
 

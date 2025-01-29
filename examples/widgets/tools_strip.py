@@ -1,7 +1,7 @@
 from trame_client.widgets.html import Div
 from trame_server import Server
 
-from slicer_trame.core import LayoutManager, SlicerApp
+from trame_slicer.core import LayoutManager, SlicerApp
 
 from .layout_button import LayoutButton
 from .load_client_volume_files_button import LoadClientVolumeFilesButton

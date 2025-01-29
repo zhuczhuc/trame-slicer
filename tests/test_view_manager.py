@@ -6,9 +6,9 @@ from trame.widgets import client
 from trame_vuetify.ui.vuetify3 import VAppLayout
 from vtkmodules.vtkCommonCore import vtkCollection
 
-from slicer_trame.core import SlicerApp, ViewManager
-from slicer_trame.rca_view import RemoteSliceViewFactory, RemoteThreeDViewFactory
-from slicer_trame.views import (
+from trame_slicer.core import SlicerApp, ViewManager
+from trame_slicer.rca_view import RemoteSliceViewFactory, RemoteThreeDViewFactory
+from trame_slicer.views import (
     AbstractView,
     AbstractViewChild,
     IViewFactory,

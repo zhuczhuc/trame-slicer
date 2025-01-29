@@ -1,8 +1,8 @@
 import pytest
 
-from slicer_trame.core import DisplayManager
-from slicer_trame.rca_view.rca_view_factory import register_rca_factories
-from slicer_trame.views import (
+from trame_slicer.core import DisplayManager
+from trame_slicer.rca_view.rca_view_factory import register_rca_factories
+from trame_slicer.views import (
     SliceView,
     ThreeDView,
     ViewLayoutDefinition,
