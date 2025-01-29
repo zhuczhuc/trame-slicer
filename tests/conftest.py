@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 from trame.app import get_server
+from trame_client.utils.testing import FixtureHelper
 from trame_server.utils.asynchronous import create_task
 from vtkmodules.vtkMRMLCore import (
     vtkMRMLModelNode,
@@ -12,6 +13,12 @@ from vtkmodules.vtkMRMLCore import (
 
 from slicer_trame.core import SlicerApp
 from slicer_trame.views import DirectRendering, SliceView, ThreeDView
+
+
+@pytest.fixture
+def fixture_helper():
+    ROOT_PATH = Path(__file__).parent.parent.absolute()
+    return FixtureHelper(ROOT_PATH)
 
 
 @pytest.fixture
@@ -162,3 +169,16 @@ def a_server(render_interactive):
         yield server
     finally:
         server.start = _server_start
+
+
+@pytest.fixture
+def a_subprocess_server(xprocess, server_path, fixture_helper):
+    name, Starter, Monitor = fixture_helper.get_xprocess_args(server_path)
+
+    # ensure process is running and return its logfile
+    logfile = xprocess.ensure(name, Starter)
+    try:
+        yield Monitor(logfile[1])
+    finally:
+        # clean up whole process tree afterwards
+        xprocess.getinfo(name).terminate()
