@@ -10,21 +10,15 @@ Contributing to trame-slicer
 #. Push your branch to your fork, and open a pull request
 
 Testing
-#######
-
-Configuring the test environment
 --------------------------------
 
 The library testing rely on the trame-slicer test data.
 To setup your testing environment :
 
-#. Clone the `trame-slicer-test-data` repository using ``git clone`` to the `tests/data` sub folder
+#. Download the `trame-slicer-test-data` zip file available in this repository's release page
+#. Unzip the file content to the `tests/data` folder
 #. Install the test requirements using pip using the `tests/requirements.txt` file
-
-Running the tests
------------------
-
-Run the tests using the pytest module ``python -m pytest tests``
+#. Run the tests using the pytest module ``python -m pytest tests``
 
 Interactivity
 -------------
@@ -36,8 +30,14 @@ Some tests allow for interactive interaction with the views and can be activated
 The interactivity time limit will apply to tests using a trame server in an asyncio tasks.
 Interactivity for VTK render window logic will require manually closing the windows to stop the interaction.
 
+Commit messages
+---------------
+
+trame-slicer follows trame's commit message convention to be compatible with it's CI features including the auto
+semantic release.
+
 Tips
-####
+-----
 
 #. When first creating a new project, it is helpful to run ``pre-commit run --all-files`` to ensure all files pass the pre-commit checks.
 #. A quick way to fix ``black`` issues is by installing black (``pip install black``) and running the ``black`` command at the root of your repository.
