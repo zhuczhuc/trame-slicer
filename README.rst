@@ -86,7 +86,12 @@ Please look at the `LICENSE <.LICENSE/>`_ file for more information.
 Acknowledgment
 --------------
 
-This repository was created from the `trame-cookicutter <https://github.com/Kitware/trame-cookiecutter/>`_ library.
+This library was funded by the following projects :
+
+* `Cure Overgrowth Syndromes (COSY) RHU Project <https://rhu-cosy.com/en/accueil-english/>`_.
+* `Handling heterogeneous Imaging and signal data for analysing the Neurodevelopmental Trajectories of premature newborns (HINT) ANR project <https://anr-hint.pages.in2p3.fr/>`_
+
+This library was created from the `trame-cookicutter <https://github.com/Kitware/trame-cookiecutter/>`_ library.
 
 Contact
 -------
