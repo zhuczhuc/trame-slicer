@@ -50,7 +50,7 @@ def test_segmentation_editor_on_slice(
     a_slice_view.render()
     brush = BrushModel(BrushShape.Cylinder)
     editor = SegmentationEditor(segmentation_node, a_volume_node)
-    editor.sanize_segmentation()
+    editor.sanitize_segmentation()
     effect = SegmentPaintEffect2D(a_slice_view, editor, brush)
     segmentation.SetConversionParameter("Conversion method", "1")
     segmentation.SetConversionParameter("SurfaceNets smoothing", "1")
@@ -94,7 +94,7 @@ def test_segmentation_editor_on_volume(
     a_threed_view.render()
 
     editor = SegmentationEditor(segmentation_node, a_volume_node)
-    editor.sanize_segmentation()
+    editor.sanitize_segmentation()
     editor.enable_surface_representation()
 
     # scissor_brush = ScissorPolygonBrush(a_threed_view.render_window())

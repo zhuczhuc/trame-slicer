@@ -151,7 +151,7 @@ class SegmentationEditor:
     def overwrite_mode(self, mode: LabelMapOverwriteMode) -> None:
         self._overwrite_mode = mode
 
-    def sanize_segmentation(self):
+    def sanitize_segmentation(self):
         """
         Force labelmap extent to source volume extent.\n
         Does nothing if segmentation contains no segment.
@@ -320,13 +320,15 @@ class SegmentationEditor:
         label_value = (
             segment.GetLabelValue() if self._operation == LabelMapOperation.Set else 0
         )
+        active_label_value = segment.GetLabelValue()
 
-        # Apply effect
+        ## Apply effect
         self._apply_modifier_labelmap_to_labelmap(
             np_labelmap[labelmap_slices],
             modifier_labelmap[modifier_labelmap_slices],
             self._mask[labelmap_slices] if self._mask else None,
             label_value,
+            active_label_value,
             self._overwrite_mode,
         )
 
@@ -338,6 +340,7 @@ class SegmentationEditor:
         modifier: NDArray[np.bool],
         mask: Optional[NDArray[np.bool]],
         label_value: int,
+        active_label_value: int,
         rule: LabelMapOverwriteMode,
     ) -> None:
         """even if you can call this function, you should use one of the higher level function defined above"""
@@ -360,7 +363,9 @@ class SegmentationEditor:
                     )  # create a mask for the segment value
                     labelmap[masked_modifier & segment_label_mask] = label_value
         elif rule == LabelMapOverwriteMode.Never:
-            empty_label_mask = labelmap == 0
+            # When erasing (label_value == 0) we only affect current segment
+            # Otherwise, we only affect empty spaces (labelmap == 0)
+            empty_label_mask = (labelmap == 0 if label_value != 0 else labelmap == active_label_value)
             labelmap[masked_modifier & empty_label_mask] = label_value
 
     def _poly_to_modifier_labelmap(self, poly: vtkPolyData) -> vtkImageData:

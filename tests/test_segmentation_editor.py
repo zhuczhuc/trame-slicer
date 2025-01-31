@@ -63,7 +63,7 @@ def test_segmentation_editor(a_simple_volume, a_simple_segmentation, a_slicer_ap
     )
 
     editor = SegmentationEditor(segmentation_node, a_simple_volume)
-    editor.sanize_segmentation()
+    editor.sanitize_segmentation()
     editor.active_segment = segmentation.GetNthSegmentID(0)
 
     labelmap = vtk_image_to_np(vtk_labelmap)

@@ -14,7 +14,6 @@ from vtkmodules.vtkRenderingCore import (
     vtkProperty,
 )
 
-from trame_slicer.views import AbstractViewInteractor
 from trame_slicer.views.threed_view import ThreeDView
 
 from .segment_paint_effect import (
@@ -22,6 +21,7 @@ from .segment_paint_effect import (
     BrushModel,
     BrushShape,
     SegmentPaintEffect,
+    SegmentPaintEffectInteractor
 )
 from .segmentation_editor import SegmentationEditor
 
@@ -117,8 +117,8 @@ class SegmentPaintEffect3D(SegmentPaintEffect):
         maxY = vtkref(1.0)
         renderer.NormalizedDisplayToDisplay(maxX, maxY)  # noqa
         rendererSizeInPixels = (
-            int(maxX.get() - minX.get()),
-            int(maxY.get() - minY.get()),
+            int(maxX.get() - minX.get()),  # noqa
+            int(maxY.get() - minY.get()),  # noqa
         )
         cam = renderer.GetActiveCamera()
         mmPerPixel = 1.0
@@ -175,6 +175,8 @@ class SegmentPaintEffect3D(SegmentPaintEffect):
         self._last_position = position
 
     def _interpolated_brush_position_if_needed(self, position):
+        assert self._last_position is not None
+
         stroke_length = math.dist(position, self._last_position)
         maximum_distance_between_points = 0.2 * self.absolute_brush_diameter()
         if maximum_distance_between_points <= 0.0:
@@ -191,11 +193,10 @@ class SegmentPaintEffect3D(SegmentPaintEffect):
             self.add_point_to_selection(weighted_point)
 
 
-class SegmentPaintEffect3DInteractor(AbstractViewInteractor):
+class SegmentPaintEffect3DInteractor(SegmentPaintEffectInteractor):
     def __init__(self, effect: SegmentPaintEffect3D) -> None:
-        super().__init__()
-        self.effect = effect
-
+        super().__init__(effect)
+        self._effect = effect # for type hints
         self._render_callback: Optional[Callable] = None
         # Event we may consume and how we consume them
         self._supported_events = {
@@ -205,19 +206,19 @@ class SegmentPaintEffect3DInteractor(AbstractViewInteractor):
         }
 
     @property
-    def is_brush_enabled(self):
-        return self.effect.is_brush_enabled()
+    def effect(self) -> SegmentPaintEffect3D:
+        return self._effect
 
     def process_event(self, event_data: vtkMRMLInteractionEventData) -> bool:
         is_not_supported_event = event_data.GetType() not in self._supported_events
-        if not self.is_brush_enabled or is_not_supported_event:
+        if not self.effect.is_brush_enabled() or is_not_supported_event:
             return False
 
         callback = self._supported_events[event_data.GetType()]
         return callback(event_data)
 
     def left_pressed(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if not self.is_brush_enabled or not self.effect.view.has_last_quick_pick_hit():
+        if not self.effect.is_brush_enabled() or not self.effect.view.has_last_quick_pick_hit():
             return False
 
         self.effect.start_painting()
@@ -236,7 +237,7 @@ class SegmentPaintEffect3DInteractor(AbstractViewInteractor):
         return False
 
     def mouse_moved(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if self.is_brush_enabled and self.effect.view.has_last_quick_pick_hit():
+        if self.effect.is_brush_enabled() and self.effect.view.has_last_quick_pick_hit():
             self.effect.update_world_position(event_data.GetWorldPosition())
             self.effect.view.schedule_render()
             self.trigger_render_callback()

@@ -15,7 +15,6 @@ from vtkmodules.vtkRenderingCore import (
     vtkProperty2D,
 )
 
-from trame_slicer.views import AbstractViewInteractor
 from trame_slicer.views.slice_view import SliceView
 
 from .segment_paint_effect import (
@@ -23,6 +22,7 @@ from .segment_paint_effect import (
     BrushModel,
     BrushShape,
     SegmentPaintEffect,
+    SegmentPaintEffectInteractor,
 )
 from .segmentation_editor import SegmentationEditor
 
@@ -184,17 +184,20 @@ class SegmentPaintEffect2D(SegmentPaintEffect):
         self.update_brush_diameter()
 
 
-class SegmentPaintEffect2DInteractor(AbstractViewInteractor):
+class SegmentPaintEffect2DInteractor(SegmentPaintEffectInteractor):
     def __init__(self, effect: SegmentPaintEffect2D) -> None:
-        super().__init__()
-        self.effect = effect
-
+        super().__init__(effect)
+        self._effect = effect # for type hints
         # Event we may consume and how we consume them
         self._supported_events = {
             int(vtkCommand.MouseMoveEvent): self.mouse_moved,
             int(vtkCommand.LeftButtonPressEvent): self.left_pressed,
             int(vtkCommand.LeftButtonReleaseEvent): self.left_released,
         }
+
+    @property
+    def effect(self) -> SegmentPaintEffect2D:
+        return self._effect
 
     def process_event(self, event_data: vtkMRMLInteractionEventData) -> bool:
         is_event_unsupported = event_data.GetType() not in self._supported_events

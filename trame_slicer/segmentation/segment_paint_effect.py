@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import IntEnum
+from typing import Optional, Callable
 
 from vtkmodules.vtkCommonCore import vtkPoints
 from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput, vtkPolyDataAlgorithm
@@ -9,7 +10,7 @@ from vtkmodules.vtkFiltersGeneral import vtkTransformPolyDataFilter
 from vtkmodules.vtkFiltersSources import vtkCylinderSource, vtkSphereSource
 from vtkmodules.vtkRenderingCore import vtkProp
 
-from trame_slicer.views import AbstractView
+from trame_slicer.views import AbstractView, AbstractViewInteractor
 
 from .segmentation_editor import SegmentationEditor
 from .segmentation_effect import SegmentationEffect
@@ -137,7 +138,7 @@ class SegmentPaintEffect(SegmentationEffect):
     def paint_coordinates_world(self) -> vtkPoints:
         return self._paint_coordinates_world
 
-    def add_point_to_selection(self, position: list[float]) -> None:
+    def add_point_to_selection(self, position: tuple[float, float, float]) -> None:
         self._paint_coordinates_world.InsertNextPoint(position)
         self._paint_coordinates_world.Modified()
 
@@ -181,6 +182,21 @@ class SegmentPaintEffect(SegmentationEffect):
             algo.Update()
             self.editor.apply_glyph(algo.GetOutput(), self._paint_coordinates_world)
             self.editor.update_surface_representation()
-        finally:
-            # ensure points are always cleared
-            self._paint_coordinates_world.SetNumberOfPoints(0)
+        except:
+            raise
+        finally:  # ensure points are always cleared
+            self._paint_coordinates_world.SetNumberOfPoints(0)  # clear points
+
+
+class SegmentPaintEffectInteractor(AbstractViewInteractor):
+    def __init__(self, effect: SegmentPaintEffect) -> None:
+        super().__init__()
+        self._effect = effect
+
+    @property
+    def effect(self) -> SegmentPaintEffect:
+        return self._effect
+
+    def trigger_render_callback(self) -> None:
+        if self.render_callback:
+            self.render_callback()

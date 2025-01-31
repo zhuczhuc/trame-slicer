@@ -3,8 +3,8 @@ from .segment_paint_effect2d import SegmentPaintEffect2D, SegmentPaintEffect2DIn
 from .segment_paint_effect3d import SegmentPaintEffect3D, SegmentPaintEffect3DInteractor
 from .segment_scissor_effect import (
     ScissorPolygonBrush,
-    SegmentScissorEffect3D,
-    SegmentScissorEffect3DInteractor,
+    SegmentScissorEffect,
+    SegmentScissorEffectInteractor,
 )
 from .segmentation_editor import (
     LabelMapOperation,

@@ -51,7 +51,7 @@ class SegmentationManager:
         )
 
         editor = SegmentationEditor(segmentation_node, volume)
-        editor.sanize_segmentation()
+        editor.sanitize_segmentation()
 
         segmentation = Segmentation(editor, self._view_manager.get_views(view_group))
 

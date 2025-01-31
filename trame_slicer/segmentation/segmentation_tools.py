@@ -4,13 +4,14 @@ from trame_slicer.segmentation import (
     BrushModel,
     BrushShape,
     LabelMapOperation,
+    LabelMapOverwriteMode,
     SegmentationEditor,
     SegmentPaintEffect2D,
     SegmentPaintEffect2DInteractor,
     SegmentPaintEffect3D,
     SegmentPaintEffect3DInteractor,
-    SegmentScissorEffect3D,
-    SegmentScissorEffect3DInteractor,
+    SegmentScissorEffect,
+    SegmentScissorEffectInteractor,
 )
 from trame_slicer.views import AbstractView, SliceView, ThreeDView
 
@@ -41,6 +42,7 @@ class SegmentationTool:
         self._editor.operation = (
             LabelMapOperation.Erase if erase else LabelMapOperation.Set
         )
+        self._editor.overwrite_mode = LabelMapOverwriteMode.Never
 
 
 class SegmentationPaintEraseTool(SegmentationTool):
@@ -65,9 +67,6 @@ class SegmentationPaintEraseTool(SegmentationTool):
             interactor = self._3d_effects[view]
             interactor.effect.enable_brush()
             view.add_user_interactor(interactor)
-            view.reset_camera()
-            view.reset_focal_point()
-            view.render()
 
         for view in [v for v in views if isinstance(v, SliceView)]:
             if view not in self._2d_effects:
@@ -80,6 +79,8 @@ class SegmentationPaintEraseTool(SegmentationTool):
             interactor.effect.enable_brush()
             view.add_user_interactor(interactor)
 
+        self._render_all_views()
+
     def deactivate(self) -> None:
         for [view, interactor] in self._3d_effects.items():
             interactor.effect.disable_brush()
@@ -88,6 +89,8 @@ class SegmentationPaintEraseTool(SegmentationTool):
         for [view, interactor] in self._2d_effects.items():
             interactor.effect.disable_brush()
             view.remove_user_interactor(interactor)
+
+        self._render_all_views()
 
     def _render_all_views(self):
         for view in self._3d_effects:
@@ -101,28 +104,28 @@ class SegmentationScissorTool(SegmentationTool):
     def __init__(self, editor: SegmentationEditor) -> None:
         super().__init__(editor)
         self._brush_model = BrushModel(BrushShape.Sphere)
-        self._3d_effects: dict[ThreeDView, SegmentScissorEffect3DInteractor] = {}
-        # self._2d_effects: dict[SliceView, SegmentPaintEffect2DInteractor] = {}
+
+        self._effects: dict[AbstractView, SegmentScissorEffectInteractor] = {}
 
     def activate(self, views: list[AbstractView]) -> None:
-        for view in [v for v in views if isinstance(v, ThreeDView)]:
-            if view not in self._3d_effects:
-                effect = SegmentScissorEffect3D(view, self._editor)
-                interactor = SegmentScissorEffect3DInteractor(effect)
+        for view in [v for v in views if isinstance(v, ThreeDView) or isinstance(v, SliceView)]:
+            if view not in self._effects:
+                effect = SegmentScissorEffect(view, self._editor)
+                interactor = SegmentScissorEffectInteractor(effect)
                 interactor.render_callback = self._render_all_views
-                self._3d_effects[view] = interactor
+                self._effects[view] = interactor
 
-            interactor = self._3d_effects[view]
+            interactor = self._effects[view]
             interactor.effect.enable_brush()
             view.add_user_interactor(interactor)
             view.schedule_render()
 
     def deactivate(self) -> None:
-        for [view, interactor] in self._3d_effects.items():
+        for [view, interactor] in self._effects.items():
             interactor.effect.disable_brush()
 
     def _render_all_views(self):
-        for view in self._3d_effects:
+        for view in self._effects:
             view.schedule_render()
 
 

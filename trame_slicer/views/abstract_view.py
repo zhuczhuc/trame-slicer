@@ -117,10 +117,10 @@ class AbstractView:
 
         self._add_observers()
 
-    def add_user_interactor(self, observer: "AbstractView"):
+    def add_user_interactor(self, observer: AbstractViewInteractor):
         self._user_interactors.append(observer)
 
-    def remove_user_interactor(self, observer: "AbstractView"):
+    def remove_user_interactor(self, observer: AbstractViewInteractor):
         self._user_interactors.remove(observer)
 
     def _add_observers(self):
@@ -215,8 +215,8 @@ class AbstractView:
             if manager is None:
                 continue
             distance = vtkref(float_info.max)
-            if manager.CanProcessInteractionEvent(event_data, distance):
-                if not closest_displayable_manager or distance < closest_distance:
+            if manager.CanProcessInteractionEvent(event_data, distance):  # noqa
+                if not closest_displayable_manager or distance < closest_distance:  # noqa
                     closest_displayable_manager = manager
                     closest_distance = distance
 
