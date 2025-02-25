@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional
 
 import vtk
 from slicer import (
@@ -20,7 +19,7 @@ from vtkmodules.vtkCommonCore import vtkCollection, vtkOutputWindow
 
 from .display_manager import DisplayManager
 from .io_manager import IOManager
-from .segmentation_manager import SegmentationManager
+from .segmentation_editor import SegmentationEditor
 from .view_manager import ViewManager
 from .volume_rendering import VolumeRendering
 
@@ -32,7 +31,7 @@ class SlicerApp:
     Configures the default nodes present in the scene.
     """
 
-    def __init__(self, share_directory: Optional[str] = None):
+    def __init__(self, share_directory: str | None = None):
         from trame_slicer.resources import resources_path
 
         self.share_directory = Path(share_directory or resources_path())
@@ -124,19 +123,21 @@ class SlicerApp:
         # initialize view manager responsible for creating new views in the app
         self.view_manager = ViewManager(self.scene, self.app_logic)
 
-        # Initialize IO manager
-        self.io_manager = IOManager(self.scene, self.app_logic)
-
         # Initialize display manager
         self.display_manager = DisplayManager(self.view_manager, self.volume_rendering)
 
-        # Initialize segmentation manager
-        self.segmentation_manager = SegmentationManager(
-            self.segmentation_logic, self.view_manager, self.scene
+        # Initialize segmentation editor
+        self.segmentation_editor = SegmentationEditor(
+            self.scene, self.segmentation_logic, self.view_manager
+        )
+
+        # Initialize IO manager
+        self.io_manager = IOManager(
+            self.scene, self.app_logic, self.segmentation_editor
         )
 
     @vtk.calldata_type(vtk.VTK_OBJECT)
-    def _remove_attached_displayable_nodes(self, scene, eventid, node):
+    def _remove_attached_displayable_nodes(self, scene, _event_id, node):
         if not scene:
             return
 

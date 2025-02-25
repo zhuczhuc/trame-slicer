@@ -24,7 +24,6 @@ def test_can_load_scene_with_markups(
 def test_markups_nodes_can_be_placed_interactively(
     a_slicer_app,
     a_threed_view,
-    a_model_node,
     render_interactive,
 ):
     markups_node: vtkMRMLMarkupsFiducialNode = a_slicer_app.scene.AddNewNodeByClass(

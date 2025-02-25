@@ -1,5 +1,5 @@
 import asyncio
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from trame_server.utils import asynchronous
 
@@ -16,7 +16,7 @@ class ScheduledRenderStrategy:
     """
 
     def __init__(self):
-        self.abstract_view: Optional["AbstractView"] = None
+        self.abstract_view: AbstractView | None = None
 
     def schedule_render(self):
         pass
@@ -41,7 +41,7 @@ class DirectRendering(ScheduledRenderStrategy):
 class AsyncIORendering(ScheduledRenderStrategy):
     def __init__(self, schedule_render_fps: float = 30.0):
         super().__init__()
-        self.request_render_task: Optional[asyncio.Task] = None
+        self.request_render_task: asyncio.Task | None = None
         self.schedule_render_fps = schedule_render_fps
 
     def schedule_render(self):

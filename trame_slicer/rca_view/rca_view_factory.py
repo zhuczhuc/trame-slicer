@@ -1,5 +1,5 @@
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional
 
 from slicer import vtkMRMLApplicationLogic, vtkMRMLScene
 from trame_client.widgets.html import Div
@@ -34,8 +34,8 @@ class RcaView:
 def register_rca_factories(
     view_manager: ViewManager,
     server: Server,
-    slice_view_ui_f: Callable[[Server, str, AbstractViewChild], None] = None,
-    three_d_view_ui_f: Callable[[Server, str, AbstractViewChild], None] = None,
+    slice_view_ui_f: Callable[[Server, str, AbstractViewChild], None] | None = None,
+    three_d_view_ui_f: Callable[[Server, str, AbstractViewChild], None] | None = None,
     rca_encoder: RcaEncoder = RcaEncoder.TURBO_JPEG,
     target_fps: float = 30.0,
     interactive_quality: int = 50,
@@ -78,12 +78,12 @@ class RemoteViewFactory(IViewFactory):
         view_ctor: Callable,
         view_type: ViewType,
         *,
-        populate_view_ui_f: Optional[
-            Callable[[Server, str, AbstractViewChild], None]
-        ] = None,
-        target_fps: Optional[float] = None,
-        interactive_quality: Optional[int] = None,
-        rca_encoder: Optional[RcaEncoder | str] = None,
+        populate_view_ui_f: (
+            Callable[[Server, str, AbstractViewChild], None] | None
+        ) = None,
+        target_fps: float | None = None,
+        interactive_quality: int | None = None,
+        rca_encoder: RcaEncoder | str | None = None,
     ):
         super().__init__()
         self._server = server
@@ -144,9 +144,7 @@ class RemoteViewFactory(IViewFactory):
 
     def _create_vuetify_ui(self, view_id: str, slicer_view: AbstractView):
         with Div(
-            style=(
-                "position: relative;" "width: 100%;" "height: 100%;" "overflow: hidden;"
-            )
+            style=("position: relative;width: 100%;height: 100%;overflow: hidden;")
         ):
             RemoteControlledArea(
                 name=view_id,

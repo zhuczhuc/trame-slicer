@@ -8,7 +8,6 @@ from slicer import vtkMRMLAbstractViewNode
 def test_slice_view_can_display_volume(
     a_slice_view,
     a_volume_node,
-    a_slicer_app,
     render_interactive,
 ):
     a_slice_view.set_background_volume_id(a_volume_node.GetID())
@@ -30,8 +29,6 @@ def test_slice_view_can_display_volume(
 def test_a_slice_view_slice_offset_can_be_set(
     a_slice_view,
     a_volume_node,
-    a_slicer_app,
-    render_interactive,
 ):
     a_slice_view.set_background_volume_id(a_volume_node.GetID())
     a_slice_view.set_background_color([255, 0, 0])
@@ -73,7 +70,6 @@ def test_slice_view_foreground_background_opacity_can_be_set():
 
 def test_slice_view_can_be_set_visible_in_3d(
     a_slice_view,
-    a_threed_view,
     a_volume_node,
     render_interactive,
 ):

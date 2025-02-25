@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 from itertools import chain
-from typing import Optional, Protocol, Union, runtime_checkable
+from typing import Protocol, Union, runtime_checkable
 
 from trame.widgets import client, html
 
@@ -22,7 +22,7 @@ class View(Protocol):
 class Layout:
     direction: LayoutDirection
     items: list[Union["Layout", View]]
-    flex_sizes: Optional[list[str]] = None
+    flex_sizes: list[str] | None = None
 
     def get_views(self, is_recursive: bool) -> list[View]:
         """
@@ -58,7 +58,7 @@ class LayoutGrid:
         self,
         layout_items: list[Union["Layout", View]],
         layout_direction: LayoutDirection,
-        layout_flex_sizes: Optional[list[str]] = None,
+        layout_flex_sizes: list[str] | None = None,
     ):
         layout_class = (
             "flex-row"
@@ -107,7 +107,7 @@ def pretty_xml(xml_str: str) -> str:
 def vue_layout_to_slicer(layout: Layout):
     layout_str = f'<layout type="{layout.direction.name.lower()}">'
 
-    item: Union[Layout, ViewLayoutDefinition]
+    item: Layout | ViewLayoutDefinition
     for item in layout.items:
         item_xml = (
             vue_layout_to_slicer(item) if isinstance(item, Layout) else item.to_xml()
@@ -124,17 +124,18 @@ def slicer_layout_to_vue(xml_str: str) -> Layout:
     elt = etree.fromstring(xml_str)
 
     def to_layout_item(child):
+        _error_msg = "Invalid input XML layout"
         if not child.tag == "item" or len(child.getchildren()) != 1:
-            raise RuntimeError("Invalid input XML layout")
+            raise RuntimeError(_error_msg)
 
         child = child.getchildren()[0]
         child_xml_str = etree.tostring(child)
         if child.tag == "layout":
             return slicer_layout_to_vue(child_xml_str)
-        elif child.tag == "view":
+        if child.tag == "view":
             return ViewLayoutDefinition.from_xml(child_xml_str)
 
-        raise RuntimeError("Invalid input XML layout")
+        raise RuntimeError(_error_msg)
 
     items = [to_layout_item(child) for child in elt.getchildren()]
 

@@ -1,6 +1,5 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Union
 from zipfile import ZipFile
 
 from slicer import (
@@ -11,15 +10,11 @@ from slicer import (
     vtkMRMLRemoteIOLogic,
     vtkMRMLScene,
     vtkMRMLSegmentationNode,
-    vtkMRMLSegmentationStorageNode,
     vtkMRMLStorageNode,
     vtkMRMLVolumeNode,
-    vtkSegment,
-    vtkSegmentationConverter,
-    vtkSlicerSegmentationsModuleLogic,
 )
-from vtkmodules.vtkCommonDataModel import vtkPolyData
 
+from .segmentation_editor import SegmentationEditor
 from .volumes_reader import VolumesReader
 
 
@@ -28,7 +23,12 @@ class IOManager:
     Class responsible for loading files in the scene.
     """
 
-    def __init__(self, scene: vtkMRMLScene, app_logic: vtkMRMLApplicationLogic):
+    def __init__(
+        self,
+        scene: vtkMRMLScene,
+        app_logic: vtkMRMLApplicationLogic,
+        segmentation_editor: SegmentationEditor,
+    ):
         self.scene = scene
         self.app_logic = app_logic
 
@@ -48,17 +48,19 @@ class IOManager:
         )
         self.remote_io.AddDataIOToScene()
 
+        self.segmentation_editor: SegmentationEditor = segmentation_editor
+
     def load_volumes(
         self,
-        volume_files: Union[str, list[str]],
+        volume_files: str | list[str],
     ) -> list[vtkMRMLVolumeNode]:
         return VolumesReader.load_volumes(self.scene, self.app_logic, volume_files)
 
     def load_model(
         self,
-        model_file: Union[str, Path],
+        model_file: str | Path,
         do_convert_to_slicer_coord: bool = True,
-    ) -> Optional[vtkMRMLModelNode]:
+    ) -> vtkMRMLModelNode | None:
         model_file = Path(model_file).resolve()
         if not model_file.is_file():
             return None
@@ -89,10 +91,10 @@ class IOManager:
     def write_model(
         cls,
         model_node,
-        model_file: Union[str, Path],
+        model_file: str | Path,
         do_convert_from_slicer_coord: bool = True,
     ) -> None:
-        cls._write_node(
+        cls.write_node(
             model_node,
             model_file,
             vtkMRMLModelStorageNode,
@@ -100,92 +102,28 @@ class IOManager:
         )
 
     def load_segmentation(
-        self,
-        segmentation_file: Union[str, Path],
-    ) -> Optional[vtkMRMLSegmentationNode]:
-        """
-        Adapted from Modules/Loadable/Segmentations/qSlicerSegmentationsReader.cxx
-        """
-        segmentation_file = Path(segmentation_file).resolve()
-        if not segmentation_file.is_file():
-            return None
+        self, segmentation_file: str | Path, do_convert_to_slicer_coord=True
+    ) -> vtkMRMLSegmentationNode | None:
+        if Path(segmentation_file).suffix in [".obj", ".stl", ".ply"]:
+            model = self.load_model(segmentation_file, do_convert_to_slicer_coord)
+            try:
+                return (
+                    self.segmentation_editor.create_segmentation_node_from_model_node(
+                        model
+                    )
+                )
+            finally:
+                self.scene.RemoveNode(model)
 
-        node_name = segmentation_file.stem
-        if segmentation_file.suffix in [".obj", ".stl"]:
-            return self._load_segmentation_from_model_file(segmentation_file, node_name)
+        return self.segmentation_editor.load_segmentation_from_file(segmentation_file)
 
-        logic = vtkSlicerSegmentationsModuleLogic()
-        logic.SetMRMLApplicationLogic(self.app_logic)
-        logic.SetMRMLScene(self.scene)
-        return logic.LoadSegmentationFromFile(
-            segmentation_file.as_posix(), True, node_name
+    def write_segmentation(self, segmentation_node, segmentation_file: str | Path):
+        self.segmentation_editor.export_segmentation_to_file(
+            segmentation_node, segmentation_file
         )
 
     @classmethod
-    def write_segmentation(
-        cls,
-        segmentation_node,
-        segmentation_file: Union[str, Path],
-        do_convert_from_slicer_coord: bool = True,
-    ):
-        cls._write_node(
-            segmentation_node,
-            segmentation_file,
-            vtkMRMLSegmentationStorageNode,
-            do_convert_from_slicer_coord,
-        )
-
-    def _load_segmentation_from_model_file(
-        self,
-        segmentation_file: Path,
-        node_name: str,
-    ) -> Optional[vtkMRMLSegmentationNode]:
-        """
-        Adapted from Modules/Loadable/Segmentations/qSlicerSegmentationsReader.cxx
-        """
-        model_storage_node = vtkMRMLModelStorageNode()
-        model_storage_node.SetFileName(segmentation_file.as_posix())
-        model_node = vtkMRMLModelNode()
-        if not model_storage_node.ReadData(model_node):
-            return None
-
-        closed_surface_representation: vtkPolyData = model_node.GetPolyData()
-        if not closed_surface_representation:
-            return None
-
-        point_data = closed_surface_representation.GetPointData()
-        if not point_data:
-            return None
-
-        while point_data.GetNumberOfArrays() > 0:
-            point_data.RemoveArray(0)
-
-        segment = vtkSegment()
-        segment.SetName(node_name)
-        closed_surface_tag = (
-            vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName()
-        )
-        segment.AddRepresentation(
-            closed_surface_tag,
-            closed_surface_representation,
-        )
-
-        segmentation_node: vtkMRMLSegmentationNode = self.scene.AddNewNodeByClass(
-            "vtkMRMLSegmentationNode",
-            node_name,
-        )
-        segmentation_node.SetSourceRepresentationToClosedSurface()
-        segmentation_node.CreateDefaultDisplayNodes()
-        segmentation_node.GetSegmentation().AddSegment(segment)
-
-        display_node = segmentation_node.GetDisplayNode()
-        if display_node:
-            display_node.SetPreferredDisplayRepresentationName2D(closed_surface_tag)
-
-        return segmentation_node
-
-    @classmethod
-    def _write_node(
+    def write_node(
         cls,
         node,
         node_file,
@@ -224,9 +162,8 @@ class IOManager:
 
     def _load_mrb_scene(self, scene_path: Path) -> bool:
         try:
-            with TemporaryDirectory() as tmpdir:
-                with ZipFile(scene_path, "r") as zip_file:
-                    zip_file.extractall(tmpdir)
-                    return self._load_mrml_scene(next(Path(tmpdir).rglob("*.mrml")))
+            with TemporaryDirectory() as tmpdir, ZipFile(scene_path, "r") as zip_file:
+                zip_file.extractall(tmpdir)
+                return self._load_mrml_scene(next(Path(tmpdir).rglob("*.mrml")))
         except StopIteration:
             return False

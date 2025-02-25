@@ -26,7 +26,7 @@ class LoadClientVolumeFilesButton(Div):
                 type="file",
                 multiple=True,
                 change=(
-                    "file_loading_busy = true;"
+                    f"{StateId.file_loading_busy} = true;"
                     "trigger('"
                     f"{server.controller.trigger_name(self._create_load_local_files_task)}"
                     "', [$event.target.files]"
@@ -85,7 +85,7 @@ class LoadClientVolumeFilesButton(Div):
                 v.GetImageData().GetBounds(b)
                 return (b[1] - b[0]) * (b[3] - b[2]) * (b[5] - b[4])
 
-            volumes = list(sorted(volumes, key=bounds_volume))
+            volumes = sorted(volumes, key=bounds_volume)
             volume_node = volumes[-1]
             self._slicer_app.display_manager.show_volume(
                 volume_node,

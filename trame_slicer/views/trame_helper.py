@@ -1,6 +1,6 @@
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional
 
 from trame_client.widgets.html import Div
 from trame_server.core import Server
@@ -67,36 +67,38 @@ def create_vertical_view_gutter_ui(
     server: Server,
     view_id: str,
     view: AbstractViewChild,
-    fill_gutter_f: Optional[Callable[[Server, str, AbstractViewChild], None]] = None,
+    fill_gutter_f: Callable[[Server, str, AbstractViewChild], None] | None = None,
 ) -> None:
-    with Div(
-        classes="view-gutter",
-        style="position: absolute;"
-        "top: 0;"
-        "left: 0;"
-        "background-color: transparent;"
-        "height: 100%;",
+    with (
+        Div(
+            classes="view-gutter",
+            style="position: absolute;"
+            "top: 0;"
+            "left: 0;"
+            "background-color: transparent;"
+            "height: 100%;",
+        ),
+        Div(classes="view-gutter-content d-flex flex-column fill-height pa-2"),
     ):
-        with Div(classes="view-gutter-content d-flex flex-column fill-height pa-2"):
-            with VBtn(
+        with VBtn(
+            size="medium",
+            variant="text",
+            click=view.reset_view,
+        ):
+            VIcon(
+                icon="mdi-camera-flip-outline",
                 size="medium",
-                variant="text",
-                click=view.reset_view,
-            ):
-                VIcon(
-                    icon="mdi-camera-flip-outline",
-                    size="medium",
-                    color="white",
-                )
-                VTooltip(
-                    "Reset Camera",
-                    activator="parent",
-                    location="right",
-                    transition="slide-x-transition",
-                )
+                color="white",
+            )
+            VTooltip(
+                "Reset Camera",
+                activator="parent",
+                location="right",
+                transition="slide-x-transition",
+            )
 
-            if fill_gutter_f is not None:
-                fill_gutter_f(server, view_id, view)
+        if fill_gutter_f is not None:
+            fill_gutter_f(server, view_id, view)
 
 
 def create_slice_buttons(_server, _view_id, view: SliceView):

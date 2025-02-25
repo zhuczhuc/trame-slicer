@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar
+from typing import TypeVar
 
 from slicer import vtkMRMLApplicationLogic, vtkMRMLScene
 
@@ -15,7 +15,7 @@ class IViewFactory(ABC):
     """
 
     def __init__(self):
-        self._views: dict[str, V] = dict()
+        self._views: dict[str, V] = {}
 
     @abstractmethod
     def can_create_view(self, view: ViewLayoutDefinition) -> bool:
@@ -46,13 +46,13 @@ class IViewFactory(ABC):
     ) -> V:
         pass
 
-    def get_view(self, view_id: str) -> Optional[AbstractViewChild]:
+    def get_view(self, view_id: str) -> AbstractViewChild | None:
         view = self.get_factory_view(view_id)
         if view is None:
             return None
         return self._get_slicer_view(view)
 
-    def get_factory_view(self, view_id) -> Optional[V]:
+    def get_factory_view(self, view_id) -> V | None:
         if not self.has_view(view_id):
             return None
         return self._views[view_id]

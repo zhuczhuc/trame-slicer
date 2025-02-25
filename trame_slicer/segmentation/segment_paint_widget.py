@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from enum import IntEnum
-from typing import Optional, Callable
 
 from vtkmodules.vtkCommonCore import vtkPoints
-from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput, vtkPolyDataAlgorithm
+from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput
 from vtkmodules.vtkCommonTransforms import vtkTransform
 from vtkmodules.vtkFiltersCore import vtkPolyDataNormals
 from vtkmodules.vtkFiltersGeneral import vtkTransformPolyDataFilter
@@ -12,8 +11,8 @@ from vtkmodules.vtkRenderingCore import vtkProp
 
 from trame_slicer.views import AbstractView, AbstractViewInteractor
 
-from .segmentation_editor import SegmentationEditor
-from .segmentation_effect import SegmentationEffect
+from .segment_modifier import SegmentModifier
+from .segmentation_widget import SegmentationWidget
 
 
 class BrushShape(IntEnum):
@@ -80,7 +79,8 @@ class BrushModel:
                 self._cylinder_source.GetOutputPort()
             )
         else:
-            raise Exception(f"Invalid shape value {shape}")
+            _error_msg = f"Invalid shape value {shape}"
+            raise Exception(_error_msg)
 
     def set_sphere_parameters(
         self, radius: float, phi_resolution: int, theta_resolution: int
@@ -89,18 +89,22 @@ class BrushModel:
         self._sphere_source.SetThetaResolution(theta_resolution)
         self._sphere_source.SetRadius(radius)
 
-    def set_cylinder_parameters(self, radius: float, resolution: int, height: float):
+    def set_cylinder_parameters(self, *, radius: float, resolution: int, height: float):
         self._cylinder_source.SetResolution(resolution)
         self._cylinder_source.SetHeight(height)
         self._cylinder_source.SetRadius(radius)
 
-    # Return the output port of transformed brush model
     def get_output_port(self) -> vtkAlgorithmOutput:
+        """
+        Return the output port of transformed brush model
+        """
         return self._world_origin_to_world_transformer.GetOutputPort()
 
-    # Return the output port of untransformed brush model
-    # Useful for feedback actors
     def get_untransformed_output_port(self) -> vtkAlgorithmOutput:
+        """
+        Return the output port of untransformed brush model
+        Useful for feedback actors
+        """
         return self._brush_poly_data_normals.GetOutputPort()
 
 
@@ -116,16 +120,16 @@ class AbstractBrush(ABC):
         return self.get_prop().SetVisibility(int(visibility))
 
 
-class SegmentPaintEffect(SegmentationEffect):
+class SegmentPaintWidget(SegmentationWidget):
     def __init__(
         self,
         view: AbstractView,
-        editor: SegmentationEditor,
+        modifier: SegmentModifier,
         brush_model: BrushModel,
         brush: AbstractBrush,
         brush_feedback: AbstractBrush,
     ) -> None:
-        super().__init__(editor)
+        super().__init__(modifier)
         self._view = view
         self._brush_model = brush_model
         self._brush = brush
@@ -138,7 +142,7 @@ class SegmentPaintEffect(SegmentationEffect):
     def paint_coordinates_world(self) -> vtkPoints:
         return self._paint_coordinates_world
 
-    def add_point_to_selection(self, position: tuple[float, float, float]) -> None:
+    def add_point_to_selection(self, position: list[float]) -> None:
         self._paint_coordinates_world.InsertNextPoint(position)
         self._paint_coordinates_world.Modified()
 
@@ -176,27 +180,19 @@ class SegmentPaintEffect(SegmentationEffect):
 
     def commit(self) -> None:
         try:
-            algo: vtkPolyDataAlgorithm = (
-                self._brush_model.get_untransformed_output_port().GetProducer()
-            )
+            algo = self._brush_model.get_untransformed_output_port().GetProducer()
             algo.Update()
-            self.editor.apply_glyph(algo.GetOutput(), self._paint_coordinates_world)
-            self.editor.update_surface_representation()
-        except:
-            raise
-        finally:  # ensure points are always cleared
-            self._paint_coordinates_world.SetNumberOfPoints(0)  # clear points
+            self.modifier.apply_glyph(algo.GetOutput(), self._paint_coordinates_world)
+        finally:
+            # ensure points are always cleared
+            self._paint_coordinates_world.SetNumberOfPoints(0)
 
 
-class SegmentPaintEffectInteractor(AbstractViewInteractor):
-    def __init__(self, effect: SegmentPaintEffect) -> None:
+class SegmentPaintWidgetInteractor(AbstractViewInteractor):
+    def __init__(self, widget: SegmentPaintWidget) -> None:
         super().__init__()
-        self._effect = effect
+        self._widget = widget
 
     @property
-    def effect(self) -> SegmentPaintEffect:
-        return self._effect
-
-    def trigger_render_callback(self) -> None:
-        if self.render_callback:
-            self.render_callback()
+    def widget(self) -> SegmentPaintWidget:
+        return self._widget

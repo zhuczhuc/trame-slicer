@@ -4,9 +4,7 @@ import pytest
 from slicer import vtkMRMLAbstractViewNode
 
 
-def test_threed_view_can_render_mrml_models(
-    a_threed_view, a_model_node, render_interactive
-):
+def test_threed_view_can_render_mrml_models(a_threed_view, render_interactive):
     a_threed_view.reset_camera()
     a_threed_view.reset_focal_point()
     a_threed_view.render()
@@ -15,9 +13,7 @@ def test_threed_view_can_render_mrml_models(
         a_threed_view.start_interactor()
 
 
-def test_threed_view_can_set_background(
-    a_threed_view, a_model_node, render_interactive
-):
+def test_threed_view_can_set_background(a_threed_view, render_interactive):
     a_threed_view.set_background_color([60, 60, 60])
     a_threed_view.set_background_gradient_color([60, 60, 60], [0, 0, 0])
     a_threed_view.set_background_color_from_string("red")
@@ -76,7 +72,6 @@ def test_three_d_view_can_display_rulers_but_forces_ortho_render_mode(
 
 def test_three_d_view_can_toggle_between_perspective_and_orthographic(
     a_threed_view,
-    render_interactive,
 ):
     a_threed_view.set_render_mode_to_orthographic()
     assert not a_threed_view.is_render_mode_perspective()
@@ -84,7 +79,9 @@ def test_three_d_view_can_toggle_between_perspective_and_orthographic(
     assert a_threed_view.is_render_mode_perspective()
 
 
-@pytest.mark.parametrize("factor, is_orthographic", product([0.9, -3], [True, False]))
+@pytest.mark.parametrize(
+    ("factor", "is_orthographic"), product([0.9, -3], [True, False])
+)
 def test_three_d_view_can_zoom_by_arbitrary_factor(
     a_threed_view, render_interactive, factor, is_orthographic
 ):

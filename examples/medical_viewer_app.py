@@ -50,7 +50,7 @@ class MyTrameSlicerApp:
     def server(self) -> Server:
         return self._server
 
-    def _build_ui(self, *args, **kwargs):
+    def _build_ui(self):
         with SinglePageLayout(self._server) as self.ui:
             self.ui.root.theme = "dark"
 
@@ -61,14 +61,16 @@ class MyTrameSlicerApp:
                 vuetify3.VSpacer()
 
             # Main content
-            with self.ui.content:
-                with Div(classes="fill-height d-flex flex-row flex-grow-1"):
-                    ToolsStrip(
-                        server=self._server,
-                        slicer_app=self._slicer_app,
-                        layout_manager=self._layout_manager,
-                    )
-                    self._server.ui.layout_grid(self.ui)
+            with (
+                self.ui.content,
+                Div(classes="fill-height d-flex flex-row flex-grow-1"),
+            ):
+                ToolsStrip(
+                    server=self._server,
+                    slicer_app=self._slicer_app,
+                    layout_manager=self._layout_manager,
+                )
+                self._server.ui.layout_grid(self.ui)
 
 
 def main(server=None, **kwargs):

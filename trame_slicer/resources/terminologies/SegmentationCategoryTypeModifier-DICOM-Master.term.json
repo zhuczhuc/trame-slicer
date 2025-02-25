@@ -12,11 +12,7 @@
         "contextGroupName": "SegmentationPropertyCategories",
         "Type": [
           {
-            "recommendedDisplayRGBValue": [
-              230,
-              220,
-              70
-            ],
+            "recommendedDisplayRGBValue": [230, 220, 70],
             "CodeMeaning": "Body fat",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "fat",
@@ -37,11 +33,7 @@
             "SNOMEDCTConceptID": "12402003"
           },
           {
-            "recommendedDisplayRGBValue": [
-              177,
-              122,
-              101
-            ],
+            "recommendedDisplayRGBValue": [177, 122, 101],
             "CodeMeaning": "Skin",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skin",
@@ -53,11 +45,7 @@
             "SNOMEDCTConceptID": "39937001"
           },
           {
-            "recommendedDisplayRGBValue": [
-              192,
-              104,
-              88
-            ],
+            "recommendedDisplayRGBValue": [192, 104, 88],
             "CodeMeaning": "Muscle",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscle",
@@ -69,11 +57,7 @@
             "SNOMEDCTConceptID": "71616004"
           },
           {
-            "recommendedDisplayRGBValue": [
-              178,
-              212,
-              242
-            ],
+            "recommendedDisplayRGBValue": [178, 212, 242],
             "CodeMeaning": "Meniscus",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "meniscus",
@@ -85,11 +69,7 @@
             "SNOMEDCTConceptID": "74135004"
           },
           {
-            "recommendedDisplayRGBValue": [
-              152,
-              189,
-              207
-            ],
+            "recommendedDisplayRGBValue": [152, 189, 207],
             "CodeMeaning": "Tendon",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tendon",
@@ -101,11 +81,7 @@
             "SNOMEDCTConceptID": "13024002"
           },
           {
-            "recommendedDisplayRGBValue": [
-              183,
-              214,
-              211
-            ],
+            "recommendedDisplayRGBValue": [183, 214, 211],
             "CodeMeaning": "Ligament",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "ligament",
@@ -117,11 +93,7 @@
             "SNOMEDCTConceptID": "52082005"
           },
           {
-            "recommendedDisplayRGBValue": [
-              111,
-              184,
-              210
-            ],
+            "recommendedDisplayRGBValue": [111, 184, 210],
             "CodeMeaning": "Connective tissue",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "connective tissue",
@@ -142,11 +114,7 @@
             "SNOMEDCTConceptID": "59820001"
           },
           {
-            "recommendedDisplayRGBValue": [
-              183,
-              156,
-              220
-            ],
+            "recommendedDisplayRGBValue": [183, 156, 220],
             "CodeMeaning": "Capillary",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "capillary",
@@ -158,11 +126,7 @@
             "SNOMEDCTConceptID": "20982000"
           },
           {
-            "recommendedDisplayRGBValue": [
-              216,
-              101,
-              79
-            ],
+            "recommendedDisplayRGBValue": [216, 101, 79],
             "CodeMeaning": "Artery",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "artery",
@@ -174,11 +138,7 @@
             "SNOMEDCTConceptID": "51114001"
           },
           {
-            "recommendedDisplayRGBValue": [
-              0,
-              151,
-              206
-            ],
+            "recommendedDisplayRGBValue": [0, 151, 206],
             "CodeMeaning": "Vein",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "vein",
@@ -190,11 +150,7 @@
             "SNOMEDCTConceptID": "29092000"
           },
           {
-            "recommendedDisplayRGBValue": [
-              216,
-              101,
-              79
-            ],
+            "recommendedDisplayRGBValue": [216, 101, 79],
             "CodeMeaning": "Blood",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "blood",
@@ -206,11 +162,7 @@
             "SNOMEDCTConceptID": "87612001"
           },
           {
-            "recommendedDisplayRGBValue": [
-              68,
-              172,
-              100
-            ],
+            "recommendedDisplayRGBValue": [68, 172, 100],
             "CodeMeaning": "Lymph node",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lymph node",
@@ -222,11 +174,7 @@
             "SNOMEDCTConceptID": "59441001"
           },
           {
-            "recommendedDisplayRGBValue": [
-              111,
-              197,
-              131
-            ],
+            "recommendedDisplayRGBValue": [111, 197, 131],
             "CodeMeaning": "Lymphatic system",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lymphatic system",
@@ -238,11 +186,7 @@
             "SNOMEDCTConceptID": "89890002"
           },
           {
-            "recommendedDisplayRGBValue": [
-              111,
-              197,
-              131
-            ],
+            "recommendedDisplayRGBValue": [111, 197, 131],
             "CodeMeaning": "Lymphatic vessel",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lymphatic vessel",
@@ -254,11 +198,7 @@
             "SNOMEDCTConceptID": "83555006"
           },
           {
-            "recommendedDisplayRGBValue": [
-              128,
-              174,
-              128
-            ],
+            "recommendedDisplayRGBValue": [128, 174, 128],
             "CodeMeaning": "Tissue",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tissue",
@@ -270,11 +210,7 @@
             "SNOMEDCTConceptID": "85756007"
           },
           {
-            "recommendedDisplayRGBValue": [
-              221,
-              130,
-              101
-            ],
+            "recommendedDisplayRGBValue": [221, 130, 101],
             "CodeMeaning": "Organ",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "organ",
@@ -286,11 +222,7 @@
             "SNOMEDCTConceptID": "113343008"
           },
           {
-            "recommendedDisplayRGBValue": [
-              241,
-              214,
-              145
-            ],
+            "recommendedDisplayRGBValue": [241, 214, 145],
             "CodeMeaning": "Bone",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "bone",
@@ -302,11 +234,7 @@
             "SNOMEDCTConceptID": "272673000"
           },
           {
-            "recommendedDisplayRGBValue": [
-              111,
-              184,
-              210
-            ],
+            "recommendedDisplayRGBValue": [111, 184, 210],
             "CodeMeaning": "Cartilage",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cartilage",
@@ -318,11 +246,7 @@
             "SNOMEDCTConceptID": "309312004"
           },
           {
-            "recommendedDisplayRGBValue": [
-              244,
-              214,
-              49
-            ],
+            "recommendedDisplayRGBValue": [244, 214, 49],
             "CodeMeaning": "Nerve",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "nerve",
@@ -344,11 +268,7 @@
         "contextGroupName": "SegmentationPropertyCategories",
         "Type": [
           {
-            "recommendedDisplayRGBValue": [
-              144,
-              238,
-              144
-            ],
+            "recommendedDisplayRGBValue": [144, 238, 144],
             "CodeMeaning": "Mass",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "mass",
@@ -369,11 +289,7 @@
             "SNOMEDCTConceptID": "27925004"
           },
           {
-            "recommendedDisplayRGBValue": [
-              205,
-              205,
-              100
-            ],
+            "recommendedDisplayRGBValue": [205, 205, 100],
             "CodeMeaning": "Cyst",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cyst",
@@ -385,11 +301,7 @@
             "SNOMEDCTConceptID": "367643001"
           },
           {
-            "recommendedDisplayRGBValue": [
-              145,
-              60,
-              66
-            ],
+            "recommendedDisplayRGBValue": [145, 60, 66],
             "CodeMeaning": "Blood clot",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "clot",
@@ -401,11 +313,7 @@
             "SNOMEDCTConceptID": "75753009"
           },
           {
-            "recommendedDisplayRGBValue": [
-              150,
-              98,
-              83
-            ],
+            "recommendedDisplayRGBValue": [150, 98, 83],
             "CodeMeaning": "Embolus",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "embolism",
@@ -417,11 +325,7 @@
             "SNOMEDCTConceptID": "55584005"
           },
           {
-            "recommendedDisplayRGBValue": [
-              140,
-              224,
-              228
-            ],
+            "recommendedDisplayRGBValue": [140, 224, 228],
             "CodeMeaning": "Edema",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "edema",
@@ -433,11 +337,7 @@
             "SNOMEDCTConceptID": "79654002"
           },
           {
-            "recommendedDisplayRGBValue": [
-              188,
-              65,
-              28
-            ],
+            "recommendedDisplayRGBValue": [188, 65, 28],
             "CodeMeaning": "Hemorrhage",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "bleeding",
@@ -467,11 +367,7 @@
             "SNOMEDCTConceptID": "44132006"
           },
           {
-            "recommendedDisplayRGBValue": [
-              216,
-              191,
-              216
-            ],
+            "recommendedDisplayRGBValue": [216, 191, 216],
             "CodeMeaning": "Necrosis",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "necrosis",
@@ -520,11 +416,7 @@
         "contextGroupName": "SegmentationPropertyCategories",
         "Type": [
           {
-            "recommendedDisplayRGBValue": [
-              218,
-              255,
-              255
-            ],
+            "recommendedDisplayRGBValue": [218, 255, 255],
             "CodeMeaning": "Gas",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "gas",
@@ -536,11 +428,7 @@
             "SNOMEDCTConceptID": "74947009"
           },
           {
-            "recommendedDisplayRGBValue": [
-              78,
-              63,
-              0
-            ],
+            "recommendedDisplayRGBValue": [78, 63, 0],
             "CodeMeaning": "Feces",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "feces",
@@ -552,11 +440,7 @@
             "SNOMEDCTConceptID": "39477002"
           },
           {
-            "recommendedDisplayRGBValue": [
-              0,
-              145,
-              30
-            ],
+            "recommendedDisplayRGBValue": [0, 145, 30],
             "CodeMeaning": "Bile",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "bile",
@@ -568,11 +452,7 @@
             "SNOMEDCTConceptID": "70150004"
           },
           {
-            "recommendedDisplayRGBValue": [
-              214,
-              230,
-              130
-            ],
+            "recommendedDisplayRGBValue": [214, 230, 130],
             "CodeMeaning": "Urine",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "urine",
@@ -584,11 +464,7 @@
             "SNOMEDCTConceptID": "78014005"
           },
           {
-            "recommendedDisplayRGBValue": [
-              170,
-              250,
-              250
-            ],
+            "recommendedDisplayRGBValue": [170, 250, 250],
             "CodeMeaning": "Body fluid",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "fluid",
@@ -1040,11 +916,7 @@
             "SNOMEDCTConceptID": "102320000"
           },
           {
-            "recommendedDisplayRGBValue": [
-              240,
-              255,
-              30
-            ],
+            "recommendedDisplayRGBValue": [240, 255, 30],
             "CodeMeaning": "Needle",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "needle",
@@ -1101,11 +973,7 @@
             "SNOMEDCTConceptID": "57126000"
           },
           {
-            "recommendedDisplayRGBValue": [
-              220,
-              245,
-              20
-            ],
+            "recommendedDisplayRGBValue": [220, 245, 20],
             "CodeMeaning": "Foreign body",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "foreign object",
@@ -1307,11 +1175,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  125,
-                  102,
-                  154
-                ],
+                "recommendedDisplayRGBValue": [125, 102, 154],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right arcuate fasciculus",
@@ -1323,11 +1187,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  125,
-                  102,
-                  154
-                ],
+                "recommendedDisplayRGBValue": [125, 102, 154],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left arcuate fasciculus",
@@ -1620,11 +1480,7 @@
             "SNOMEDCTConceptID": "416631005"
           },
           {
-            "recommendedDisplayRGBValue": [
-              173,
-              121,
-              88
-            ],
+            "recommendedDisplayRGBValue": [173, 121, 88],
             "CodeMeaning": "Skin of chest",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skin of thoracic wall",
@@ -1636,11 +1492,7 @@
             "SNOMEDCTConceptID": "74160004"
           },
           {
-            "recommendedDisplayRGBValue": [
-              177,
-              124,
-              92
-            ],
+            "recommendedDisplayRGBValue": [177, 124, 92],
             "CodeMeaning": "Skin of abdomen",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skin of abdominal wall",
@@ -1737,11 +1589,7 @@
             "SNOMEDCTConceptID": "110517009"
           },
           {
-            "recommendedDisplayRGBValue": [
-              241,
-              213,
-              144
-            ],
+            "recommendedDisplayRGBValue": [241, 213, 144],
             "CodeMeaning": "Skull",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skull",
@@ -1803,11 +1651,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  203,
-                  179,
-                  77
-                ],
+                "recommendedDisplayRGBValue": [203, 179, 77],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right frontal bone",
@@ -1819,11 +1663,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  203,
-                  179,
-                  77
-                ],
+                "recommendedDisplayRGBValue": [203, 179, 77],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left frontal bone",
@@ -1856,11 +1696,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  229,
-                  204,
-                  109
-                ],
+                "recommendedDisplayRGBValue": [229, 204, 109],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right parietal bone",
@@ -1872,11 +1708,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  229,
-                  204,
-                  109
-                ],
+                "recommendedDisplayRGBValue": [229, 204, 109],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left parietal bone",
@@ -1909,11 +1741,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  255,
-                  243,
-                  152
-                ],
+                "recommendedDisplayRGBValue": [255, 243, 152],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right temporal bone",
@@ -1925,11 +1753,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  255,
-                  243,
-                  152
-                ],
+                "recommendedDisplayRGBValue": [255, 243, 152],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left temporal bone",
@@ -1991,11 +1815,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              230,
-              138
-            ],
+            "recommendedDisplayRGBValue": [255, 230, 138],
             "CodeMeaning": "Occipital bone",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "occipital bone",
@@ -2056,11 +1876,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  209,
-                  185,
-                  85
-                ],
+                "recommendedDisplayRGBValue": [209, 185, 85],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right sphenoid bone",
@@ -2072,11 +1888,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  209,
-                  185,
-                  85
-                ],
+                "recommendedDisplayRGBValue": [209, 185, 85],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left sphenoid bone",
@@ -2109,11 +1921,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  248,
-                  223,
-                  131
-                ],
+                "recommendedDisplayRGBValue": [248, 223, 131],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right ethmoid bone",
@@ -2125,11 +1933,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  248,
-                  223,
-                  131
-                ],
+                "recommendedDisplayRGBValue": [248, 223, 131],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left ethmoid bone",
@@ -2201,11 +2005,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  242,
-                  217,
-                  123
-                ],
+                "recommendedDisplayRGBValue": [242, 217, 123],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right palatine bone",
@@ -2217,11 +2017,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  242,
-                  217,
-                  123
-                ],
+                "recommendedDisplayRGBValue": [242, 217, 123],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left palatine bone",
@@ -2283,11 +2079,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              196,
-              172,
-              68
-            ],
+            "recommendedDisplayRGBValue": [196, 172, 68],
             "CodeMeaning": "Maxilla",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "maxilla",
@@ -2329,11 +2121,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              222,
-              198,
-              101
-            ],
+            "recommendedDisplayRGBValue": [222, 198, 101],
             "CodeMeaning": "Mandible",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "mandible",
@@ -2346,11 +2134,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              250,
-              210,
-              139
-            ],
+            "recommendedDisplayRGBValue": [250, 210, 139],
             "CodeMeaning": "Hyoid bone",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "hyoid bone",
@@ -2373,11 +2157,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              244,
-              217,
-              154
-            ],
+            "recommendedDisplayRGBValue": [244, 217, 154],
             "CodeMeaning": "Sternum",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "sternum",
@@ -2439,11 +2219,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              253,
-              232,
-              158
-            ],
+            "recommendedDisplayRGBValue": [253, 232, 158],
             "CodeMeaning": "Rib",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "ribs",
@@ -2494,11 +2270,7 @@
             "SNOMEDCTConceptID": "44300000"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              255,
-              207
-            ],
+            "recommendedDisplayRGBValue": [255, 255, 207],
             "CodeMeaning": "Cervical spine",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cervical vertebral column",
@@ -2511,11 +2283,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              226,
-              202,
-              134
-            ],
+            "recommendedDisplayRGBValue": [226, 202, 134],
             "CodeMeaning": "Thoracic spine",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thoracic vertebral column",
@@ -2528,11 +2296,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              212,
-              188,
-              102
-            ],
+            "recommendedDisplayRGBValue": [212, 188, 102],
             "CodeMeaning": "Lumbar spine",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lumbar vertebral column",
@@ -2624,11 +2388,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  205,
-                  179,
-                  108
-                ],
+                "recommendedDisplayRGBValue": [205, 179, 108],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right clavicle",
@@ -2640,11 +2400,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  205,
-                  179,
-                  108
-                ],
+                "recommendedDisplayRGBValue": [205, 179, 108],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left clavicle",
@@ -2745,11 +2501,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              238,
-              170
-            ],
+            "recommendedDisplayRGBValue": [255, 238, 170],
             "CodeMeaning": "Bone of lower limb",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skeleton of lower limb",
@@ -2956,11 +2708,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              201,
-              121,
-              77
-            ],
+            "recommendedDisplayRGBValue": [201, 121, 77],
             "CodeMeaning": "Muscle of head",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of head",
@@ -3002,11 +2750,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              213,
-              124,
-              109
-            ],
+            "recommendedDisplayRGBValue": [213, 124, 109],
             "CodeMeaning": "Muscle of neck",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of neck",
@@ -3126,11 +2870,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              194,
-              98,
-              79
-            ],
+            "recommendedDisplayRGBValue": [194, 98, 79],
             "CodeMeaning": "Muscle of upper limb",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of upper limb",
@@ -3376,11 +3116,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              171,
-              85,
-              68
-            ],
+            "recommendedDisplayRGBValue": [171, 85, 68],
             "CodeMeaning": "Abdominal wall muscle",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of abdominal wall",
@@ -3596,11 +3332,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              188,
-              95,
-              76
-            ],
+            "recommendedDisplayRGBValue": [188, 95, 76],
             "CodeMeaning": "Chest wall muscle",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of thoracic wall",
@@ -3873,11 +3605,7 @@
             "SNOMEDCTConceptID": "244933000"
           },
           {
-            "recommendedDisplayRGBValue": [
-              206,
-              111,
-              93
-            ],
+            "recommendedDisplayRGBValue": [206, 111, 93],
             "CodeMeaning": "Muscle of lower limb",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of lower limb",
@@ -4026,11 +3754,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right elbow",
@@ -4042,11 +3766,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left elbow",
@@ -4079,11 +3799,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right wrist",
@@ -4095,11 +3811,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left wrist",
@@ -4210,11 +3922,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right hip",
@@ -4226,11 +3934,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left hip",
@@ -4445,11 +4149,7 @@
             "SNOMEDCTConceptID": "312535008"
           },
           {
-            "recommendedDisplayRGBValue": [
-              177,
-              122,
-              101
-            ],
+            "recommendedDisplayRGBValue": [177, 122, 101],
             "CodeMeaning": "Nose",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "nose",
@@ -4472,11 +4172,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              237,
-              145
-            ],
+            "recommendedDisplayRGBValue": [255, 237, 145],
             "CodeMeaning": "Vomer bone",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "vomer bone",
@@ -4516,11 +4212,7 @@
             "SNOMEDCTConceptID": "18962004"
           },
           {
-            "recommendedDisplayRGBValue": [
-              150,
-              208,
-              243
-            ],
+            "recommendedDisplayRGBValue": [150, 208, 243],
             "CodeMeaning": "Larynx",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "larynx",
@@ -4533,11 +4225,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              182,
-              228,
-              255
-            ],
+            "recommendedDisplayRGBValue": [182, 228, 255],
             "CodeMeaning": "Trachea",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "trachea",
@@ -4560,11 +4248,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              175,
-              216,
-              244
-            ],
+            "recommendedDisplayRGBValue": [175, 216, 244],
             "CodeMeaning": "Bronchus",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "bronchi",
@@ -4636,11 +4320,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  197,
-                  165,
-                  145
-                ],
+                "recommendedDisplayRGBValue": [197, 165, 145],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right lung",
@@ -4652,11 +4332,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  197,
-                  165,
-                  145
-                ],
+                "recommendedDisplayRGBValue": [197, 165, 145],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left lung",
@@ -4796,11 +4472,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              202,
-              164,
-              140
-            ],
+            "recommendedDisplayRGBValue": [202, 164, 140],
             "CodeMeaning": "Middle lobe of right lung",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "middle lobe of right lung",
@@ -4862,11 +4534,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  172,
-                  138,
-                  115
-                ],
+                "recommendedDisplayRGBValue": [172, 138, 115],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "superior lobe of right lung",
@@ -4878,11 +4546,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  172,
-                  138,
-                  115
-                ],
+                "recommendedDisplayRGBValue": [172, 138, 115],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "superior lobe of left lung",
@@ -4915,11 +4579,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  224,
-                  186,
-                  162
-                ],
+                "recommendedDisplayRGBValue": [224, 186, 162],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "inferior lobe of right lung",
@@ -4931,11 +4591,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  224,
-                  186,
-                  162
-                ],
+                "recommendedDisplayRGBValue": [224, 186, 162],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "inferior lobe of left lung",
@@ -4958,11 +4614,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              245,
-              217
-            ],
+            "recommendedDisplayRGBValue": [255, 245, 217],
             "CodeMeaning": "Pleura",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pleura",
@@ -5004,11 +4656,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              213,
-              99,
-              79
-            ],
+            "recommendedDisplayRGBValue": [213, 99, 79],
             "CodeMeaning": "Cardiovascular system",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "circulatory system",
@@ -5021,11 +4669,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              206,
-              110,
-              84
-            ],
+            "recommendedDisplayRGBValue": [206, 110, 84],
             "CodeMeaning": "Heart",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "heart",
@@ -5077,11 +4721,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              233,
-              138,
-              112
-            ],
+            "recommendedDisplayRGBValue": [233, 138, 112],
             "CodeMeaning": "Interatrial septum",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "atrial septum",
@@ -5103,11 +4743,7 @@
             "SNOMEDCTConceptID": "128586007"
           },
           {
-            "recommendedDisplayRGBValue": [
-              210,
-              115,
-              89
-            ],
+            "recommendedDisplayRGBValue": [210, 115, 89],
             "CodeMeaning": "Right atrium",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "right atrium",
@@ -5130,11 +4766,7 @@
             "paired": "N"
           },
           {
-            "recommendedDisplayRGBValue": [
-              203,
-              108,
-              81
-            ],
+            "recommendedDisplayRGBValue": [203, 108, 81],
             "CodeMeaning": "Left atrium",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "left atrium",
@@ -5196,11 +4828,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              195,
-              100,
-              73
-            ],
+            "recommendedDisplayRGBValue": [195, 100, 73],
             "CodeMeaning": "Interventricular septum",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "ventricular septum",
@@ -5252,11 +4880,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              181,
-              85,
-              57
-            ],
+            "recommendedDisplayRGBValue": [181, 85, 57],
             "CodeMeaning": "Right ventricle",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "right ventricle of heart",
@@ -5298,11 +4922,7 @@
             "paired": "N"
           },
           {
-            "recommendedDisplayRGBValue": [
-              152,
-              55,
-              13
-            ],
+            "recommendedDisplayRGBValue": [152, 55, 13],
             "CodeMeaning": "Left ventricle",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "left ventricle of heart",
@@ -5383,11 +5003,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              166,
-              70,
-              38
-            ],
+            "recommendedDisplayRGBValue": [166, 70, 38],
             "CodeMeaning": "Tricuspid Valve",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tricuspid valve",
@@ -5400,11 +5016,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              225,
-              130,
-              104
-            ],
+            "recommendedDisplayRGBValue": [225, 130, 104],
             "CodeMeaning": "Pulmonary valve",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pulmonary valve",
@@ -5426,11 +5038,7 @@
             "SNOMEDCTConceptID": "90315007"
           },
           {
-            "recommendedDisplayRGBValue": [
-              159,
-              63,
-              27
-            ],
+            "recommendedDisplayRGBValue": [159, 63, 27],
             "CodeMeaning": "Mitral Valve",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "mitral valve",
@@ -5443,11 +5051,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              218,
-              123,
-              97
-            ],
+            "recommendedDisplayRGBValue": [218, 123, 97],
             "CodeMeaning": "Aortic Valve",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "aortic valve",
@@ -5460,11 +5064,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              244,
-              209
-            ],
+            "recommendedDisplayRGBValue": [255, 244, 209],
             "CodeMeaning": "Pericardium",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pericardium",
@@ -5477,11 +5077,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              184,
-              122,
-              154
-            ],
+            "recommendedDisplayRGBValue": [184, 122, 154],
             "CodeMeaning": "Pericardial cavity",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pericardial cavity",
@@ -5572,11 +5168,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              216,
-              101,
-              79
-            ],
+            "recommendedDisplayRGBValue": [216, 101, 79],
             "CodeMeaning": "Artery",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "artery",
@@ -5618,11 +5210,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              217,
-              102,
-              81
-            ],
+            "recommendedDisplayRGBValue": [217, 102, 81],
             "CodeMeaning": "Systemic artery",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "systemic arterial system",
@@ -5652,11 +5240,7 @@
             "SNOMEDCTConceptID": "299716001"
           },
           {
-            "recommendedDisplayRGBValue": [
-              224,
-              97,
-              76
-            ],
+            "recommendedDisplayRGBValue": [224, 97, 76],
             "CodeMeaning": "Aorta",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "aorta",
@@ -6109,11 +5693,7 @@
             "paired": "N"
           },
           {
-            "recommendedDisplayRGBValue": [
-              0,
-              122,
-              171
-            ],
+            "recommendedDisplayRGBValue": [0, 122, 171],
             "CodeMeaning": "Pulmonary artery",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pulmonary arterial system",
@@ -7809,11 +7389,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              0,
-              151,
-              206
-            ],
+            "recommendedDisplayRGBValue": [0, 151, 206],
             "CodeMeaning": "Vein",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "vein",
@@ -7894,11 +7470,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              0,
-              147,
-              202
-            ],
+            "recommendedDisplayRGBValue": [0, 147, 202],
             "CodeMeaning": "Systemic vein",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "systemic venous system",
@@ -8155,11 +7727,7 @@
             "paired": "N"
           },
           {
-            "recommendedDisplayRGBValue": [
-              186,
-              77,
-              64
-            ],
+            "recommendedDisplayRGBValue": [186, 77, 64],
             "CodeMeaning": "Pulmonary vein",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pulmonary venous system",
@@ -8712,11 +8280,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              182,
-              105,
-              107
-            ],
+            "recommendedDisplayRGBValue": [182, 105, 107],
             "CodeMeaning": "Soft palate",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "soft palate",
@@ -8729,11 +8293,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              188,
-              91,
-              95
-            ],
+            "recommendedDisplayRGBValue": [188, 91, 95],
             "CodeMeaning": "Lip",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lips",
@@ -8746,11 +8306,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              166,
-              84,
-              94
-            ],
+            "recommendedDisplayRGBValue": [166, 84, 94],
             "CodeMeaning": "Tongue",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tongue",
@@ -8763,11 +8319,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              250,
-              220
-            ],
+            "recommendedDisplayRGBValue": [255, 250, 220],
             "CodeMeaning": "Tooth",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "teeth",
@@ -8809,11 +8361,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              184,
-              105,
-              108
-            ],
+            "recommendedDisplayRGBValue": [184, 105, 108],
             "CodeMeaning": "Pharynx",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pharynx",
@@ -8836,11 +8384,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              211,
-              171,
-              143
-            ],
+            "recommendedDisplayRGBValue": [211, 171, 143],
             "CodeMeaning": "Esophagus",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "esophagus",
@@ -8853,11 +8397,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              216,
-              132,
-              105
-            ],
+            "recommendedDisplayRGBValue": [216, 132, 105],
             "CodeMeaning": "Stomach",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "stomach",
@@ -8870,11 +8410,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              205,
-              167,
-              142
-            ],
+            "recommendedDisplayRGBValue": [205, 167, 142],
             "CodeMeaning": "Small Intestine",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "small bowel",
@@ -8887,11 +8423,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              253,
-              229
-            ],
+            "recommendedDisplayRGBValue": [255, 253, 229],
             "CodeMeaning": "Duodenum",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "duodenum",
@@ -8934,11 +8466,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              204,
-              168,
-              143
-            ],
+            "recommendedDisplayRGBValue": [204, 168, 143],
             "CodeMeaning": "Colon",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "colon",
@@ -8980,11 +8508,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              224,
-              199
-            ],
+            "recommendedDisplayRGBValue": [255, 224, 199],
             "CodeMeaning": "Anus",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "anus",
@@ -8997,11 +8521,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              0,
-              145,
-              30
-            ],
+            "recommendedDisplayRGBValue": [0, 145, 30],
             "CodeMeaning": "Bile duct",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "biliary tree",
@@ -9043,11 +8563,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              70,
-              163,
-              117
-            ],
+            "recommendedDisplayRGBValue": [70, 163, 117],
             "CodeMeaning": "Salivary gland",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "salivary glands",
@@ -9167,11 +8683,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              221,
-              130,
-              101
-            ],
+            "recommendedDisplayRGBValue": [221, 130, 101],
             "CodeMeaning": "Liver",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "liver",
@@ -9184,11 +8696,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              139,
-              150,
-              98
-            ],
+            "recommendedDisplayRGBValue": [139, 150, 98],
             "CodeMeaning": "Gallbladder",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "gallbladder",
@@ -9201,11 +8709,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              249,
-              180,
-              111
-            ],
+            "recommendedDisplayRGBValue": [249, 180, 111],
             "CodeMeaning": "Pancreas",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pancreas",
@@ -9237,11 +8741,7 @@
             "SNOMEDCTConceptID": "110621006"
           },
           {
-            "recommendedDisplayRGBValue": [
-              203,
-              136,
-              116
-            ],
+            "recommendedDisplayRGBValue": [203, 136, 116],
             "CodeMeaning": "Urinary system",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "urinary system",
@@ -9273,11 +8773,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  185,
-                  102,
-                  83
-                ],
+                "recommendedDisplayRGBValue": [185, 102, 83],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right kidney",
@@ -9289,11 +8785,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  185,
-                  102,
-                  83
-                ],
+                "recommendedDisplayRGBValue": [185, 102, 83],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left kidney",
@@ -9404,11 +8896,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  247,
-                  182,
-                  164
-                ],
+                "recommendedDisplayRGBValue": [247, 182, 164],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right ureter",
@@ -9420,11 +8908,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  247,
-                  182,
-                  164
-                ],
+                "recommendedDisplayRGBValue": [247, 182, 164],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left ureter",
@@ -9447,11 +8931,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              222,
-              154,
-              132
-            ],
+            "recommendedDisplayRGBValue": [222, 154, 132],
             "CodeMeaning": "Bladder",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "urinary bladder",
@@ -9474,11 +8954,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              124,
-              186,
-              223
-            ],
+            "recommendedDisplayRGBValue": [124, 186, 223],
             "CodeMeaning": "Urethra",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "urethra",
@@ -9491,11 +8967,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              185,
-              135,
-              134
-            ],
+            "recommendedDisplayRGBValue": [185, 135, 134],
             "CodeMeaning": "Female external genitalia",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "female external genitalia",
@@ -9508,11 +8980,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              244,
-              170,
-              147
-            ],
+            "recommendedDisplayRGBValue": [244, 170, 147],
             "CodeMeaning": "Female internal genitalia",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "female internal genitalia",
@@ -9535,11 +9003,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              193,
-              123,
-              103
-            ],
+            "recommendedDisplayRGBValue": [193, 123, 103],
             "CodeMeaning": "Vagina",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "vagina",
@@ -9552,11 +9016,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              181,
-              158
-            ],
+            "recommendedDisplayRGBValue": [255, 181, 158],
             "CodeMeaning": "Uterus",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "uterus",
@@ -9589,11 +9049,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  213,
-                  141,
-                  113
-                ],
+                "recommendedDisplayRGBValue": [213, 141, 113],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right ovary",
@@ -9605,11 +9061,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  213,
-                  141,
-                  113
-                ],
+                "recommendedDisplayRGBValue": [213, 141, 113],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left ovary",
@@ -9642,11 +9094,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  255,
-                  190,
-                  165
-                ],
+                "recommendedDisplayRGBValue": [255, 190, 165],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right fallopian tube",
@@ -9658,11 +9106,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  227,
-                  153,
-                  130
-                ],
+                "recommendedDisplayRGBValue": [227, 153, 130],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left fallopian tube",
@@ -9694,11 +9138,7 @@
             "SNOMEDCTConceptID": "110639002"
           },
           {
-            "recommendedDisplayRGBValue": [
-              185,
-              135,
-              134
-            ],
+            "recommendedDisplayRGBValue": [185, 135, 134],
             "CodeMeaning": "Male external genitalia",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "male external genitalia",
@@ -9711,11 +9151,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              216,
-              146,
-              127
-            ],
+            "recommendedDisplayRGBValue": [216, 146, 127],
             "CodeMeaning": "Male internal genitalia",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "male internal genitalia",
@@ -9738,11 +9174,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              230,
-              158,
-              140
-            ],
+            "recommendedDisplayRGBValue": [230, 158, 140],
             "CodeMeaning": "Prostate",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "prostate",
@@ -9774,11 +9206,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  245,
-                  172,
-                  147
-                ],
+                "recommendedDisplayRGBValue": [245, 172, 147],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right seminal vesicle",
@@ -9790,11 +9218,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  245,
-                  172,
-                  147
-                ],
+                "recommendedDisplayRGBValue": [245, 172, 147],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left seminal vesicle",
@@ -9866,11 +9290,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  241,
-                  172,
-                  151
-                ],
+                "recommendedDisplayRGBValue": [241, 172, 151],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right deferent duct",
@@ -9882,11 +9302,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  241,
-                  172,
-                  151
-                ],
+                "recommendedDisplayRGBValue": [241, 172, 151],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left deferent duct",
@@ -9929,11 +9345,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  154,
-                  150,
-                  201
-                ],
+                "recommendedDisplayRGBValue": [154, 150, 201],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right limbic lobe",
@@ -9945,11 +9357,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  154,
-                  150,
-                  201
-                ],
+                "recommendedDisplayRGBValue": [154, 150, 201],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left limbic lobe",
@@ -9972,11 +9380,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              244,
-              214,
-              49
-            ],
+            "recommendedDisplayRGBValue": [244, 214, 49],
             "CodeMeaning": "Central nervous system",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "central nervous system",
@@ -9988,11 +9392,7 @@
             "SNOMEDCTConceptID": "21483005"
           },
           {
-            "recommendedDisplayRGBValue": [
-              250,
-              250,
-              210
-            ],
+            "recommendedDisplayRGBValue": [250, 250, 210],
             "CodeMeaning": "White Matter",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "white matter",
@@ -10004,11 +9404,7 @@
             "SNOMEDCTConceptID": "389080008"
           },
           {
-            "recommendedDisplayRGBValue": [
-              200,
-              200,
-              235
-            ],
+            "recommendedDisplayRGBValue": [200, 200, 235],
             "CodeMeaning": "Gray Matter",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "gray matter",
@@ -10020,11 +9416,7 @@
             "SNOMEDCTConceptID": "389081007"
           },
           {
-            "recommendedDisplayRGBValue": [
-              250,
-              250,
-              225
-            ],
+            "recommendedDisplayRGBValue": [250, 250, 225],
             "CodeMeaning": "Brain",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "brain",
@@ -10037,11 +9429,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              69,
-              110,
-              53
-            ],
+            "recommendedDisplayRGBValue": [69, 110, 53],
             "CodeMeaning": "Diencephalon",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "diencephalon",
@@ -10054,11 +9442,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              68,
-              131,
-              98
-            ],
+            "recommendedDisplayRGBValue": [68, 131, 98],
             "CodeMeaning": "Telencephalon",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "telencephalon",
@@ -10071,11 +9455,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              85,
-              188,
-              255
-            ],
+            "recommendedDisplayRGBValue": [85, 188, 255],
             "CodeMeaning": "Brain cerebrospinal fluid pathway",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "CSF space",
@@ -10087,11 +9467,7 @@
             "SNOMEDCTConceptID": "280371009"
           },
           {
-            "recommendedDisplayRGBValue": [
-              216,
-              186,
-              0
-            ],
+            "recommendedDisplayRGBValue": [216, 186, 0],
             "CodeMeaning": "Peripheral nervous system",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "peripheral nervous system",
@@ -10152,11 +9528,7 @@
             "SNOMEDCTConceptID": "244391007"
           },
           {
-            "recommendedDisplayRGBValue": [
-              224,
-              194,
-              0
-            ],
+            "recommendedDisplayRGBValue": [224, 194, 0],
             "CodeMeaning": "Peripheral nerve",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "peripheral nerve",
@@ -10198,11 +9570,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              85,
-              188,
-              255
-            ],
+            "recommendedDisplayRGBValue": [85, 188, 255],
             "CodeMeaning": "Cerebrospinal Fluid",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cerebro-spinal fluid",
@@ -10244,11 +9612,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              244,
-              209
-            ],
+            "recommendedDisplayRGBValue": [255, 244, 209],
             "CodeMeaning": "Meninges",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "meninges",
@@ -10261,11 +9625,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              244,
-              209
-            ],
+            "recommendedDisplayRGBValue": [255, 244, 209],
             "CodeMeaning": "Dura mater",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "dura mater",
@@ -10278,11 +9638,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              244,
-              209
-            ],
+            "recommendedDisplayRGBValue": [255, 244, 209],
             "CodeMeaning": "Arachnoid",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "arachnoid",
@@ -10295,11 +9651,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              244,
-              209
-            ],
+            "recommendedDisplayRGBValue": [255, 244, 209],
             "CodeMeaning": "Pia mater",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pia mater",
@@ -10312,11 +9664,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              88,
-              106,
-              215
-            ],
+            "recommendedDisplayRGBValue": [88, 106, 215],
             "CodeMeaning": "Subarachnoid space",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "subarachnoid space",
@@ -10329,11 +9677,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              88,
-              106,
-              215
-            ],
+            "recommendedDisplayRGBValue": [88, 106, 215],
             "CodeMeaning": "Brain ventricle",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "ventricles of brain",
@@ -10385,11 +9729,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  88,
-                  106,
-                  215
-                ],
+                "recommendedDisplayRGBValue": [88, 106, 215],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right lateral ventricle",
@@ -10401,11 +9741,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  88,
-                  106,
-                  215
-                ],
+                "recommendedDisplayRGBValue": [88, 106, 215],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left lateral ventricle",
@@ -10438,11 +9774,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              88,
-              106,
-              215
-            ],
+            "recommendedDisplayRGBValue": [88, 106, 215],
             "CodeMeaning": "Cerebral aqueduct",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cerebral aqueduct",
@@ -10455,11 +9787,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              88,
-              106,
-              215
-            ],
+            "recommendedDisplayRGBValue": [88, 106, 215],
             "CodeMeaning": "Fourth ventricle",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "fourth ventricle",
@@ -10472,11 +9800,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              128,
-              174,
-              128
-            ],
+            "recommendedDisplayRGBValue": [128, 174, 128],
             "CodeMeaning": "Cerebral cortex",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cerebral cortex",
@@ -10518,11 +9842,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              250,
-              250,
-              225
-            ],
+            "recommendedDisplayRGBValue": [250, 250, 225],
             "CodeMeaning": "Cerebral White Matter",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cerebral white matter",
@@ -10574,11 +9894,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  83,
-                  146,
-                  164
-                ],
+                "recommendedDisplayRGBValue": [83, 146, 164],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right frontal lobe",
@@ -10590,11 +9906,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  83,
-                  146,
-                  164
-                ],
+                "recommendedDisplayRGBValue": [83, 146, 164],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left frontal lobe",
@@ -10627,11 +9939,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  141,
-                  93,
-                  137
-                ],
+                "recommendedDisplayRGBValue": [141, 93, 137],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right parietal lobe",
@@ -10643,11 +9951,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  141,
-                  93,
-                  137
-                ],
+                "recommendedDisplayRGBValue": [141, 93, 137],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left parietal lobe",
@@ -10680,11 +9984,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  182,
-                  166,
-                  110
-                ],
+                "recommendedDisplayRGBValue": [182, 166, 110],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right occipital lobe",
@@ -10696,11 +9996,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  182,
-                  166,
-                  110
-                ],
+                "recommendedDisplayRGBValue": [182, 166, 110],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left occipital lobe",
@@ -10733,11 +10029,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  162,
-                  115,
-                  105
-                ],
+                "recommendedDisplayRGBValue": [162, 115, 105],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right temporal lobe",
@@ -10749,11 +10041,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  162,
-                  115,
-                  105
-                ],
+                "recommendedDisplayRGBValue": [162, 115, 105],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left temporal lobe",
@@ -10864,11 +10152,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  188,
-                  135,
-                  166
-                ],
+                "recommendedDisplayRGBValue": [188, 135, 166],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right insular lobe",
@@ -10880,11 +10164,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  188,
-                  135,
-                  166
-                ],
+                "recommendedDisplayRGBValue": [188, 135, 166],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left insular lobe",
@@ -10907,11 +10187,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              97,
-              113,
-              158
-            ],
+            "recommendedDisplayRGBValue": [97, 113, 158],
             "CodeMeaning": "Corpus callosum",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "corpus callosum",
@@ -10934,11 +10210,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  127,
-                  150,
-                  88
-                ],
+                "recommendedDisplayRGBValue": [127, 150, 88],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right superior longitudinal fasciculus",
@@ -10950,11 +10222,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  127,
-                  150,
-                  88
-                ],
+                "recommendedDisplayRGBValue": [127, 150, 88],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left superior longitudinal fasciculus",
@@ -10987,11 +10255,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  106,
-                  174,
-                  155
-                ],
+                "recommendedDisplayRGBValue": [106, 174, 155],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right uncinate fasciculus",
@@ -11003,11 +10267,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  106,
-                  174,
-                  155
-                ],
+                "recommendedDisplayRGBValue": [106, 174, 155],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left uncinate fasciculus",
@@ -11040,11 +10300,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  154,
-                  146,
-                  83
-                ],
+                "recommendedDisplayRGBValue": [154, 146, 83],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right cingulum bundle",
@@ -11056,11 +10312,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  154,
-                  146,
-                  83
-                ],
+                "recommendedDisplayRGBValue": [154, 146, 83],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left cingulum bundle",
@@ -11093,11 +10345,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  159,
-                  116,
-                  163
-                ],
+                "recommendedDisplayRGBValue": [159, 116, 163],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right inferior longitudinal fasciculus",
@@ -11109,11 +10357,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  159,
-                  116,
-                  163
-                ],
+                "recommendedDisplayRGBValue": [159, 116, 163],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left inferior longitudinal fasciculus",
@@ -11146,11 +10390,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  78,
-                  152,
-                  141
-                ],
+                "recommendedDisplayRGBValue": [78, 152, 141],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right optic radiation",
@@ -11162,11 +10402,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  78,
-                  152,
-                  141
-                ],
+                "recommendedDisplayRGBValue": [78, 152, 141],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left optic radiation",
@@ -11199,11 +10435,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  64,
-                  123,
-                  147
-                ],
+                "recommendedDisplayRGBValue": [64, 123, 147],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right fornix",
@@ -11215,11 +10447,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  64,
-                  123,
-                  147
-                ],
+                "recommendedDisplayRGBValue": [64, 123, 147],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left fornix",
@@ -11252,11 +10480,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  140,
-                  190
-                ],
+                "recommendedDisplayRGBValue": [177, 140, 190],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right striatum",
@@ -11268,11 +10492,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  140,
-                  190
-                ],
+                "recommendedDisplayRGBValue": [177, 140, 190],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left striatum",
@@ -11305,11 +10525,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  30,
-                  111,
-                  85
-                ],
+                "recommendedDisplayRGBValue": [30, 111, 85],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right caudate nucleus",
@@ -11321,11 +10537,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  30,
-                  111,
-                  85
-                ],
+                "recommendedDisplayRGBValue": [30, 111, 85],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left caudate nucleus",
@@ -11358,11 +10570,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  98,
-                  153,
-                  112
-                ],
+                "recommendedDisplayRGBValue": [98, 153, 112],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right amygdaloid complex",
@@ -11374,11 +10582,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  98,
-                  153,
-                  112
-                ],
+                "recommendedDisplayRGBValue": [98, 153, 112],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left amygdaloid complex",
@@ -11411,11 +10615,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  210,
-                  157,
-                  166
-                ],
+                "recommendedDisplayRGBValue": [210, 157, 166],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right putamen",
@@ -11427,11 +10627,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  210,
-                  157,
-                  166
-                ],
+                "recommendedDisplayRGBValue": [210, 157, 166],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left putamen",
@@ -11464,11 +10660,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  48,
-                  129,
-                  126
-                ],
+                "recommendedDisplayRGBValue": [48, 129, 126],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right pallidum",
@@ -11480,11 +10672,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  48,
-                  129,
-                  126
-                ],
+                "recommendedDisplayRGBValue": [48, 129, 126],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left pallidum",
@@ -11507,11 +10695,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              166,
-              113,
-              137
-            ],
+            "recommendedDisplayRGBValue": [166, 113, 137],
             "CodeMeaning": "Thalamus",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thalamus",
@@ -11524,11 +10708,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  122,
-                  101,
-                  38
-                ],
+                "recommendedDisplayRGBValue": [122, 101, 38],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right thalamus",
@@ -11540,11 +10720,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  122,
-                  101,
-                  38
-                ],
+                "recommendedDisplayRGBValue": [122, 101, 38],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left thalamus",
@@ -11567,11 +10743,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              126,
-              161,
-              197
-            ],
+            "recommendedDisplayRGBValue": [126, 161, 197],
             "CodeMeaning": "Posterior cerebral commissure",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "posterior commissure",
@@ -11584,11 +10756,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              145,
-              92,
-              109
-            ],
+            "recommendedDisplayRGBValue": [145, 92, 109],
             "CodeMeaning": "Midbrain",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "midbrain",
@@ -11601,11 +10769,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              46,
-              101,
-              131
-            ],
+            "recommendedDisplayRGBValue": [46, 101, 131],
             "CodeMeaning": "Substantia nigra",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "substantia nigra",
@@ -11618,11 +10782,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  0,
-                  108,
-                  112
-                ],
+                "recommendedDisplayRGBValue": [0, 108, 112],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right substantia nigra",
@@ -11634,11 +10794,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  0,
-                  108,
-                  112
-                ],
+                "recommendedDisplayRGBValue": [0, 108, 112],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left substantia nigra",
@@ -11671,11 +10827,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  174,
-                  140,
-                  103
-                ],
+                "recommendedDisplayRGBValue": [174, 140, 103],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right medial lemniscus",
@@ -11687,11 +10839,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  174,
-                  140,
-                  103
-                ],
+                "recommendedDisplayRGBValue": [174, 140, 103],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left medial lemniscus",
@@ -11724,11 +10872,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              194,
-              195,
-              164
-            ],
+            "recommendedDisplayRGBValue": [194, 195, 164],
             "CodeMeaning": "Cerebellar white matter",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cerebellar white matter",
@@ -11751,11 +10895,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  139,
-                  126,
-                  177
-                ],
+                "recommendedDisplayRGBValue": [139, 126, 177],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right superior cerebellar peduncle",
@@ -11767,11 +10907,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  139,
-                  126,
-                  177
-                ],
+                "recommendedDisplayRGBValue": [139, 126, 177],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left superior cerebellar peduncle",
@@ -11804,11 +10940,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  148,
-                  120,
-                  72
-                ],
+                "recommendedDisplayRGBValue": [148, 120, 72],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right middle cerebellar peduncle",
@@ -11820,11 +10952,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  148,
-                  120,
-                  72
-                ],
+                "recommendedDisplayRGBValue": [148, 120, 72],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left middle cerebellar peduncle",
@@ -11857,11 +10985,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  186,
-                  135,
-                  135
-                ],
+                "recommendedDisplayRGBValue": [186, 135, 135],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right inferior cerebellar peduncle",
@@ -11873,11 +10997,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  186,
-                  135,
-                  135
-                ],
+                "recommendedDisplayRGBValue": [186, 135, 135],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left inferior cerebellar peduncle",
@@ -11900,11 +11020,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              244,
-              214,
-              49
-            ],
+            "recommendedDisplayRGBValue": [244, 214, 49],
             "CodeMeaning": "Spinal cord",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "spinal cord",
@@ -11917,11 +11033,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              200,
-              200,
-              215
-            ],
+            "recommendedDisplayRGBValue": [200, 200, 215],
             "CodeMeaning": "Spinal cord gray matter",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "gray matter of spinal cord",
@@ -11934,11 +11046,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              250,
-              250,
-              225
-            ],
+            "recommendedDisplayRGBValue": [250, 250, 225],
             "CodeMeaning": "Spinal cord white matter",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "white matter of spinal cord",
@@ -11961,11 +11069,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  201,
-                  160,
-                  133
-                ],
+                "recommendedDisplayRGBValue": [201, 160, 133],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right corticospinal tract",
@@ -11977,11 +11081,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  201,
-                  160,
-                  133
-                ],
+                "recommendedDisplayRGBValue": [201, 160, 133],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left corticospinal tract",
@@ -12004,11 +11104,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              234,
-              92
-            ],
+            "recommendedDisplayRGBValue": [255, 234, 92],
             "CodeMeaning": "Cranial nerve",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cranial nerves",
@@ -12050,11 +11146,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              99,
-              106,
-              24
-            ],
+            "recommendedDisplayRGBValue": [99, 106, 24],
             "CodeMeaning": "Optic chiasm",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "optic chiasm",
@@ -12077,11 +11169,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  156,
-                  171,
-                  108
-                ],
+                "recommendedDisplayRGBValue": [156, 171, 108],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right optic tract",
@@ -12093,11 +11181,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  156,
-                  171,
-                  108
-                ],
+                "recommendedDisplayRGBValue": [156, 171, 108],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left optic tract",
@@ -12120,11 +11204,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              240,
-              210,
-              35
-            ],
+            "recommendedDisplayRGBValue": [240, 210, 35],
             "CodeMeaning": "Vagus nerve",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "vagus nerve",
@@ -12205,11 +11285,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              226,
-              77
-            ],
+            "recommendedDisplayRGBValue": [255, 226, 77],
             "CodeMeaning": "Autonomic nerve",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "autonomic nerve",
@@ -12251,11 +11327,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              243,
-              106
-            ],
+            "recommendedDisplayRGBValue": [255, 243, 106],
             "CodeMeaning": "Sympathetic trunk",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "sympathetic trunk",
@@ -12424,11 +11496,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  194,
-                  142,
-                  0
-                ],
+                "recommendedDisplayRGBValue": [194, 142, 0],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right eyeball",
@@ -12440,11 +11508,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  194,
-                  142,
-                  0
-                ],
+                "recommendedDisplayRGBValue": [194, 142, 0],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left eyeball",
@@ -12555,11 +11619,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  174,
-                  122,
-                  90
-                ],
+                "recommendedDisplayRGBValue": [174, 122, 90],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right external ear",
@@ -12571,11 +11631,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  174,
-                  122,
-                  90
-                ],
+                "recommendedDisplayRGBValue": [174, 122, 90],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left external ear",
@@ -12647,11 +11703,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  201,
-                  112,
-                  73
-                ],
+                "recommendedDisplayRGBValue": [201, 112, 73],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right middle ear",
@@ -12663,11 +11715,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  201,
-                  112,
-                  73
-                ],
+                "recommendedDisplayRGBValue": [201, 112, 73],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left middle ear",
@@ -12700,11 +11748,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  229,
-                  147,
-                  118
-                ],
+                "recommendedDisplayRGBValue": [229, 147, 118],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right inner ear",
@@ -12716,11 +11760,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  229,
-                  147,
-                  118
-                ],
+                "recommendedDisplayRGBValue": [229, 147, 118],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left inner ear",
@@ -12752,11 +11792,7 @@
             "SNOMEDCTConceptID": "361078006"
           },
           {
-            "recommendedDisplayRGBValue": [
-              57,
-              157,
-              110
-            ],
+            "recommendedDisplayRGBValue": [57, 157, 110],
             "CodeMeaning": "Pituitary",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pituitary gland",
@@ -12769,11 +11805,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              60,
-              143,
-              83
-            ],
+            "recommendedDisplayRGBValue": [60, 143, 83],
             "CodeMeaning": "Adenohypophysis",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "adenohypophysis",
@@ -12786,11 +11818,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              92,
-              162,
-              109
-            ],
+            "recommendedDisplayRGBValue": [92, 162, 109],
             "CodeMeaning": "Neurohypophysis",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "neurohypophysis",
@@ -12803,11 +11831,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              253,
-              135,
-              192
-            ],
+            "recommendedDisplayRGBValue": [253, 135, 192],
             "CodeMeaning": "Pineal Gland",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pineal gland",
@@ -12830,11 +11854,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  249,
-                  186,
-                  150
-                ],
+                "recommendedDisplayRGBValue": [249, 186, 150],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right adrenal gland",
@@ -12846,11 +11866,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  249,
-                  186,
-                  150
-                ],
+                "recommendedDisplayRGBValue": [249, 186, 150],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left adrenal gland",
@@ -12912,11 +11928,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              62,
-              162,
-              114
-            ],
+            "recommendedDisplayRGBValue": [62, 162, 114],
             "CodeMeaning": "Thyroid",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thyroid gland",
@@ -12939,11 +11951,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  62,
-                  162,
-                  114
-                ],
+                "recommendedDisplayRGBValue": [62, 162, 114],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right parathyroid glands",
@@ -12955,11 +11963,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  62,
-                  162,
-                  114
-                ],
+                "recommendedDisplayRGBValue": [62, 162, 114],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left parathyroid glands",
@@ -12982,11 +11986,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              157,
-              108,
-              162
-            ],
+            "recommendedDisplayRGBValue": [157, 108, 162],
             "CodeMeaning": "Spleen",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "spleen",
@@ -12999,11 +11999,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              68,
-              172,
-              100
-            ],
+            "recommendedDisplayRGBValue": [68, 172, 100],
             "CodeMeaning": "Lymph node",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lymph node",
@@ -13055,11 +12051,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              47,
-              150,
-              103
-            ],
+            "recommendedDisplayRGBValue": [47, 150, 103],
             "CodeMeaning": "Thymus",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thymus",
@@ -13081,11 +12073,7 @@
             "SNOMEDCTConceptID": "38266002"
           },
           {
-            "recommendedDisplayRGBValue": [
-              242,
-              206,
-              142
-            ],
+            "recommendedDisplayRGBValue": [242, 206, 142],
             "CodeMeaning": "Bone structure of head and/or neck",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skeleton of neck",
@@ -13133,11 +12121,7 @@
             "SNOMEDCTConceptID": "297173004"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              239,
-              172
-            ],
+            "recommendedDisplayRGBValue": [255, 239, 172],
             "CodeMeaning": "Bone of thorax",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skeleton of thorax",
@@ -13313,11 +12297,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              198,
-              175,
-              125
-            ],
+            "recommendedDisplayRGBValue": [198, 175, 125],
             "CodeMeaning": "Bone of upper limb",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skeleton of upper limb",
@@ -13369,11 +12349,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              177,
-              122,
-              101
-            ],
+            "recommendedDisplayRGBValue": [177, 122, 101],
             "CodeMeaning": "Head",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "head",
@@ -13514,11 +12490,7 @@
             ]
           },
           {
-            "recommendedDisplayRGBValue": [
-              177,
-              122,
-              101
-            ],
+            "recommendedDisplayRGBValue": [177, 122, 101],
             "CodeMeaning": "Neck",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "neck",
@@ -13609,11 +12581,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right shoulder",
@@ -13625,11 +12593,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left shoulder",
@@ -13768,11 +12732,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              177,
-              122,
-              101
-            ],
+            "recommendedDisplayRGBValue": [177, 122, 101],
             "CodeMeaning": "Chest",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thorax",
@@ -13813,11 +12773,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              244,
-              209
-            ],
+            "recommendedDisplayRGBValue": [255, 244, 209],
             "CodeMeaning": "Mediastinum",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "mediastinum",
@@ -13850,11 +12806,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              177,
-              122,
-              101
-            ],
+            "recommendedDisplayRGBValue": [177, 122, 101],
             "CodeMeaning": "Abdomen",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "abdomen",
@@ -13867,11 +12819,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              186,
-              124,
-              161
-            ],
+            "recommendedDisplayRGBValue": [186, 124, 161],
             "CodeMeaning": "Abdominal cavity",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "abdominal cavity",
@@ -13983,11 +12931,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              255,
-              255,
-              220
-            ],
+            "recommendedDisplayRGBValue": [255, 255, 220],
             "CodeMeaning": "Peritioneum",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "peritoneum",
@@ -14000,11 +12944,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              204,
-              142,
-              178
-            ],
+            "recommendedDisplayRGBValue": [204, 142, 178],
             "CodeMeaning": "Peritoneal cavity",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "peritoneal cavity",
@@ -14027,11 +12967,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              234,
-              234,
-              194
-            ],
+            "recommendedDisplayRGBValue": [234, 234, 194],
             "CodeMeaning": "Omentum",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "omentum",
@@ -14044,11 +12980,7 @@
             "paired": "U"
           },
           {
-            "recommendedDisplayRGBValue": [
-              180,
-              119,
-              153
-            ],
+            "recommendedDisplayRGBValue": [180, 119, 153],
             "CodeMeaning": "Retroperitoneal space",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "retroperitoneal space",
@@ -14138,11 +13070,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right upper limb",
@@ -14154,11 +13082,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left upper limb",
@@ -14230,11 +13154,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right arm",
@@ -14246,11 +13166,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left arm",
@@ -14283,11 +13199,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right forearm",
@@ -14299,11 +13211,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left forearm",
@@ -14336,11 +13244,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right hand",
@@ -14352,11 +13256,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left hand",
@@ -14467,11 +13367,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right lower limb",
@@ -14483,11 +13379,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left lower limb",
@@ -14520,11 +13412,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right thigh",
@@ -14536,11 +13424,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left thigh",
@@ -14573,11 +13457,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right knee",
@@ -14589,11 +13469,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left knee",
@@ -14674,11 +13550,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right leg",
@@ -14690,11 +13562,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left leg",
@@ -14727,11 +13595,7 @@
             "paired": "Y",
             "Modifier": [
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Right",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right foot",
@@ -14743,11 +13607,7 @@
                 "SNOMEDCTConceptID": "24028007"
               },
               {
-                "recommendedDisplayRGBValue": [
-                  177,
-                  122,
-                  101
-                ],
+                "recommendedDisplayRGBValue": [177, 122, 101],
                 "CodeMeaning": "Left",
                 "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left foot",
@@ -14970,11 +13830,7 @@
             "contextGroupName": "AbstractSegmentationTypes"
           },
           {
-            "recommendedDisplayRGBValue": [
-              0,
-              0,
-              0
-            ],
+            "recommendedDisplayRGBValue": [0, 0, 0],
             "CodeMeaning": "Background",
             "CodingSchemeDesignator": "DCM",
             "3dSlicerLabel": "background",
@@ -14999,11 +13855,7 @@
             "contextGroupName": "AbstractSegmentationTypes"
           },
           {
-            "recommendedDisplayRGBValue": [
-              78,
-              63,
-              0
-            ],
+            "recommendedDisplayRGBValue": [78, 63, 0],
             "CodeMeaning": "Waste Material",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "waste",
@@ -15015,11 +13867,7 @@
             "SNOMEDCTConceptID": "289925000"
           },
           {
-            "recommendedDisplayRGBValue": [
-              128,
-              174,
-              128
-            ],
+            "recommendedDisplayRGBValue": [128, 174, 128],
             "CodeMeaning": "Tissue",
             "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tissue",

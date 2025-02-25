@@ -18,7 +18,6 @@ class VRPresetSelect(VSelect):
     """
 
     def __init__(self, server: Server, slicer_app: SlicerApp):
-
         super().__init__(
             items=(StateId.vr_presets,),
             v_model=(StateId.vr_preset_value,),
@@ -28,9 +27,12 @@ class VRPresetSelect(VSelect):
         self._populate_presets()
 
         with self:
-            with Template(v_slot_item="{props}"), VListItem(v_bind="props"), Template(
-                v_slot_prepend=""
-            ), Span(classes="pr-2"):
+            with (
+                Template(v_slot_item="{props}"),
+                VListItem(v_bind="props"),
+                Template(v_slot_prepend=""),
+                Span(classes="pr-2"),
+            ):
                 VImg(src=("props.data",), height=64, width=64)
 
             with Template(v_slot_selection="{item}"):

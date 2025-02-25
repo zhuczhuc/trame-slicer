@@ -1,8 +1,8 @@
+from _weakref import ref
+from collections.abc import Callable
 from itertools import count
-from typing import Callable, Optional, Union
 from weakref import WeakMethod
 
-from _weakref import ref
 from vtkmodules.vtkCommonCore import vtkObject
 
 
@@ -15,7 +15,7 @@ class VtkEventDispatcher:
     def __init__(self):
         self._weak_obs: list[WeakMethod] = []
         self._inst_obs: set[Callable] = set()
-        self._vtk_obj: dict[int, tuple[ref, int]] = dict()
+        self._vtk_obj: dict[int, tuple[ref, int]] = {}
         self._obs_id = count()
         self._trigger_args = []
         self._trigger_kwargs = {}
@@ -30,14 +30,14 @@ class VtkEventDispatcher:
     def attach_vtk_observer(
         self,
         vtk_obj: vtkObject,
-        observed_event: Union[int, str],
+        observed_event: int | str,
     ) -> int:
         vtk_obj_obs_id = vtk_obj.AddObserver(observed_event, self.trigger_dispatch)
         _obs_id = next(self._obs_id)
         self._vtk_obj[_obs_id] = (ref(vtk_obj), vtk_obj_obs_id)
         return _obs_id
 
-    def detach_vtk_observer(self, obs_id: Optional[int]) -> None:
+    def detach_vtk_observer(self, obs_id: int | None) -> None:
         if obs_id not in self._vtk_obj:
             return
 

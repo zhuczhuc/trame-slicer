@@ -3,3 +3,9 @@ from .rca_view_factory import (
     RemoteThreeDViewFactory,
     register_rca_factories,
 )
+
+__all__ = [
+    "RemoteSliceViewFactory",
+    "RemoteThreeDViewFactory",
+    "register_rca_factories",
+]

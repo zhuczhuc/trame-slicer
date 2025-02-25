@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from slicer import vtkMRMLInteractionEventData
 
 
 class AbstractViewInteractor(ABC):
     def __init__(self):
-        self.render_callback: Optional[Callable] = None
+        self.render_callback: Callable | None = None
 
     @abstractmethod
     def process_event(self, event_data: vtkMRMLInteractionEventData) -> bool:

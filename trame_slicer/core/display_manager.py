@@ -1,5 +1,3 @@
-from typing import Optional
-
 from slicer import vtkMRMLDisplayableNode, vtkMRMLVolumeNode
 
 from .view_manager import ViewManager
@@ -18,7 +16,7 @@ class DisplayManager:
     def show_volume(
         self,
         volume_node: vtkMRMLVolumeNode,
-        view_group: Optional[int] = None,
+        view_group: int | None = None,
         vr_preset: str = "",
         do_reset_views: bool = False,
     ) -> None:
@@ -43,22 +41,22 @@ class DisplayManager:
         if do_reset_views:
             self.reset_views(view_group)
 
-    def reset_views(self, view_group: Optional[int] = None):
+    def reset_views(self, view_group: int | None = None):
         for view in self._view_manager.get_views(view_group):
             view.reset_view()
 
     def show_volume_in_slice_background(
         self,
-        volume_node: Optional[vtkMRMLVolumeNode],
-        view_group: Optional[int] = None,
+        volume_node: vtkMRMLVolumeNode | None,
+        view_group: int | None = None,
     ):
         for view in self._view_manager.get_slice_views(view_group):
             view.set_background_volume_id(volume_node.GetID() if volume_node else None)
 
     def show_volume_in_slice_foreground(
         self,
-        volume_node: Optional[vtkMRMLVolumeNode],
-        view_group: Optional[int] = None,
+        volume_node: vtkMRMLVolumeNode | None,
+        view_group: int | None = None,
     ):
         for view in self._view_manager.get_slice_views(view_group):
             view.set_foreground_volume_id(volume_node.GetID() if volume_node else None)
@@ -66,7 +64,7 @@ class DisplayManager:
     def set_node_visible_in_group(
         self,
         node: vtkMRMLDisplayableNode,
-        view_group: Optional[int] = None,
+        view_group: int | None = None,
     ):
         view_node_ids = [
             view.get_view_node_id() for view in self._view_manager.get_views(view_group)

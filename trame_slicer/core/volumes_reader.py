@@ -1,7 +1,7 @@
 from collections import defaultdict
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal, Optional, Union, get_args
+from typing import Literal, get_args
 
 import numpy as np
 import pydicom.multival
@@ -69,7 +69,7 @@ class VolumesReader:
         cls,
         scene: vtkMRMLScene,
         app_logic: vtkMRMLApplicationLogic,
-        volume_files: Union[list[str], str],
+        volume_files: list[str] | str,
     ) -> list[vtkMRMLVolumeNode]:
         if not isinstance(volume_files, list):
             volume_files = [volume_files]
@@ -93,20 +93,20 @@ class VolumesReader:
         scene: vtkMRMLScene,
         app_logic: vtkMRMLApplicationLogic,
         volume_file: str,
-    ) -> Optional[vtkMRMLVolumeNode]:
+    ) -> vtkMRMLVolumeNode | None:
         file_name, name = cls._file_name_from_volume_path(volume_file)
         file_list = vtkStringArray()
         logic = vtkSlicerVolumesLogic()
         logic.SetMRMLApplicationLogic(app_logic)
         logic.SetMRMLScene(scene)
         options = 0
-        return logic.AddArchetypeVolume(file_name, name, options, file_list)  # noqa
+        return logic.AddArchetypeVolume(file_name, name, options, file_list)
 
     @classmethod
     def contains_dcm_volume(cls, volume_files: list[str]) -> bool:
         if len(volume_files) < 1:
             return False
-        return any([cls.is_dcm_file(volume_file) for volume_file in volume_files])
+        return any(cls.is_dcm_file(volume_file) for volume_file in volume_files)
 
     @classmethod
     def is_dcm_file(cls, file_name: str) -> bool:
@@ -170,7 +170,7 @@ class VolumesReader:
             if len(values) <= 1:
                 continue
 
-            for i_value, value in enumerate(values):
+            for value in values:
                 split_files.add(tuple(sorted(sub_series_files[tag, value])))
 
         return [list(files) for files in split_files] or [volume_files]
@@ -255,14 +255,14 @@ class VolumesReader:
 
     @classmethod
     def _filter_none(
-        cls, volume_nodes: list[Optional[vtkMRMLVolumeNode]]
+        cls, volume_nodes: list[vtkMRMLVolumeNode | None]
     ) -> list[vtkMRMLVolumeNode]:
         return list(filter(None, volume_nodes))
 
     @classmethod
     def load_single_dcm_volume(
         cls, scene: vtkMRMLScene, volume_files: list[str]
-    ) -> Optional[vtkMRMLVolumeNode]:
+    ) -> vtkMRMLVolumeNode | None:
         # Get name and grayscale values
         is_gray_scale = cls._is_grayscale(volume_files)
         name = cls._dcm_series_name(volume_files)
@@ -276,6 +276,7 @@ class VolumesReader:
             )
             if volume is not None:
                 return volume
+        return None
 
     @classmethod
     def _dcm_series_name(cls, volume_files: list[str]) -> str:
@@ -320,7 +321,8 @@ class VolumesReader:
         elif image_io_backend == "DCMTK":
             reader.SetDICOMImageIOApproachToDCMTK()
         else:
-            raise Exception("Invalid imageIOName of %s" % image_io_backend)
+            _error_msg = f"Invalid imageIOName of {image_io_backend}"
+            raise Exception(_error_msg)
         reader.Update()
 
         if reader.GetErrorCode() != vtkErrorCode.NoError:
@@ -328,9 +330,8 @@ class VolumesReader:
                 image_io_backend,
                 vtkErrorCode.GetStringFromErrorCode(reader.GetErrorCode()),
             )
-            raise RuntimeError(
-                f"Could not read scalar volume using %s approach.  Error is: {error_strings}"
-            )
+            _error_msg = f"Could not read scalar volume using %s approach.  Error is: {error_strings}"
+            raise RuntimeError(_error_msg)
 
         image_change_information = vtkImageChangeInformation()
         image_change_information.SetInputConnection(reader.GetOutputPort())
@@ -349,7 +350,7 @@ class VolumesReader:
         vtkMRMLVolumeArchetypeStorageNode.SetMetaDataDictionaryFromReader(
             volume_node,
             reader,
-        )  # noqa
+        )
         volume_node.SetRASToIJKMatrix(reader.GetRasToIjkMatrix())
         volume_node.CreateDefaultDisplayNodes()
         return volume_node

@@ -23,7 +23,7 @@ def view_def(group: int, i_view: int, view_type: ViewType):
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_slicer_app_with_two_groups(a_slicer_app, a_server):
     register_rca_factories(a_slicer_app.view_manager, a_server)
 
@@ -54,25 +54,25 @@ def a_slicer_app_with_two_groups(a_slicer_app, a_server):
     assert len(a_slicer_app.view_manager.get_slice_views(view_group=1)) == 3
     assert len(a_slicer_app.view_manager.get_threed_views(view_group=1)) == 1
 
-    yield a_slicer_app
+    return a_slicer_app
 
 
-@pytest.fixture()
+@pytest.fixture
 def slice_view_group_0(a_slicer_app_with_two_groups) -> list[SliceView]:
     return a_slicer_app_with_two_groups.view_manager.get_slice_views(view_group=0)
 
 
-@pytest.fixture()
+@pytest.fixture
 def slice_view_group_1(a_slicer_app_with_two_groups) -> list[SliceView]:
     return a_slicer_app_with_two_groups.view_manager.get_slice_views(view_group=1)
 
 
-@pytest.fixture()
+@pytest.fixture
 def threed_view_group_0(a_slicer_app_with_two_groups) -> list[ThreeDView]:
     return a_slicer_app_with_two_groups.view_manager.get_threed_views(view_group=0)
 
 
-@pytest.fixture()
+@pytest.fixture
 def threed_view_group_1(a_slicer_app_with_two_groups) -> list[ThreeDView]:
     return a_slicer_app_with_two_groups.view_manager.get_threed_views(view_group=1)
 
@@ -94,24 +94,18 @@ def test_a_display_manager_can_show_node_in_given_view_group(
     display_man.show_volume(a_volume_node, view_group=0)
 
     assert all(
-        [
-            slice_view.get_background_volume_id() == a_volume_node.GetID()
-            for slice_view in slice_view_group_0
-        ]
+        slice_view.get_background_volume_id() == a_volume_node.GetID()
+        for slice_view in slice_view_group_0
     )
 
     assert all(
-        [
-            slice_view.get_foreground_volume_id() is None
-            for slice_view in slice_view_group_0
-        ]
+        slice_view.get_foreground_volume_id() is None
+        for slice_view in slice_view_group_0
     )
 
     assert all(
-        [
-            slice_view.get_background_volume_id() is None
-            for slice_view in slice_view_group_1
-        ]
+        slice_view.get_background_volume_id() is None
+        for slice_view in slice_view_group_1
     )
 
     display = a_slicer_app_with_two_groups.volume_rendering.get_vr_display_node(
@@ -135,15 +129,11 @@ def test_a_display_manager_can_show_node_to_slice_foreground(
     display_man.show_volume_in_slice_foreground(a_volume_node, view_group=0)
 
     assert all(
-        [
-            slice_view.get_foreground_volume_id() == a_volume_node.GetID()
-            for slice_view in slice_view_group_0
-        ]
+        slice_view.get_foreground_volume_id() == a_volume_node.GetID()
+        for slice_view in slice_view_group_0
     )
 
     assert all(
-        [
-            slice_view.get_foreground_volume_id() is None
-            for slice_view in slice_view_group_1
-        ]
+        slice_view.get_foreground_volume_id() is None
+        for slice_view in slice_view_group_1
     )

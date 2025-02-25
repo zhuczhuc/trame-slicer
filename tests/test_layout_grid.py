@@ -89,7 +89,7 @@ def test_layout_component_is_compatible_with_size(a_server):
     a_server.start()
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_slicer_layout():
     return """
 <layout type="vertical">
@@ -132,7 +132,7 @@ def a_slicer_layout():
 """
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_red_view():
     return ViewLayoutDefinition(
         "Red",
@@ -146,7 +146,7 @@ def a_red_view():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_green_view():
     return ViewLayoutDefinition(
         "Green",
@@ -159,7 +159,7 @@ def a_green_view():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_yellow_view():
     return ViewLayoutDefinition(
         "Yellow",
@@ -172,12 +172,12 @@ def a_yellow_view():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_3d_view():
     return ViewLayoutDefinition("1", ViewType.THREE_D_VIEW, ViewProps(label="1"))
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_vue_layout(a_red_view, a_green_view, a_yellow_view, a_3d_view):
     return Layout(
         LayoutDirection.Vertical,
@@ -212,7 +212,7 @@ def test_layout_can_return_their_views_recursively(
 
 
 def test_layout_can_return_only_direct_views(
-    a_vue_layout, a_red_view, a_green_view, a_yellow_view, a_3d_view
+    a_red_view, a_green_view, a_yellow_view, a_3d_view
 ):
     layout = Layout(
         LayoutDirection.Vertical,

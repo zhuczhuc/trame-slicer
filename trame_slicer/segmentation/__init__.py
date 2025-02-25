@@ -1,21 +1,52 @@
-from .segment_paint_effect import BrushModel, BrushShape, SegmentPaintEffect
-from .segment_paint_effect2d import SegmentPaintEffect2D, SegmentPaintEffect2DInteractor
-from .segment_paint_effect3d import SegmentPaintEffect3D, SegmentPaintEffect3DInteractor
-from .segment_scissor_effect import (
+from .segment_modifier import ModificationMode, SegmentModifier, vtk_image_to_np
+from .segment_paint_widget import BrushModel, BrushShape, SegmentPaintWidget
+from .segment_paint_widget_2d import (
+    SegmentPaintWidget2D,
+    SegmentPaintWidget2DInteractor,
+)
+from .segment_paint_widget_3d import (
+    SegmentPaintWidget3D,
+    SegmentPaintWidget3DInteractor,
+)
+from .segment_properties import SegmentProperties
+from .segment_region_mask import MaskedRegion, SegmentRegionMask
+from .segment_scissor_widget import (
     ScissorPolygonBrush,
-    SegmentScissorEffect,
-    SegmentScissorEffectInteractor,
+    SegmentScissorWidget,
+    SegmentScissorWidgetInteractor,
 )
-from .segmentation_editor import (
-    LabelMapOperation,
-    LabelMapOverwriteMode,
-    SegmentationEditor,
-    vtk_image_to_np,
+from .segmentation import Segmentation
+from .segmentation_effects import (
+    SegmentationEffect,
+    SegmentationEffectID,
+    SegmentationEraseEffect,
+    SegmentationPaintEffect,
+    SegmentationScissorEffect,
 )
-from .segmentation_effect import SegmentationEffect
-from .segmentation_tools import (
-    Segmentation,
-    SegmentationPaintEraseTool,
-    SegmentationTool,
-    SegmentationToolID,
-)
+from .segmentation_widget import SegmentationWidget
+
+__all__ = [
+    "BrushModel",
+    "BrushShape",
+    "MaskedRegion",
+    "ModificationMode",
+    "ScissorPolygonBrush",
+    "SegmentModifier",
+    "SegmentPaintWidget",
+    "SegmentPaintWidget2D",
+    "SegmentPaintWidget2DInteractor",
+    "SegmentPaintWidget3D",
+    "SegmentPaintWidget3DInteractor",
+    "SegmentProperties",
+    "SegmentRegionMask",
+    "SegmentScissorWidget",
+    "SegmentScissorWidgetInteractor",
+    "Segmentation",
+    "SegmentationEffect",
+    "SegmentationEffectID",
+    "SegmentationEraseEffect",
+    "SegmentationPaintEffect",
+    "SegmentationScissorEffect",
+    "SegmentationWidget",
+    "vtk_image_to_np",
+]

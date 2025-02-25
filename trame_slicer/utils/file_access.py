@@ -15,7 +15,6 @@ def write_client_files_to_dir(
     for file in client_file_dicts:
         file_helper = ClientFile(file)
         file_path = dest_dir / file_helper.name
-        with open(file_path, "wb") as f:
-            f.write(file_helper.content)
+        file_path.write_bytes(file_helper.content)
         file_list.append(file_path.as_posix())
     return file_list

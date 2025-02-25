@@ -35,3 +35,10 @@ def get_volume_rendering_presets_icon_url(
         for name, preset_path in presets
         if icons_folder.joinpath(preset_path).is_file()
     ]
+
+
+__all__ = [
+    "get_terminologies_path",
+    "get_volume_rendering_presets_icon_url",
+    "resources_path",
+]

@@ -9,7 +9,7 @@ from slicer import (
 from trame_slicer.views import AbstractView
 
 
-def test_abstract_view_can_render_a_simple_cone(a_slicer_app):
+def test_abstract_view_can_render_a_simple_cone():
     view = AbstractView()
     cone, mapper, actor = vtk.vtkConeSource(), vtk.vtkPolyDataMapper(), vtk.vtkActor()
 

@@ -1,33 +1,34 @@
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from slicer import vtkMRMLInteractionEventData
 from vtkmodules.vtkCommonCore import vtkCommand, vtkPoints
-from vtkmodules.vtkCommonMath import vtkMatrix4x4
 from vtkmodules.vtkCommonDataModel import vtkCellArray, vtkPolyData, vtkQuad
+from vtkmodules.vtkCommonMath import vtkMatrix4x4
 from vtkmodules.vtkRenderingCore import (
+    vtkActor2D,
     vtkCoordinate,
     vtkPolyDataMapper2D,
-    vtkActor2D,
     vtkProp,
     vtkProperty2D,
 )
 
 from trame_slicer.views import AbstractView, AbstractViewInteractor, SliceView
 
-from .segmentation_editor import SegmentationEditor
-from .segmentation_effect import SegmentationEffect
+from .segment_modifier import SegmentModifier
+from .segmentation_widget import SegmentationWidget
 
 
 class ScissorPolygonBrush:
-    """Display the scissor as 2D lines"""
+    """Display the scissors as 2D lines"""
+
     def __init__(self):
         super().__init__()
         self._points = vtkPoints()
         self._lines = vtkCellArray()
-        self._verts = vtkCellArray()
+        self._vertices = vtkCellArray()
         self._poly = vtkPolyData()
         self._poly.SetLines(self._lines)
-        self._poly.SetVerts(self._verts)
+        self._poly.SetVerts(self._vertices)
         self._poly.SetPoints(self._points)
 
         self._brush_mapper = vtkPolyDataMapper2D()
@@ -56,36 +57,37 @@ class ScissorPolygonBrush:
         count = self._points.GetNumberOfPoints()
         if count > 1:
             self._lines.InsertNextCell(2, [count - 1, count - 2])
-        self._verts.InsertNextCell(1, [count - 1])
+        self._vertices.InsertNextCell(1, [count - 1])
 
     def reset(self) -> None:
         self._points.SetNumberOfPoints(0)
         self._lines.Reset()
-        self._verts.Reset()
+        self._vertices.Reset()
         self._poly.Modified()
 
     @property
     def points(self) -> vtkPoints:
         return self._points
 
-    # Return brush prop.
-    # Can be used to add or remove the brush from the renderer, configure rendering properties (visibility, color, ...)
     def get_prop(self) -> vtkProp:
+        """
+        Return brush prop.
+        Can be used to add or remove the brush from the renderer, configure rendering properties (visibility, color, ...)
+        """
         return self._brush_actor
 
     def get_property(self) -> vtkProperty2D:
         return self._brush_actor.GetProperty()
 
 
-# On slice view project 2D points on slice (world pos)
-# On 3D view project 2D points on focal plane (world pos)
-class SegmentScissorEffect(SegmentationEffect):
-    def __init__(
-        self,
-        view: AbstractView,
-        editor: SegmentationEditor
-    ) -> None:
-        super().__init__(editor)
+class SegmentScissorWidget(SegmentationWidget):
+    """
+    On slice view project 2D points on slice (world pos)
+    On 3D view project 2D points on focal plane (world pos)
+    """
+
+    def __init__(self, view: AbstractView, modifier: SegmentModifier) -> None:
+        super().__init__(modifier)
         self._view = view
         self._brush = ScissorPolygonBrush()
         self._brush_enabled = False
@@ -127,10 +129,9 @@ class SegmentScissorEffect(SegmentationEffect):
         return self._painting
 
     def commit(self):
-        if self._brush.points.GetNumberOfPoints() >= 3: # need at least 3 points to create a closed polydata
-            self._editor.apply_poly(self._create_poly())
-
-        self.editor.update_surface_representation()
+        # need at least 3 points to create a closed polydata
+        if self._brush.points.GetNumberOfPoints() >= 3:
+            self._modifier.apply_polydata_world(self._create_poly())
 
     def _create_poly(self) -> vtkPolyData:
         # DisplayToWorldCoordinate
@@ -168,23 +169,32 @@ class SegmentScissorEffect(SegmentationEffect):
 
         return polydata
 
-    def _display_to_world(self, display_coords: list[float], dc_to_wc: vtkCoordinate) -> tuple[list[float], list[float]]:
+    def _display_to_world(
+        self, display_coords: list[float], dc_to_wc: vtkCoordinate
+    ) -> tuple[list[float], list[float]]:
         if isinstance(self._view, SliceView):
             return self._display_to_world_slice(display_coords, self._view)
-        else:
-            return self._display_to_world_generic(display_coords, dc_to_wc)
+        return self._display_to_world_generic(display_coords, dc_to_wc)
 
-    def _display_to_world_slice(self, display_coords: list[float], view: SliceView) -> tuple[list[float], list[float]]:
+    def _display_to_world_slice(
+        self, display_coords: list[float], view: SliceView
+    ) -> tuple[list[float], list[float]]:
         xy_to_slice: vtkMatrix4x4 = view.logic.GetSliceNode().GetXYToRAS()
 
-        max_dim = max(self.editor.volume_node.GetImageData().GetBounds())
+        max_dim = max(self.modifier.volume_node.GetImageData().GetBounds())
 
-        near = xy_to_slice.MultiplyPoint([display_coords[0], display_coords[1], -max_dim, 1.0])
-        far = xy_to_slice.MultiplyPoint([display_coords[0], display_coords[1], max_dim, 1.0])
+        near = xy_to_slice.MultiplyPoint(
+            [display_coords[0], display_coords[1], -max_dim, 1.0]
+        )
+        far = xy_to_slice.MultiplyPoint(
+            [display_coords[0], display_coords[1], max_dim, 1.0]
+        )
 
-        return (list(near), list(far))
+        return list(near), list(far)
 
-    def _display_to_world_generic(self, display_coords: list[float], dc_to_wc: vtkCoordinate) -> tuple[list[float], list[float]]:
+    def _display_to_world_generic(
+        self, display_coords: list[float], dc_to_wc: vtkCoordinate
+    ) -> tuple[list[float], list[float]]:
         renderer = self._view.renderer()
 
         dc_to_wc.SetValue(display_coords[0], display_coords[1], 0.0)
@@ -193,23 +203,25 @@ class SegmentScissorEffect(SegmentationEffect):
         dc_to_wc.SetValue(display_coords[0], display_coords[1], 1.0)
         far = dc_to_wc.GetComputedWorldValue(renderer)
 
-        return (list(near), list(far))
+        return list(near), list(far)
 
-class SegmentScissorEffectInteractor(AbstractViewInteractor):
-    def __init__(self, effect: SegmentScissorEffect) -> None:
+
+class SegmentScissorWidgetInteractor(AbstractViewInteractor):
+    def __init__(self, widget: SegmentScissorWidget) -> None:
         super().__init__()
-        self._effect = effect # for type hints
-        self._render_callback: Optional[Callable] = None
-        # Event we may consume and how we consume them
-        self._supported_events = {
+        self._widget = widget  # for type hints
+        self._render_callback: Callable | None = None
+
+        # Events we may consume and how we consume them
+        self._supported_events: dict[int, Callable] = {
             int(vtkCommand.MouseMoveEvent): self.mouse_moved,
             int(vtkCommand.LeftButtonPressEvent): self.left_pressed,
-            int(vtkCommand.LeftButtonReleaseEvent): self.left_released
+            int(vtkCommand.LeftButtonReleaseEvent): self.left_released,
         }
 
     @property
-    def effect(self) -> SegmentScissorEffect:
-        return self._effect
+    def widget(self) -> SegmentScissorWidget:
+        return self._widget
 
     def process_event(self, event_data: vtkMRMLInteractionEventData) -> bool:
         if event_data.GetType() not in self._supported_events:
@@ -219,28 +231,29 @@ class SegmentScissorEffectInteractor(AbstractViewInteractor):
         return callback(event_data) if callback is not None else False
 
     def left_pressed(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if self._effect.is_brush_enabled():
-            x, y = event_data.GetDisplayPosition()
-            self.effect.start_painting(x, y)
-            self.trigger_render_callback()
-            return True
+        if not self._widget.is_brush_enabled():
+            return False
 
-        return False  # Always let other interactors and displayable managers do whatever they want
+        x, y = event_data.GetDisplayPosition()
+        self.widget.start_painting(x, y)
+        self.trigger_render_callback()
+        return True
 
-    def left_released(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if self.effect.is_painting():
-            self.effect.stop_painting()
-            self.trigger_render_callback()
-            return True
+    def left_released(self, _event_data: vtkMRMLInteractionEventData) -> bool:
+        if not self.widget.is_painting():
+            return False
 
-        return False
+        self.widget.stop_painting()
+        self.trigger_render_callback()
+        return True
 
     def mouse_moved(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if self._effect.is_brush_enabled():
+        if self._widget.is_brush_enabled():
             x, y = event_data.GetDisplayPosition()
-            self.effect.move_last_point(x, y)
-            if self._effect.is_painting():
-                self.effect.add_point(x, y)
+            self.widget.move_last_point(x, y)
+            if self._widget.is_painting():
+                self.widget.add_point(x, y)
             self.trigger_render_callback()
 
-        return False  # Always let other interactors and displayable managers do whatever they want
+        # Always let other interactor and displayable managers do whatever they want
+        return False

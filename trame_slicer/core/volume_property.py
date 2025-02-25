@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from enum import Flag, auto
-from typing import Callable, Optional
+from typing import Optional
 
 from slicer import vtkMRMLVolumePropertyNode
 from vtkmodules.vtkCommonDataModel import vtkPiecewiseFunction
@@ -18,7 +19,7 @@ class VolumeProperty:
     Allows more pythonic access to the scalar / opacity properties of a volume rendering display node.
     """
 
-    def __init__(self, volume_property_node: Optional[vtkMRMLVolumePropertyNode]):
+    def __init__(self, volume_property_node: vtkMRMLVolumePropertyNode | None):
         self._property_node = volume_property_node or vtkMRMLVolumePropertyNode()
 
     @property
@@ -96,7 +97,7 @@ class VolumeProperty:
             )
 
     @classmethod
-    def _get_map_values(cls, transfer_fun, array_size: int) -> Optional[list[list]]:
+    def _get_map_values(cls, transfer_fun, array_size: int) -> list[list] | None:
         values = []
         if not transfer_fun:
             return None
@@ -112,10 +113,10 @@ class VolumeProperty:
         cls,
         transfer_fun,
         add_fun: Callable,
-        values: Optional[list[list[float]]],
+        values: list[list[float]] | None,
     ):
         if not all([transfer_fun, values]):
-            return
+            return None
 
         transfer_fun.RemoveAllPoints()
         for value in values:

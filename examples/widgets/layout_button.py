@@ -32,15 +32,17 @@ class LayoutButton(VMenu):
                     name="Layouts",
                 )
 
-            with VCard():
-                with VCardText():
-                    with VRadioGroup(
-                        v_model=StateId.current_layout_name,
-                        classes="mt-0",
-                        hide_details=True,
-                    ):
-                        for layout in self._layout_manager.get_layout_ids():
-                            VRadio(label=layout, value=layout)
+            with (
+                VCard(),
+                VCardText(),
+                VRadioGroup(
+                    v_model=StateId.current_layout_name,
+                    classes="mt-0",
+                    hide_details=True,
+                ),
+            ):
+                for layout in self._layout_manager.get_layout_ids():
+                    VRadio(label=layout, value=layout)
 
     @change(StateId.current_layout_name)
     def on_current_layout_changed(self, **kwargs):

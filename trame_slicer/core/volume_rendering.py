@@ -1,5 +1,3 @@
-from typing import Optional
-
 from slicer import (
     vtkMRMLApplicationLogic,
     vtkMRMLScene,
@@ -48,7 +46,7 @@ class VolumeRendering:
 
     def apply_preset(
         self,
-        display: Optional[vtkMRMLVolumeRenderingDisplayNode],
+        display: vtkMRMLVolumeRenderingDisplayNode | None,
         preset_name: str,
     ):
         if not display:
@@ -71,7 +69,7 @@ class VolumeRendering:
     def get_vr_display_node(
         self,
         volume_node: vtkMRMLVolumeNode,
-    ) -> Optional[vtkMRMLVolumeRenderingDisplayNode]:
+    ) -> vtkMRMLVolumeRenderingDisplayNode | None:
         return self._logic.GetFirstVolumeRenderingDisplayNode(volume_node)
 
     def has_vr_display_node(self, volume_node: vtkMRMLVolumeNode) -> bool:
@@ -88,7 +86,7 @@ class VolumeRendering:
         preset_nodes = self._get_preset_nodes()
         return [preset_node.GetName() for preset_node in preset_nodes]
 
-    def get_preset_node(self, preset_name: str) -> Optional[vtkMRMLVolumePropertyNode]:
+    def get_preset_node(self, preset_name: str) -> vtkMRMLVolumePropertyNode | None:
         preset_nodes = self._get_preset_nodes()
         for i in range(len(preset_nodes)):
             if preset_nodes[i].GetName() == preset_name:
@@ -143,7 +141,7 @@ class VolumeRendering:
 
     @classmethod
     def _get_vr_volume_property(
-        cls, vr_display_node: Optional[vtkMRMLVolumeRenderingDisplayNode]
+        cls, vr_display_node: vtkMRMLVolumeRenderingDisplayNode | None
     ) -> VolumeProperty:
         return VolumeProperty(
             vr_display_node.GetVolumePropertyNode() if vr_display_node else None

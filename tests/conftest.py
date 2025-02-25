@@ -11,8 +11,9 @@ from trame.app import get_server
 from trame_client.utils.testing import FixtureHelper
 from trame_server.utils.asynchronous import create_task
 
+from tests.direct_view_factory import DirectViewFactory
 from trame_slicer.core import SlicerApp
-from trame_slicer.views import DirectRendering, SliceView, ThreeDView
+from trame_slicer.views import ViewLayoutDefinition, ViewProps, ViewType
 
 
 @pytest.fixture
@@ -27,12 +28,27 @@ def a_slicer_app():
 
 
 @pytest.fixture
-def a_threed_view(a_slicer_app, render_interactive):
-    three_d_view = ThreeDView(
-        a_slicer_app.scene,
-        a_slicer_app.app_logic,
-        "ThreeD",
-        scheduled_render_strategy=DirectRendering(),
+def a_segmentation_editor(a_slicer_app):
+    return a_slicer_app.segmentation_editor
+
+
+@pytest.fixture
+def a_view_factory():
+    return DirectViewFactory()
+
+
+@pytest.fixture
+def a_view_manager(a_slicer_app, a_view_factory):
+    a_slicer_app.view_manager.register_factory(a_view_factory)
+    return a_slicer_app.view_manager
+
+
+@pytest.fixture
+def a_threed_view(a_view_manager, render_interactive):
+    three_d_view = a_view_manager.create_view(
+        ViewLayoutDefinition(
+            singleton_tag="ThreeD", type=ViewType.THREE_D_VIEW, properties=ViewProps()
+        )
     )
     if render_interactive:
         three_d_view.render_window().ShowWindowOn()
@@ -42,54 +58,57 @@ def a_threed_view(a_slicer_app, render_interactive):
 
 
 @pytest.fixture
-def a_slice_view(a_slicer_app, render_interactive):
-    view = SliceView(
-        a_slicer_app.scene,
-        a_slicer_app.app_logic,
-        "Red",
-        scheduled_render_strategy=DirectRendering(),
+def a_slice_view(a_view_manager, render_interactive):
+    view = a_view_manager.create_view(
+        ViewLayoutDefinition(
+            singleton_tag="Red",
+            type=ViewType.SLICE_VIEW,
+            properties=ViewProps(orientation="Axial"),
+        )
     )
+    view.interactor().UpdateSize(400, 300)
+
     if render_interactive:
         view.render_window().ShowWindowOn()
     return view
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_data_folder():
     return Path(__file__).parent / "data"
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_nrrd_volume_file_path(a_data_folder) -> Path:
     return a_data_folder.joinpath("mr_head.nrrd")
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_nifti_volume_file_path(a_data_folder) -> Path:
     return a_data_folder.joinpath("mr_head.nii.gz")
 
 
-@pytest.fixture()
+@pytest.fixture
 def ct_chest_dcm_volume_file_paths(a_data_folder) -> list[Path]:
     return list(a_data_folder.joinpath("ct_chest_dcm").glob("*.dcm"))
 
 
-@pytest.fixture()
+@pytest.fixture
 def mr_head_dcm_volume_file_paths(a_data_folder) -> list[Path]:
     return list(a_data_folder.joinpath("mr_head_dcm").glob("*.dcm"))
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_model_file_path(a_data_folder) -> Path:
     return a_data_folder.joinpath("model.stl")
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_segmentation_stl_file_path(a_data_folder) -> Path:
     return a_data_folder.joinpath("segmentation.stl")
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_segmentation_nifti_file_path(a_data_folder) -> Path:
     return a_data_folder.joinpath("segmentation.nii.gz")
 
@@ -122,7 +141,7 @@ def a_segmentation_model(a_slicer_app, a_data_folder):
 
 
 @pytest.fixture
-def a_volume_node(a_slicer_app, a_data_folder, a_nrrd_volume_file_path):
+def a_volume_node(a_slicer_app, a_nrrd_volume_file_path):
     storage_node = vtkMRMLVolumeArchetypeStorageNode()
     node = a_slicer_app.scene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
     storage_node.SetFileName(
@@ -143,7 +162,7 @@ def render_interactive(pytestconfig):
     return float(pytestconfig.getoption("render_interactive"))
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_server(render_interactive):
     server = get_server(None, client_type="vue3")
 
@@ -161,7 +180,7 @@ def a_server(render_interactive):
         # If render interactive time is very small, opening browser may make the tests hang.
         # For rendering time less than 1 second, disable browser opening.
         open_browser = bool(render_interactive > 1)
-        _server_start(open_browser=open_browser, *args, **kwargs)
+        _server_start(*args, open_browser=open_browser, **kwargs)
 
     server.start = limited_time_start
 

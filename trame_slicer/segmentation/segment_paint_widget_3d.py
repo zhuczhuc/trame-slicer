@@ -1,8 +1,8 @@
 import math
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from slicer import vtkMRMLInteractionEventData
-from vtkmodules.vtkCommonCore import reference as vtkref
+from vtkmodules.vtkCommonCore import reference as vtk_ref
 from vtkmodules.vtkCommonCore import vtkCommand
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput
@@ -16,14 +16,14 @@ from vtkmodules.vtkRenderingCore import (
 
 from trame_slicer.views.threed_view import ThreeDView
 
-from .segment_paint_effect import (
+from .segment_modifier import SegmentModifier
+from .segment_paint_widget import (
     AbstractBrush,
     BrushModel,
     BrushShape,
-    SegmentPaintEffect,
-    SegmentPaintEffectInteractor
+    SegmentPaintWidget,
+    SegmentPaintWidgetInteractor,
 )
-from .segmentation_editor import SegmentationEditor
 
 
 class Brush3D(AbstractBrush):
@@ -34,22 +34,29 @@ class Brush3D(AbstractBrush):
         self.brush_actor.VisibilityOff()
         self.brush_actor.PickableOff()  # otherwise picking in 3D view would not work
 
-    # Specify input polydata to use as brush
-    def set_input_connection(self, input: vtkAlgorithmOutput):
-        self.brush_mapper.SetInputConnection(input)
+    def set_input_connection(self, input_conn: vtkAlgorithmOutput):
+        """
+        Specify input polydata to use as brush
+        """
+        self.brush_mapper.SetInputConnection(input_conn)
 
-    # Return brush prop.
-    # Can be used to add or remove the brush from the renderer, configure rendering properties (visibility, color, ...)
     def get_prop(self) -> vtkProp:
+        """
+        Return brush prop.
+        Can be used to add or remove the brush from the renderer, configure rendering properties (visibility, color, ...)
+        """
         return self.brush_actor
 
     def get_property(self) -> vtkProperty:
         return self.brush_actor.GetProperty()
 
 
-# Uses a vtkGlyph3DMapper instead of a vtkGlyph3D + vtkPolyDataMapper
-# This is way more efficient and also simplify code!
 class BrushFeedback3D(AbstractBrush):
+    """
+    Uses a vtkGlyph3DMapper instead of a vtkGlyph3D + vtkPolyDataMapper
+    More efficient than 3D Slicer implementation.
+    """
+
     def __init__(self):
         self.brush_mapper = vtkGlyph3DMapper()
         self.brush_actor = vtkActor()
@@ -57,26 +64,30 @@ class BrushFeedback3D(AbstractBrush):
         self.brush_actor.VisibilityOff()
         self.brush_actor.PickableOff()  # otherwise picking in 3D view would not work
 
-    # Specify input polydata to use as brush
-    def set_source_connection(self, input: vtkAlgorithmOutput):
-        self.brush_mapper.SetSourceConnection(input)
+    def set_source_connection(self, input_conn: vtkAlgorithmOutput):
+        """
+        Specify input polydata to use as brush
+        """
+        self.brush_mapper.SetSourceConnection(input_conn)
 
     # Specify input polydata to use as brush
-    def set_input_data(self, input: vtkPolyData):
-        self.brush_mapper.SetInputData(input)
+    def set_input_data(self, input_conn: vtkPolyData):
+        self.brush_mapper.SetInputData(input_conn)
 
-    # Return brush prop.
-    # Can be used to add or remove the brush from the renderer, configure rendering properties (visibility, color, ...)
     def get_prop(self) -> vtkProp:
+        """
+        Return brush prop.
+        Can be used to add or remove the brush from the renderer, configure rendering properties (visibility, color, ...)
+        """
         return self.brush_actor
 
     def get_property(self) -> vtkProperty:
         return self.brush_actor.GetProperty()
 
 
-class SegmentPaintEffect3D(SegmentPaintEffect):
+class SegmentPaintWidget3D(SegmentPaintWidget):
     def __init__(
-        self, view: ThreeDView, editor: SegmentationEditor, brush_model: BrushModel
+        self, view: ThreeDView, modifier: SegmentModifier, brush_model: BrushModel
     ):
         # brush
         brush = Brush3D()
@@ -94,11 +105,11 @@ class SegmentPaintEffect3D(SegmentPaintEffect):
         brush_feedback.set_input_data(feedback_points_poly_data)
         brush_feedback.get_property().SetColor(1.0, 0.7, 0.0)
 
-        super().__init__(view, editor, brush_model, brush, brush_feedback)
+        super().__init__(view, modifier, brush_model, brush, brush_feedback)
         self._view = view  # for real type hint
         feedback_points_poly_data.SetPoints(self.paint_coordinates_world)
 
-        self._last_position: Optional[tuple[float, float, float]] = None
+        self._last_position: tuple[float, float, float] | None = None
         self.enable_brush()  # enabled by default
 
     @property
@@ -110,18 +121,17 @@ class SegmentPaintEffect3D(SegmentPaintEffect):
         renderer = self._view.renderer()
         # Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
         # Determine the available renderer size in pixels
-        minX = vtkref(0.0)
-        minY = vtkref(0.0)
-        renderer.NormalizedDisplayToDisplay(minX, minY)  # noqa
-        maxX = vtkref(1.0)
-        maxY = vtkref(1.0)
-        renderer.NormalizedDisplayToDisplay(maxX, maxY)  # noqa
+        minX = vtk_ref(0.0)
+        minY = vtk_ref(0.0)
+        renderer.NormalizedDisplayToDisplay(minX, minY)
+        maxX = vtk_ref(1.0)
+        maxY = vtk_ref(1.0)
+        renderer.NormalizedDisplayToDisplay(maxX, maxY)
         rendererSizeInPixels = (
-            int(maxX.get() - minX.get()),  # noqa
-            int(maxY.get() - minY.get()),  # noqa
+            int(maxX.get() - minX.get()),
+            int(maxY.get() - minY.get()),
         )
         cam = renderer.GetActiveCamera()
-        mmPerPixel = 1.0
         if cam.GetParallelProjection():
             # Parallel scale: height of the viewport in world-coordinate distances.
             # Larger numbers produce smaller images.
@@ -159,7 +169,7 @@ class SegmentPaintEffect3D(SegmentPaintEffect):
     def invalidate_world_position(self) -> None:
         self._last_position = None
 
-    def update_world_position(self, position: tuple[float, float, float]) -> None:
+    def update_world_position(self, position: list[float]) -> None:
         if not self.is_brush_enabled():
             return
 
@@ -193,56 +203,65 @@ class SegmentPaintEffect3D(SegmentPaintEffect):
             self.add_point_to_selection(weighted_point)
 
 
-class SegmentPaintEffect3DInteractor(SegmentPaintEffectInteractor):
-    def __init__(self, effect: SegmentPaintEffect3D) -> None:
-        super().__init__(effect)
-        self._effect = effect # for type hints
-        self._render_callback: Optional[Callable] = None
-        # Event we may consume and how we consume them
-        self._supported_events = {
+class SegmentPaintWidget3DInteractor(SegmentPaintWidgetInteractor):
+    def __init__(self, widget: SegmentPaintWidget3D) -> None:
+        super().__init__(widget)
+        self._widget = widget  # for type hints
+        self._render_callback: Callable | None = None
+
+        # Events we may consume and how we consume them
+        self._supported_events: dict[int, Callable] = {
             int(vtkCommand.MouseMoveEvent): self.mouse_moved,
             int(vtkCommand.LeftButtonPressEvent): self.left_pressed,
             int(vtkCommand.LeftButtonReleaseEvent): self.left_released,
         }
 
     @property
-    def effect(self) -> SegmentPaintEffect3D:
-        return self._effect
+    def widget(self) -> SegmentPaintWidget3D:
+        return self._widget
+
+    @property
+    def is_brush_enabled(self):
+        return self.widget.is_brush_enabled()
+
+    @property
+    def has_pick_hit(self):
+        return self.widget.view.has_pick_hit()
 
     def process_event(self, event_data: vtkMRMLInteractionEventData) -> bool:
         is_not_supported_event = event_data.GetType() not in self._supported_events
-        if not self.effect.is_brush_enabled() or is_not_supported_event:
+        if not self.is_brush_enabled or is_not_supported_event:
             return False
 
         callback = self._supported_events[event_data.GetType()]
         return callback(event_data)
 
     def left_pressed(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if not self.effect.is_brush_enabled() or not self.effect.view.has_last_quick_pick_hit():
+        if not self.is_brush_enabled or not self.has_pick_hit:
             return False
 
-        self.effect.start_painting()
-        self.effect.add_point_to_selection(event_data.GetWorldPosition())
-        self.effect.view.schedule_render()
+        self.widget.start_painting()
+        self.widget.add_point_to_selection(event_data.GetWorldPosition())
+        self.widget.view.schedule_render()
         self.trigger_render_callback()
         return True
 
-    def left_released(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if self.effect.is_painting():
-            self.effect.stop_painting()
-            self.effect.view.schedule_render()
+    def left_released(self, _event_data: vtkMRMLInteractionEventData) -> bool:
+        if self.widget.is_painting():
+            self.widget.stop_painting()
+            self.widget.view.schedule_render()
             self.trigger_render_callback()
 
-        # Always let other interactors and displayable managers do whatever they want
+        # Always let other interactor and displayable managers do whatever they want
         return False
 
     def mouse_moved(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if self.effect.is_brush_enabled() and self.effect.view.has_last_quick_pick_hit():
-            self.effect.update_world_position(event_data.GetWorldPosition())
-            self.effect.view.schedule_render()
+        if self.is_brush_enabled and self.has_pick_hit:
+            self.widget.update_world_position(event_data.GetWorldPosition())
+            self.widget.view.schedule_render()
             self.trigger_render_callback()
         else:
-            self.effect.invalidate_world_position()
+            self.widget.invalidate_world_position()
 
-        # Always let other interactors and displayable managers do whatever they want
+        # Always let other interactor and displayable managers do whatever they want
         return False

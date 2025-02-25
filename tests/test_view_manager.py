@@ -21,22 +21,22 @@ from trame_slicer.views import (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_slicer_app():
     return SlicerApp()
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_view_manager(a_slicer_app):
     return ViewManager(a_slicer_app.scene, a_slicer_app.app_logic)
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_2d_view():
     return ViewLayoutDefinition("2d_view", ViewType.SLICE_VIEW, ViewProps())
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_3d_view():
     return ViewLayoutDefinition("3d_view", ViewType.THREE_D_VIEW, ViewProps())
 
@@ -50,7 +50,7 @@ class FakeFactory(IViewFactory):
         super().__init__()
         self.can_create = can_create
 
-    def can_create_view(self, view: ViewLayoutDefinition) -> bool:
+    def can_create_view(self, _view: ViewLayoutDefinition) -> bool:
         return self.can_create
 
     def _get_slicer_view(self, view: View) -> AbstractViewChild:
@@ -58,9 +58,9 @@ class FakeFactory(IViewFactory):
 
     def _create_view(
         self,
-        view: ViewLayoutDefinition,
-        scene: vtkMRMLScene,
-        app_logic: vtkMRMLApplicationLogic,
+        _view: ViewLayoutDefinition,
+        _scene: vtkMRMLScene,
+        _app_logic: vtkMRMLApplicationLogic,
     ) -> View:
         return self.View()
 
@@ -118,7 +118,6 @@ def test_view_manager_with_default_factories_created_nodes_are_added_to_slicer_s
 def test_view_manager_created_views_are_added_to_template(
     a_view_manager,
     a_3d_view,
-    render_interactive,
     a_server,
 ):
     a_view_manager.register_factory(RemoteThreeDViewFactory(a_server))
@@ -133,10 +132,8 @@ def test_view_manager_created_views_are_added_to_template(
 
 def test_a_2d_view_factory_creates_views_with_the_right_properties(
     a_view_manager,
-    render_interactive,
     a_server,
 ):
-
     a_view_manager.register_factory(RemoteSliceViewFactory(a_server))
 
     slice_view = ViewLayoutDefinition(
@@ -192,7 +189,6 @@ def test_3d_view_factory_has_reset_camera_button(
     a_view_manager,
     a_server,
     a_3d_view,
-    a_volume_node,
 ):
     factory = RemoteThreeDViewFactory(
         a_server, populate_view_ui_f=create_vertical_view_gutter_ui

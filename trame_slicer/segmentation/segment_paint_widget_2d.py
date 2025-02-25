@@ -1,4 +1,6 @@
 import math
+from collections.abc import Callable
+from enum import Enum, auto
 
 from slicer import vtkMRMLInteractionEventData
 from vtkmodules.vtkCommonCore import vtkCommand
@@ -17,19 +19,22 @@ from vtkmodules.vtkRenderingCore import (
 
 from trame_slicer.views.slice_view import SliceView
 
-from .segment_paint_effect import (
+from .segment_modifier import SegmentModifier
+from .segment_paint_widget import (
     AbstractBrush,
     BrushModel,
     BrushShape,
-    SegmentPaintEffect,
-    SegmentPaintEffectInteractor,
+    SegmentPaintWidget,
+    SegmentPaintWidgetInteractor,
 )
-from .segmentation_editor import SegmentationEditor
 
 
 class Brush2D(AbstractBrush):
-    # Display a vtkPolyData on a Slice
-    # This takes a vtkPolyData(Algorithm output port) as input and expect it to be pre transformed in world position
+    """
+    Display a vtkPolyData on a Slice
+    This takes a vtkPolyData(Algorithm output port) as input and expect it to be pre transformed in world position
+    """
+
     def __init__(self):
         super().__init__()
 
@@ -57,20 +62,24 @@ class Brush2D(AbstractBrush):
         self._brush_actor.VisibilityOff()
 
     # Specify input polydata to use as brush
-    def set_input_connection(self, input: vtkAlgorithmOutput):
-        self._brush_cutter.SetInputConnection(input)
+    def set_input_connection(self, input_conn: vtkAlgorithmOutput):
+        self._brush_cutter.SetInputConnection(input_conn)
 
-    # Return brush prop.
-    # Can be used to add or remove the brush from the renderer, configure rendering properties (visibility, color, ...)
     def get_prop(self) -> vtkProp:
+        """
+        Return brush prop.
+        Can be used to add or remove the brush from the renderer, configure rendering properties (visibility, color, ...)
+        """
         return self._brush_actor
 
     def get_property(self) -> vtkProperty2D:
         return self._brush_actor.GetProperty()
 
-    # Set current slice XY to RAS matrix.
-    # This should be called every time the current slice changes in the slice node
     def update_slice_position(self, xy_to_ras: vtkMatrix4x4):
+        """
+        Set current slice XY to RAS matrix.
+        This should be called every time the current slice changes in the slice node
+        """
         self._slice_plane.SetNormal(
             xy_to_ras.GetElement(0, 2),
             xy_to_ras.GetElement(1, 2),
@@ -87,9 +96,14 @@ class Brush2D(AbstractBrush):
         self._world_to_slice_transform.SetMatrix(ras_to_xy)
 
 
-class SegmentPaintEffect2D(SegmentPaintEffect):
+class BrushScaleMode(Enum):
+    Absolute = auto()
+    ScreenInvariant = auto()
+
+
+class SegmentPaintWidget2D(SegmentPaintWidget):
     def __init__(
-        self, view: SliceView, editor: SegmentationEditor, brush_model: BrushModel
+        self, view: SliceView, modifier: SegmentModifier, brush_model: BrushModel
     ):
         # brush
         brush = Brush2D()
@@ -109,53 +123,77 @@ class SegmentPaintEffect2D(SegmentPaintEffect):
         brush_feedback.get_property().SetOpacity(0.5)
 
         # Setup parent
-        super().__init__(view, editor, brush_model, brush, brush_feedback)
+        super().__init__(view, modifier, brush_model, brush, brush_feedback)
+        self._brush_scale_mode = BrushScaleMode.ScreenInvariant
         self._view = view  # for type hints
         self._brush = brush
         self._brush_feedback = brush_feedback
+        relative_brush_size = 5
+        self._brush_diameter_pix = (
+            relative_brush_size / 100
+        ) * self._vertical_screen_size()
 
         feedback_points_poly_data.SetPoints(self.paint_coordinates_world)
         self.view.mrml_view_node.AddObserver(
             vtkCommand.ModifiedEvent, self._on_slice_changed, -1.0
         )
 
-        self.enable_brush()  # enabled by default
         self._on_slice_changed(None, None)
+        self.enable_brush()
+
+    def enable_brush(self) -> None:
+        super().enable_brush()
+        self.update_brush_diameter()
 
     @property
     def view(self) -> SliceView:
         return self._view
 
-    def update_brush_diameter(self) -> None:
+    @property
+    def brush_diameter_pix(self):
+        if self._brush_scale_mode == BrushScaleMode.ScreenInvariant:
+            return self._brush_diameter_pix
+
+        return self._compute_brush_pixel_diameter_from_absolute(
+            self._brush_diameter_pix
+        )
+
+    def _get_mm_per_pixel(self):
         xy_to_slice: vtkMatrix4x4 = self.view.mrml_view_node.GetXYToSlice()
+        return math.sqrt(sum([xy_to_slice.GetElement(i, 1) ** 2 for i in range(3)]))
 
-        mm_per_pixel = math.sqrt(
-            sum([xy_to_slice.GetElement(i, 1) ** 2 for i in range(3)])
-        )
-        screenSizePixel = self.view.render_window().GetScreenSize()[1]
-        self.brush_relative_diameter = 10
-        new_brush_absolute_diameter = (
-            screenSizePixel * (self.brush_relative_diameter / 100.0) * mm_per_pixel
-        )
+    def _compute_brush_pixel_diameter_from_absolute(self, brush_diameter_mm):
+        mm_per_pixel = self._get_mm_per_pixel()
+        if mm_per_pixel == 0:
+            return brush_diameter_mm
 
+        return brush_diameter_mm / mm_per_pixel
+
+    def _vertical_screen_size(self):
+        return self.view.render_window().GetScreenSize()[1]
+
+    def update_brush_diameter(self) -> None:
         self._brush_model.set_cylinder_parameters(
-            new_brush_absolute_diameter / 2.0,
-            32,
-            self.view.logic.GetLowestVolumeSliceSpacing()[2],
+            radius=self.brush_diameter_pix / 2.0,
+            resolution=32,
+            height=self.view.get_slice_step() / 2.0,
         )
 
     def update_mouse_position(self, position: tuple[int, int]) -> None:
-        if self.is_brush_enabled():
-            xy_to_ras: vtkMatrix4x4 = self.view.mrml_view_node.GetXYToRAS()
-            world_pos = xy_to_ras.MultiplyPoint(
-                (float(position[0]), float(position[1]), 0.0, 1.0)
-            )
-            self._update_brush_position(world_pos[0:3], xy_to_ras)
-            if self.is_painting():
-                self.add_point_to_selection(world_pos[:3])
+        if not self.is_brush_enabled():
+            return
+
+        self.update_brush_diameter()
+        xy_to_ras: vtkMatrix4x4 = self.view.mrml_view_node.GetXYToRAS()
+        world_pos = list(
+            xy_to_ras.MultiplyPoint((float(position[0]), float(position[1]), 0.0, 1.0))
+        )
+        self._update_brush_position(world_pos[0:3], xy_to_ras)
+        if self.is_painting():
+            self.add_point_to_selection(world_pos[:3])
 
     def _update_brush_position(
-        self, world_pos: tuple[float, float, float], xy_to_ras: vtkMatrix4x4
+        self, world_pos: list[float], xy_to_ras: vtkMatrix4x4
     ) -> None:
         self._brush_model.set_shape(BrushShape.Cylinder)
 
@@ -176,7 +214,7 @@ class SegmentPaintEffect2D(SegmentPaintEffect):
         self._brush_model.world_origin_to_world_transform.Identity()
         self._brush_model.world_origin_to_world_transform.Translate(world_pos[:3])
 
-    def _on_slice_changed(self, caller, ev) -> None:
+    def _on_slice_changed(self, _caller, _ev) -> None:
         self._brush.update_slice_position(self.view.mrml_view_node.GetXYToRAS())
         self._brush_feedback.update_slice_position(
             self.view.mrml_view_node.GetXYToRAS()
@@ -184,46 +222,53 @@ class SegmentPaintEffect2D(SegmentPaintEffect):
         self.update_brush_diameter()
 
 
-class SegmentPaintEffect2DInteractor(SegmentPaintEffectInteractor):
-    def __init__(self, effect: SegmentPaintEffect2D) -> None:
-        super().__init__(effect)
-        self._effect = effect # for type hints
-        # Event we may consume and how we consume them
-        self._supported_events = {
+class SegmentPaintWidget2DInteractor(SegmentPaintWidgetInteractor):
+    def __init__(self, widget: SegmentPaintWidget2D) -> None:
+        super().__init__(widget)
+        self._widget = widget  # for type hints
+
+        # Events we may consume and how we consume them
+        self._supported_events: dict[int, Callable] = {
             int(vtkCommand.MouseMoveEvent): self.mouse_moved,
             int(vtkCommand.LeftButtonPressEvent): self.left_pressed,
             int(vtkCommand.LeftButtonReleaseEvent): self.left_released,
         }
 
     @property
-    def effect(self) -> SegmentPaintEffect2D:
-        return self._effect
+    def widget(self) -> SegmentPaintWidget2D:
+        return self._widget
 
     def process_event(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        is_event_unsupported = event_data.GetType() not in self._supported_events
-        if not self.effect.is_brush_enabled() or is_event_unsupported:
+        is_not_supported_event = event_data.GetType() not in self._supported_events
+        if not self.widget.is_brush_enabled() or is_not_supported_event:
             return False
 
         callback = self._supported_events.get(event_data.GetType())
         return callback(event_data) if callback is not None else False
 
     def left_pressed(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if self.effect.is_brush_enabled():
-            self.effect.start_painting()
+        if self.widget.is_brush_enabled():
+            self.widget.start_painting()
+            self._paint_at_event_position(event_data)
             return True
 
         return False
 
-    def left_released(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if self.effect.is_painting():
-            self.effect.stop_painting()
+    def left_released(self, _event_data: vtkMRMLInteractionEventData) -> bool:
+        if self.widget.is_painting():
+            self.widget.stop_painting()
 
-        return False  # Always let other interactors and displayable managers do whatever they want
+        # Always let other interactor and displayable managers do whatever they want
+        return False
 
     def mouse_moved(self, event_data: vtkMRMLInteractionEventData) -> bool:
-        if self.effect.is_brush_enabled():
-            self.effect.update_mouse_position(event_data.GetDisplayPosition())
-            self.effect.view.schedule_render()
-            self.trigger_render_callback()
+        if self.widget.is_brush_enabled():
+            self._paint_at_event_position(event_data)
 
-        return False  # Always let other interactors and displayable managers do whatever they want
+        # Always let other interactor and displayable managers do whatever they want
+        return False
+
+    def _paint_at_event_position(self, event_data: vtkMRMLInteractionEventData):
+        self.widget.update_mouse_position(event_data.GetDisplayPosition())
+        self.widget.view.schedule_render()
+        self.trigger_render_callback()

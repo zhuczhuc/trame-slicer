@@ -1,5 +1,3 @@
-from typing import Optional
-
 from slicer import vtkMRMLScene, vtkMRMLScriptedModuleNode
 from trame_client.widgets.core import VirtualNode
 
@@ -34,7 +32,7 @@ class LayoutManager:
         self._layouts: dict[str, Layout] = {}
         self._view_manager = view_manager
         self._ui = layout_ui_node
-        self._current_layout: Optional[str] = None
+        self._current_layout: str | None = None
         self._scene_node = scene.AddNewNodeByClass(
             "vtkMRMLScriptedModuleNode", "layout_node"
         )
@@ -75,14 +73,14 @@ class LayoutManager:
 
     def set_layout_from_node(self, node: vtkMRMLScriptedModuleNode) -> None:
         if not node:
-            raise RuntimeError("Cannot set layout from None scene node.")
+            _error_msg = "Cannot set layout from None scene node."
+            raise RuntimeError(_error_msg)
 
         layout_id = node.GetParameter("layout_id")
         layout_description = node.GetParameter("layout_description")
         if None in [layout_id, layout_description]:
-            raise RuntimeError(
-                f"Invalid layout information {layout_id}, {layout_description}"
-            )
+            _error_msg = f"Invalid layout information {layout_id}, {layout_description}"
+            raise RuntimeError(_error_msg)
 
         self.register_layout(layout_id, slicer_layout_to_vue(layout_description))
         self.set_layout(layout_id)
@@ -92,7 +90,8 @@ class LayoutManager:
 
     def get_layout(self, layout_id: str) -> Layout:
         if not self.has_layout(layout_id):
-            raise RuntimeError(f"Layout not present in manager : {layout_id}")
+            _error_msg = f"Layout not present in manager : {layout_id}"
+            raise RuntimeError(_error_msg)
         return self._layouts[layout_id]
 
     def register_layout_dict(self, layout_dict: dict[str, Layout]) -> None:

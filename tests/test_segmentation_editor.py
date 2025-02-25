@@ -1,193 +1,210 @@
-import numpy as np
 import pytest
-from slicer import (
-    vtkMRMLSegmentationDisplayNode,
-    vtkMRMLSegmentationNode,
-    vtkSegmentation,
-    vtkSegmentationConverter,
-    vtkSlicerSegmentationsModuleLogic,
-)
-from vtkmodules.vtkCommonCore import VTK_UNSIGNED_CHAR
-from vtkmodules.vtkCommonDataModel import vtkImageData
+from undo_stack import SignalContainerSpy, UndoStack
 
-from trame_slicer.segmentation import (
-    LabelMapOverwriteMode,
-    SegmentationEditor,
-    vtk_image_to_np,
-)
+from trame_slicer.segmentation import SegmentationEffectID
+from trame_slicer.utils import vtk_image_to_np
 
 
 @pytest.fixture
-def a_simple_segmentation(a_slicer_app, a_data_folder):
-    return a_slicer_app.io_manager.load_model(
-        a_data_folder.joinpath("simple_segmentation.stl").as_posix()
-    )
+def editor(a_segmentation_editor):
+    return a_segmentation_editor
 
 
 @pytest.fixture
-def a_simple_volume(a_slicer_app, a_data_folder, a_nrrd_volume_file_path):
-    return a_slicer_app.io_manager.load_volumes(
-        a_data_folder.joinpath("simple_volume.nii").as_posix()
-    )[-1]
+def undo_stack(editor):
+    undo_stack = UndoStack()
+    editor.set_undo_stack(undo_stack)
+    return undo_stack
 
 
-def check_labelmap_is(labelmap: np.ndarray, expected) -> None:
-    assert np.array_equal(labelmap, np.array(expected, np.uint8))
+@pytest.fixture
+def active_segmentation_node(editor, a_volume_node):
+    segmentation_node = editor.create_empty_segmentation_node()
+    editor.set_active_segmentation(segmentation_node, a_volume_node)
+    return segmentation_node
 
 
-def test_segmentation_editor(a_simple_volume, a_simple_segmentation, a_slicer_app):
-    segmentation_logic = vtkSlicerSegmentationsModuleLogic()
-    segmentation_logic.SetMRMLApplicationLogic(a_slicer_app.app_logic)
-    segmentation_logic.SetMRMLScene(a_slicer_app.scene)
-
-    # Create a segmentation node
-    segmentation_node: vtkMRMLSegmentationNode = a_slicer_app.scene.AddNewNodeByClass(
-        "vtkMRMLSegmentationNode"
-    )
-    segmentation_node.SetReferenceImageGeometryParameterFromVolumeNode(a_simple_volume)
-
-    # Push model to segmentation
-    segmentation_logic.ImportModelToSegmentationNode(
-        a_simple_segmentation, segmentation_node, ""
-    )
-    segmentation: vtkSegmentation = segmentation_node.GetSegmentation()
-
-    display_node = vtkMRMLSegmentationDisplayNode.SafeDownCast(
-        segmentation_node.GetDisplayNode()
-    )
-
-    vtk_labelmap = vtkImageData.SafeDownCast(
-        segmentation.GetNthSegment(0).GetRepresentation(
-            vtkSegmentationConverter.GetBinaryLabelmapRepresentationName()
-        )
-    )
-
-    editor = SegmentationEditor(segmentation_node, a_simple_volume)
-    editor.sanitize_segmentation()
-    editor.active_segment = segmentation.GetNthSegmentID(0)
-
-    labelmap = vtk_image_to_np(vtk_labelmap)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[0, 0], [0, 0]]])
-
-    vtk_modifier = vtkImageData()
-    vtk_modifier.SetExtent(list(vtk_labelmap.GetExtent()))
-    vtk_modifier.AllocateScalars(VTK_UNSIGNED_CHAR, 1)  # booleans
-    vtk_modifier.GetPointData().GetScalars().Fill(0)
-    modifier = vtk_image_to_np(vtk_modifier)
-    modifier[1, 0, 0] = 1
-
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[1, 0], [0, 0]]])
-
-    editor.active_segment = segmentation.AddEmptySegment("2", "2", [1.0, 0.0, 0.0])
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[2, 0], [0, 0]]])
-
-    editor.overwrite_mode = LabelMapOverwriteMode.Never
-    editor.active_segment = segmentation.GetNthSegmentID(0)
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[2, 0], [0, 0]]])  # no change
-
-    modifier[1, 0, 1] = 1
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(
-        labelmap, [[[1, 0], [0, 0]], [[2, 1], [0, 0]]]
-    )  # only 0 will change
-
-    modifier[1, 1, 0] = 1
-    modifier[1, 1, 1] = 1
-    display_node.SetSegmentVisibility(
-        segmentation.GetNthSegmentID(1), False
-    )  # hide segment 1
-    editor.overwrite_mode = LabelMapOverwriteMode.VisibleSegments
-    editor.active_segment = segmentation.AddEmptySegment("3", "3", [0.0, 1.0, 0.0])
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(
-        labelmap, [[[1, 0], [0, 0]], [[2, 3], [0, 0]]]
-    )  # only 1 will change
+@pytest.fixture
+def editor_spy(editor):
+    return SignalContainerSpy(editor)
 
 
-def test_segmentation_editor_with_mask(
-    a_simple_volume, a_simple_segmentation, a_slicer_app
+def test_segmentation_editor_can_add_segments(
+    editor, a_volume_node, active_segmentation_node
 ):
-    segmentation_logic = vtkSlicerSegmentationsModuleLogic()
-    segmentation_logic.SetMRMLApplicationLogic(a_slicer_app.app_logic)
-    segmentation_logic.SetMRMLScene(a_slicer_app.scene)
+    assert editor.get_segment_ids() == []
 
-    # Create a segmentation node
-    segmentation_node: vtkMRMLSegmentationNode = a_slicer_app.scene.AddNewNodeByClass(
-        "vtkMRMLSegmentationNode"
+    editor.set_active_segmentation(active_segmentation_node, a_volume_node)
+    editor.add_empty_segment(
+        segment_id="segment_id_1",
+        segment_name="SegmentName",
+        segment_color=[1.0, 0.0, 0.0],
     )
-    segmentation_node.SetReferenceImageGeometryParameterFromVolumeNode(a_simple_volume)
-
-    # Push model to segmentation
-    segmentation_logic.ImportModelToSegmentationNode(
-        a_simple_segmentation, segmentation_node, ""
-    )
-    segmentation: vtkSegmentation = segmentation_node.GetSegmentation()
-
-    display_node = vtkMRMLSegmentationDisplayNode.SafeDownCast(
-        segmentation_node.GetDisplayNode()
+    editor.add_empty_segment(
+        segment_id="segment_id_2",
+        segment_name="SegmentName2",
+        segment_color=[0.0, 1.0, 0.0],
     )
 
-    vtk_labelmap = vtkImageData.SafeDownCast(
-        segmentation.GetNthSegment(0).GetRepresentation(
-            vtkSegmentationConverter.GetBinaryLabelmapRepresentationName()
-        )
+    assert active_segmentation_node.GetSegmentation().GetNumberOfSegments() == 2
+    assert editor.get_segment_ids() == ["segment_id_1", "segment_id_2"]
+    assert editor.get_segment_names() == ["SegmentName", "SegmentName2"]
+
+
+def test_segmentation_can_sanitize_an_empty_initial_label_map(
+    editor, a_volume_node, active_segmentation_node
+):
+    assert active_segmentation_node
+    segment_id = editor.add_empty_segment()
+    labelmap = editor.get_segment_labelmap(segment_id)
+    assert labelmap.GetDimensions() == a_volume_node.GetImageData().GetDimensions()
+
+
+def test_segmentation_can_enable_3d_repr(editor, a_volume_node, a_segmentation_model):
+    segmentation_node = editor.create_segmentation_node_from_model_node(
+        a_segmentation_model
+    )
+    editor.set_surface_representation_enabled(True)
+    editor.set_active_segmentation(segmentation_node, a_volume_node)
+    assert segmentation_node.GetSegmentation().ContainsRepresentation(
+        editor.active_segmentation._surface_repr_name
     )
 
-    editor = SegmentationEditor(segmentation_node, a_simple_volume)
-    editor.mask = np.array(
-        [[[True, False], [True, False]], [[True, False], [False, False]]], dtype=np.bool
+    editor.set_surface_representation_enabled(False)
+    assert not segmentation_node.GetSegmentation().ContainsRepresentation(
+        editor.active_segmentation._surface_repr_name
     )
 
-    labelmap = vtk_image_to_np(vtk_labelmap)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[0, 0], [0, 0]]])
 
-    vtk_modifier = vtkImageData()
-    vtk_modifier.SetExtent(list(vtk_labelmap.GetExtent()))
-    vtk_modifier.AllocateScalars(VTK_UNSIGNED_CHAR, 1)  # booleans
-    vtk_modifier.GetPointData().GetScalars().Fill(0)
+def test_segmentation_can_undo_modifications(
+    editor,
+    undo_stack,
+    active_segmentation_node,
+):
+    assert active_segmentation_node
+    for _ in range(5):
+        editor.add_empty_segment()
+
+    assert undo_stack.can_undo()
+    undo_stack.undo()
+
+    assert len(editor.get_segment_ids()) == 4
+    assert undo_stack.can_redo()
+
+    undo_stack.redo()
+    assert len(editor.get_segment_ids()) == 5
+    assert not undo_stack.can_redo()
+
+
+@pytest.fixture
+def segmentation_with_two_segments(editor, undo_stack, active_segmentation_node):
+    assert undo_stack
+    assert active_segmentation_node
+    segment_id_1 = editor.add_empty_segment()
+
+    vtk_modifier = editor.create_modifier_labelmap()
     modifier = vtk_image_to_np(vtk_modifier)
+    modifier[0, 0, 0] = 1
+    editor.active_segment_modifier.apply_labelmap(vtk_modifier)
+
+    segment_id_2 = editor.add_empty_segment()
+    modifier[0, 0, 0] = 0
     modifier[1, 0, 0] = 1
-    modifier[1, 0, 1] = 1  # out of mask!
+    editor.active_segment_modifier.apply_labelmap(vtk_modifier)
+    return segment_id_1, segment_id_2
 
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[1, 0], [0, 0]]])
 
-    editor.active_segment = segmentation.AddEmptySegment("2", "2", [1.0, 0.0, 0.0])
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[2, 0], [0, 0]]])
+def test_modifying_segmentation_label_can_be_undo_redo(
+    editor, undo_stack, segmentation_with_two_segments
+):
+    segment_id_1, segment_id_2 = segmentation_with_two_segments
+    post = editor.get_segment_labelmap(
+        segment_id_1, as_numpy_array=True, do_sanitize=False
+    )
+    assert post.sum() == 3
 
-    editor.overwrite_mode = LabelMapOverwriteMode.Never
-    editor.active_segment = segmentation.GetNthSegmentID(0)
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[2, 0], [0, 0]]])  # no change
+    assert undo_stack.can_undo()
+    undo_stack.undo()
 
-    modifier[1, 0, 1] = 1
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[2, 0], [0, 0]]])  # no change
-    editor.mask[1, 0, 1] = True
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(
-        labelmap, [[[1, 0], [0, 0]], [[2, 1], [0, 0]]]
-    )  # only 0 will change
+    post = editor.get_segment_labelmap(
+        segment_id_1, as_numpy_array=True, do_sanitize=False
+    )
+    assert post.sum() == 1
 
-    editor.mask[1, 0, 1] = False
-    editor.mask[1, 1, 0] = True
-    editor.mask[1, 1, 1] = True
-    modifier[1, 1, 0] = 1
-    modifier[1, 1, 1] = 1
-    display_node.SetSegmentVisibility(
-        segmentation.GetNthSegmentID(1), False
-    )  # hide segment 1
-    editor.overwrite_mode = LabelMapOverwriteMode.VisibleSegments
-    editor.active_segment = segmentation.AddEmptySegment("3", "3", [0.0, 1.0, 0.0])
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(labelmap, [[[1, 0], [0, 0]], [[2, 1], [0, 0]]])  # no change
+    while undo_stack.can_undo():
+        undo_stack.undo()
 
-    editor.mask[1, 0, 1] = True
-    editor.apply_labelmap(vtk_modifier)
-    check_labelmap_is(
-        labelmap, [[[1, 0], [0, 0]], [[2, 3], [0, 0]]]
-    )  # only 1 will change
+    undo_stack.redo()
+    post = editor.get_segment_labelmap(
+        segment_id_1, as_numpy_array=True, do_sanitize=False
+    )
+    assert post.sum() == 0
+
+    assert undo_stack.can_redo()
+    while undo_stack.can_redo():
+        undo_stack.redo()
+
+    post = editor.get_segment_labelmap(
+        segment_id_1, as_numpy_array=True, do_sanitize=False
+    )
+    assert post.sum() == 3
+
+
+def test_undo_redo_keeps_labelmap_merged(
+    editor, undo_stack, segmentation_with_two_segments
+):
+    segment_id_1, segment_id_2 = segmentation_with_two_segments
+
+    labelmap_1 = editor.get_segment_labelmap(segment_id_1)
+    labelmap_2 = editor.get_segment_labelmap(segment_id_2)
+    assert labelmap_1 == labelmap_2
+
+    while undo_stack.can_undo():
+        undo_stack.undo()
+
+    while undo_stack.can_redo():
+        undo_stack.redo()
+
+    labelmap_1 = editor.get_segment_labelmap(segment_id_1)
+    labelmap_2 = editor.get_segment_labelmap(segment_id_2)
+    assert labelmap_1 == labelmap_2
+
+
+def test_undo_redo_keeps_labelmap_merged_after_remove(
+    editor, undo_stack, segmentation_with_two_segments
+):
+    segment_id_1, segment_id_2 = segmentation_with_two_segments
+
+    editor.remove_segment(segment_id_2)
+    undo_stack.undo()
+
+    labelmap_1 = editor.get_segment_labelmap(segment_id_1)
+    labelmap_2 = editor.get_segment_labelmap(segment_id_2)
+    assert labelmap_1 == labelmap_2
+
+
+def test_notifies_changes_on_new_segmentation(editor, a_volume_node, editor_spy):
+    n1 = editor.create_empty_segmentation_node()
+
+    editor.set_active_segmentation(n1, a_volume_node)
+    editor_spy[editor.active_segment_id_changed].assert_called_with("")
+    editor_spy[editor.show_3d_changed].assert_called_with(False)
+    editor_spy[editor.active_effect_name_changed].assert_called_with("")
+    editor_spy.reset()
+
+    editor.show_3d(True)
+    editor_spy[editor.show_3d_changed].assert_called_with(True)
+
+    segment_id = editor.add_empty_segment()
+    editor_spy[editor.active_segment_id_changed].assert_called_with(segment_id)
+
+    effect = editor.set_active_effect_id(SegmentationEffectID.Scissors)
+    editor_spy[editor.active_effect_name_changed].assert_called_with(
+        effect.class_name()
+    )
+
+    editor_spy.reset()
+    editor.remove_segment(segment_id)
+
+    editor_spy[editor.active_segment_id_changed].assert_called_with("")
+    editor_spy[editor.active_effect_name_changed].assert_called_with("")

@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal
 
 from slicer import (
     vtkMRMLApplicationLogic,
@@ -13,7 +13,6 @@ from slicer import (
     vtkMRMLSegmentationsDisplayableManager2D,
     vtkMRMLSliceLogic,
     vtkMRMLSliceViewDisplayableManagerFactory,
-    vtkMRMLSliceViewInteractorStyle,
     vtkMRMLTransformsDisplayableManager2D,
     vtkMRMLVolumeGlyphSliceDisplayableManager,
 )
@@ -73,7 +72,7 @@ class SliceView(AbstractView):
         app_logic: vtkMRMLApplicationLogic,
         name: str,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
 
@@ -119,7 +118,6 @@ class SliceView(AbstractView):
             self.render_manager
         )
         self.displayable_manager_group.Initialize(factory, self.renderer())
-        self.interactor_observer = vtkMRMLSliceViewInteractorStyle()
         self.name = name
 
         # Create slice logic
@@ -131,13 +129,9 @@ class SliceView(AbstractView):
         self._modified_dispatcher.attach_vtk_observer(self.logic, "ModifiedEvent")
         app_logic.GetSliceLogics().AddItem(self.logic)
 
-        self.interactor_observer.SetSliceLogic(self.logic)
-        self.interactor_observer.SetDisplayableManagers(self.displayable_manager_group)
-
         # Connect to scene
         self.set_mrml_scene(scene)
         self.interactor().SetInteractorStyle(vtkInteractorStyleUser())
-        self.interactor_observer.SetInteractor(self.interactor())
 
     def _reset_node_view_properties(self):
         super()._reset_node_view_properties()
@@ -186,16 +180,16 @@ class SliceView(AbstractView):
         self.logic.FitSliceToAll()
         self.logic.SnapSliceOffsetToIJK()
 
-    def set_background_volume_id(self, volume_id: Optional[str]) -> None:
+    def set_background_volume_id(self, volume_id: str | None) -> None:
         self.logic.GetSliceCompositeNode().SetBackgroundVolumeID(volume_id)
 
-    def get_background_volume_id(self) -> Optional[str]:
+    def get_background_volume_id(self) -> str | None:
         return self.logic.GetSliceCompositeNode().GetBackgroundVolumeID()
 
-    def set_foreground_volume_id(self, volume_id: Optional[str]) -> None:
+    def set_foreground_volume_id(self, volume_id: str | None) -> None:
         self.logic.GetSliceCompositeNode().SetForegroundVolumeID(volume_id)
 
-    def get_foreground_volume_id(self) -> Optional[str]:
+    def get_foreground_volume_id(self) -> str | None:
         return self.logic.GetSliceCompositeNode().GetForegroundVolumeID()
 
     def get_slice_range(self) -> tuple[float, float]:

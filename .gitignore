@@ -25,3 +25,4 @@ tests/data/
 __pycache__
 *egg-info
 *pyc
+/dist

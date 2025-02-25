@@ -16,7 +16,7 @@ from trame_slicer.views import (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_sagittal_view():
     return ViewLayoutDefinition(
         "sagittal_view_tag",
@@ -25,7 +25,7 @@ def a_sagittal_view():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_coronal_view():
     return ViewLayoutDefinition(
         "coronal_view_tag",
@@ -34,27 +34,27 @@ def a_coronal_view():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_mock_view_manager() -> ViewManager:
     return mock.create_autospec(ViewManager)
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_mock_ui() -> VirtualNode:
     return mock.create_autospec(VirtualNode)
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_slicer_scene() -> vtkMRMLScene:
     return vtkMRMLScene()
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_layout_manager(a_mock_ui, a_mock_view_manager, a_slicer_scene):
     return LayoutManager(a_slicer_scene, a_mock_view_manager, a_mock_ui)
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_sagittal_layout(a_sagittal_view):
     return Layout(
         LayoutDirection.Vertical,
@@ -62,7 +62,7 @@ def a_sagittal_layout(a_sagittal_view):
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_coronal_layout(a_coronal_view):
     return Layout(
         LayoutDirection.Vertical,

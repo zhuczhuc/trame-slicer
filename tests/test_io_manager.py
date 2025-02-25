@@ -13,13 +13,16 @@ from vtkmodules.vtkCommonCore import vtkPoints
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 from vtkmodules.vtkIOGeometry import vtkSTLReader
 
-from trame_slicer.core.io_manager import IOManager
-from trame_slicer.core.volumes_reader import VolumesReader
+from trame_slicer.core import IOManager, VolumesReader
 
 
-@pytest.fixture()
+@pytest.fixture
 def an_io_manager(a_slicer_app):
-    return IOManager(a_slicer_app.scene, a_slicer_app.app_logic)
+    return IOManager(
+        a_slicer_app.scene,
+        a_slicer_app.app_logic,
+        a_slicer_app.segmentation_editor,
+    )
 
 
 def test_an_io_manager_can_load_a_volume_using_nifti_format(

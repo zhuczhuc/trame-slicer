@@ -68,7 +68,7 @@ def test_dispatcher_dispatches_to_multiple_observers():
         dispatcher.add_dispatch_observer(inst.method)
 
     sphere.SetRadius(2.0)
-    assert all([inst.mock.called for inst in instances])
+    assert all(inst.mock.called for inst in instances)
 
 
 def test_dispatcher_does_nothing_if_bound_observers_deleted():

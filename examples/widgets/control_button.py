@@ -1,5 +1,5 @@
+from collections.abc import Callable
 from math import floor
-from typing import Callable, Optional
 
 from trame_client.widgets.html import Span
 from trame_vuetify.widgets.vuetify3 import VBtn, VIcon, VTooltip
@@ -11,10 +11,11 @@ class ControlButton(VBtn):
         *,
         name: str,
         icon: str,
-        click: Optional[Callable] = None,
+        click: Callable | None = None,
         size: int = 40,
         **kwargs,
     ) -> None:
+        size = size or ""
         super().__init__(
             variant="text",
             rounded=0,
@@ -26,7 +27,7 @@ class ControlButton(VBtn):
             **kwargs,
         )
 
-        icon_size = floor(0.6 * size)
+        icon_size = floor(0.6 * size) if size else ""
 
         with self:
             VIcon(icon, size=icon_size)

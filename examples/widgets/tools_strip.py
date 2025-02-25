@@ -6,6 +6,7 @@ from trame_slicer.core import LayoutManager, SlicerApp
 from .layout_button import LayoutButton
 from .load_client_volume_files_button import LoadClientVolumeFilesButton
 from .markups_button import MarkupsButton
+from .segmentation_button import SegmentationButton
 from .volume_property_button import VolumePropertyButton
 
 
@@ -31,3 +32,4 @@ class ToolsStrip(Div):
                 layout_manager=layout_manager,
             )
             MarkupsButton(server=server, slicer_app=slicer_app)
+            SegmentationButton(server=server, slicer_app=slicer_app)
