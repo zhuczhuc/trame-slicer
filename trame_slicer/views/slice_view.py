@@ -86,9 +86,9 @@ class SliceView(AbstractView):
         self.render_window().AddRenderer(self.overlay_renderer)
         self.render_window().SetAlphaBitPlanes(1)
 
-        # Observe interactor configuration event to update slice size
+        # Observe interactor resize event as window resize event is triggered before the window is actually resized.
         self.interactor().AddObserver(
-            vtkCommand.ConfigureEvent, self._update_slice_size
+            vtkCommand.WindowResizeEvent, self._update_slice_size
         )
 
         # Add Render manager
