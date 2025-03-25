@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 from itertools import chain
-from typing import Protocol, Union, runtime_checkable
+from typing import Optional, Protocol, Union, runtime_checkable
 
 from trame.widgets import client, html
 
@@ -22,6 +22,7 @@ class View(Protocol):
 class Layout:
     direction: LayoutDirection
     items: list[Union["Layout", View]]
+    flex_sizes: Optional[list[str]] = None
 
     def get_views(self, is_recursive: bool) -> list[View]:
         """
@@ -57,20 +58,28 @@ class LayoutGrid:
         self,
         layout_items: list[Union["Layout", View]],
         layout_direction: LayoutDirection,
+        layout_flex_sizes: Optional[list[str]] = None,
     ):
         layout_class = (
             "flex-row"
             if layout_direction == LayoutDirection.Horizontal
             else "flex-column"
         )
+
         with html.Div(
-            classes=f"layout-grid-container {layout_class}",
-            style="display: flex; flex-direction: column; flex: 1;",
+            classes=f"layout-grid-container d-flex {layout_class}",
+            style="flex: 1;",
         ):
-            for item in layout_items:
-                with html.Div(classes="d-flex", style="flex: 1; display: flex;"):
+            for i_item, item in enumerate(layout_items):
+                flex_size = (
+                    f"{layout_flex_sizes[i_item]}"
+                    if layout_flex_sizes and len(layout_flex_sizes) > i_item
+                    else "1"
+                )
+
+                with html.Div(classes="d-flex", style=f"flex: {flex_size};"):
                     if isinstance(item, Layout):
-                        LayoutGrid(item.items, item.direction)
+                        LayoutGrid(item.items, item.direction, item.flex_sizes)
                     else:
                         with html.Div(
                             classes="layout-grid-item",
@@ -84,7 +93,7 @@ class LayoutGrid:
             classes="d-flex flex-column flex-grow-1 fill-height",
             style="background-color:black;",
         ):
-            cls(layout.items, layout.direction)
+            cls(layout.items, layout.direction, layout.flex_sizes)
 
 
 def pretty_xml(xml_str: str) -> str:

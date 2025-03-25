@@ -53,6 +53,42 @@ def test_layout_component_can_display_server_configured_templates(a_server):
     a_server.start()
 
 
+def test_layout_component_is_compatible_with_size(a_server):
+    with ViewLayout(a_server, "red_view"):
+        Div(style="background-color: red;", classes="fill-height")
+
+    with ViewLayout(a_server, "blue_view"):
+        Div(style="background-color: blue;", classes="fill-height")
+
+    with ViewLayout(a_server, "green_view"):
+        Div(style="background-color: green;", classes="fill-height")
+
+    with ViewLayout(a_server, "yellow_view"):
+        Div(style="background-color: yellow;", classes="fill-height")
+
+    with VAppLayout(a_server):
+        LayoutGrid.create_root_grid_ui(
+            Layout(
+                LayoutDirection.Horizontal,
+                [
+                    EmptyView("red_view"),
+                    Layout(
+                        LayoutDirection.Vertical,
+                        [
+                            EmptyView("blue_view"),
+                            EmptyView("green_view"),
+                            EmptyView("yellow_view"),
+                        ],
+                        flex_sizes=["70%", "20%"],
+                    ),
+                ],
+                flex_sizes=["1", "0 0 200pt"],
+            )
+        )
+
+    a_server.start()
+
+
 @pytest.fixture()
 def a_slicer_layout():
     return """
