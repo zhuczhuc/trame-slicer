@@ -1,3 +1,6 @@
+from itertools import product
+
+import pytest
 from slicer import vtkMRMLAbstractViewNode
 
 
@@ -79,3 +82,48 @@ def test_three_d_view_can_toggle_between_perspective_and_orthographic(
     assert not a_threed_view.is_render_mode_perspective()
     a_threed_view.set_render_mode_to_perspective()
     assert a_threed_view.is_render_mode_perspective()
+
+
+@pytest.mark.parametrize("factor, is_orthographic", product([0.9, -3], [True, False]))
+def test_three_d_view_can_zoom_by_arbitrary_factor(
+    a_threed_view, render_interactive, factor, is_orthographic
+):
+    if is_orthographic:
+        a_threed_view.set_render_mode_to_orthographic()
+
+    def get_zoom():
+        camera_node = a_threed_view.get_camera_node()
+        return (
+            camera_node.GetPosition()
+            if not is_orthographic
+            else camera_node.GetParallelScale()
+        )
+
+    prev = get_zoom()
+    a_threed_view.zoom(factor)
+    assert get_zoom() != prev
+
+    if render_interactive:
+        a_threed_view.start_interactor()
+
+
+@pytest.mark.parametrize("is_orthographic", [True, False])
+def test_three_d_view_can_zoom_in(a_threed_view, render_interactive, is_orthographic):
+    if is_orthographic:
+        a_threed_view.set_render_mode_to_orthographic()
+
+    a_threed_view.zoom_in()
+
+    if render_interactive:
+        a_threed_view.start_interactor()
+
+
+@pytest.mark.parametrize("is_orthographic", [True, False])
+def test_three_d_view_can_zoom_out(a_threed_view, render_interactive, is_orthographic):
+    if is_orthographic:
+        a_threed_view.set_render_mode_to_orthographic()
+
+    a_threed_view.zoom_out()
+
+    if render_interactive:
+        a_threed_view.start_interactor()

@@ -179,13 +179,13 @@ class ThreeDView(RenderView):
         self.mrml_view_node.SetAxisLabelsVisible(is_visible)
 
     def rotate_to_view_direction(self, view_direction: ViewDirection) -> None:
-        camera_node = self._camera_node()
+        camera_node = self.get_camera_node()
         if not camera_node:
             return
 
         camera_node.RotateTo(view_direction.value)
 
-    def _camera_node(self) -> Optional[vtkMRMLCameraNode]:
+    def get_camera_node(self) -> Optional[vtkMRMLCameraNode]:
         camera_dm = self.displayable_manager_group.GetDisplayableManagerByClassName(
             "vtkMRMLCameraDisplayableManager"
         )
@@ -223,3 +223,44 @@ class ThreeDView(RenderView):
 
     def is_render_mode_perspective(self) -> bool:
         return self.mrml_view_node.GetRenderMode() == 0
+
+    def zoom(self, factor):
+        """
+        Move the camera node closer / further from the focal point by a given factor.
+
+        :param factor: Values between -inf and 1. Values greater than 0 will zoom in, below 0 will zoom out
+        """
+        if self.is_render_mode_perspective():
+            self._zoom_camera_position(factor)
+        else:
+            self._zoom_parallel_scale(factor)
+
+    def _zoom_parallel_scale(self, factor):
+        camera_node = self.get_camera_node()
+
+        parallel_factor = 1 - factor
+        if parallel_factor <= 0:
+            return
+
+        camera_node.SetParallelScale(parallel_factor * camera_node.GetParallelScale())
+        camera_node.ResetClippingRange()
+
+    def _zoom_camera_position(self, factor):
+        import numpy as np
+
+        if factor >= 1:
+            return
+
+        camera_node = self.get_camera_node()
+        camera_position = np.array(camera_node.GetPosition())
+        focal_point = np.array(camera_node.GetFocalPoint())
+        camera_node.SetPosition(
+            camera_position + factor * (focal_point - camera_position)
+        )
+        camera_node.ResetClippingRange()
+
+    def zoom_in(self):
+        self.zoom(0.2)
+
+    def zoom_out(self):
+        self.zoom(-0.2)

@@ -232,3 +232,23 @@ class SliceView(AbstractView):
 
     def toggle_visible_in_3d(self):
         self.set_visible_in_3d(not self.is_visible_in_3d())
+
+    def zoom(self, factor: float):
+        """
+        Changes the current view field of view by multiplying by input factor.
+        :param factor: Values between -inf and 1. Values greater than 0 will zoom in, below 0 will zoom out
+        """
+        fov_factor = 1 - factor
+        if fov_factor <= 0:
+            return
+
+        current_fov = self.mrml_view_node.GetFieldOfView()
+        self.mrml_view_node.SetFieldOfView(
+            current_fov[0] * fov_factor, current_fov[1] * fov_factor, current_fov[2]
+        )
+
+    def zoom_in(self):
+        self.zoom(0.2)
+
+    def zoom_out(self):
+        self.zoom(-0.2)

@@ -111,3 +111,40 @@ def test_slice_view_can_display_rulers(
 
     if render_interactive:
         a_slice_view.start_interactor()
+
+
+@pytest.mark.parametrize("factor", [0.9, -3])
+def test_slice_views_can_be_zoomed_in_out_by_arbitrary_factors(
+    factor,
+    a_slice_view,
+    a_volume_node,
+    render_interactive,
+):
+    a_slice_view.set_background_volume_id(a_volume_node.GetID())
+
+    a_slice_view.zoom(factor)
+
+    if render_interactive:
+        a_slice_view.start_interactor()
+
+
+def test_slice_views_can_be_zoomed_in(
+    a_slice_view,
+    a_volume_node,
+    render_interactive,
+):
+    a_slice_view.set_background_volume_id(a_volume_node.GetID())
+    a_slice_view.zoom_in()
+    if render_interactive:
+        a_slice_view.start_interactor()
+
+
+def test_slice_views_can_be_zoomed_out(
+    a_slice_view,
+    a_volume_node,
+    render_interactive,
+):
+    a_slice_view.set_background_volume_id(a_volume_node.GetID())
+    a_slice_view.zoom_out()
+    if render_interactive:
+        a_slice_view.start_interactor()
