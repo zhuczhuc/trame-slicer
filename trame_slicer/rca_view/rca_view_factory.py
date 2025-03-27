@@ -36,7 +36,7 @@ def register_rca_factories(
     server: Server,
     slice_view_ui_f: Callable[[Server, str, AbstractViewChild], None] = None,
     three_d_view_ui_f: Callable[[Server, str, AbstractViewChild], None] = None,
-    rca_encoder: RcaEncoder = RcaEncoder.JPEG,
+    rca_encoder: RcaEncoder = RcaEncoder.TURBO_JPEG,
     target_fps: float = 30.0,
     interactive_quality: int = 50,
 ) -> None:
