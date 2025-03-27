@@ -53,13 +53,20 @@ class ViewLayoutDefinition:
         return cls.slice_view("Sagittal")
 
     @classmethod
-    def threed_view(cls):
+    def threed_view(
+        cls,
+        *,
+        name: str = "ThreeD",
+        label: str = "1",
+        background_color: str | tuple[str, str] = ("#1f2020", "#3c3c3c"),
+        box_visible: bool = False,
+    ):
         return cls(
-            "ThreeD",
+            name,
             ViewType.THREE_D_VIEW,
             ViewProps(
-                label="1",
-                background_color=("#1f2020", "#3c3c3c"),
-                box_visible=False,
+                label=label,
+                background_color=background_color,
+                box_visible=box_visible,
             ),
         )
