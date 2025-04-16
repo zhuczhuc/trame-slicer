@@ -154,6 +154,18 @@ class IOManager:
             return self._load_mrb_scene(scene_path)
         return self._load_mrml_scene(scene_path)
 
+    def save_scene(self, scene_path: str | Path) -> bool:
+        scene_path = Path(scene_path)
+        scene_path = scene_path.resolve()
+        base_dir = scene_path.parent
+        base_dir.mkdir(parents=True, exist_ok=True)
+        self.scene.SetURL(scene_path.as_posix())
+        self.scene.SetRootDirectory(base_dir.as_posix())
+
+        if scene_path.name.endswith(".mrml"):
+            return self.scene.Commit()
+        return self.scene.WriteToMRB(scene_path.as_posix())
+
     def _load_mrml_scene(self, scene_path: Path) -> bool:
         if not scene_path.is_file():
             return False

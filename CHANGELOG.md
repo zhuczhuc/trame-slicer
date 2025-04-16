@@ -1,6 +1,5 @@
 # CHANGELOG
 
-
 ## v0.1.0 (2025-04-14)
 
 ### Features
@@ -13,26 +12,38 @@
 - **segmentation**: (wip) Add segment editor
   ([`8702402`](https://github.com/KitwareMedical/trame-slicer/commit/870240271255ca84020d0399653f188340361955))
 
-* Add segmentation editor and paint/erase effect * Add segmentation editor scissor effect * Add
-  examples
+* Add segmentation editor and paint/erase effect
+  - Add segmentation editor scissor effect
+  - Add examples
 
 - **segmentation**: Refactoring
   ([`3deb00c`](https://github.com/KitwareMedical/trame-slicer/commit/3deb00c6886b666c51bd22b301f3a02bc02341ad))
 
-* Rename SegmentationEffect to Widget * Rename SegmentationTool to Effect * Rename
-  SegmentationManager to SegmentationEditor * Rename SegmentationEditor to SegmentModifier * Move
-  Segmentation logic to SegmentationEditor * Fix segmentation sanitize when using empty segment *
-  Fix segmentation export to NIFTI file * Move IO to segmentation editor * Fix brush scaling in
-  absolute mode and default to invariant * Fix events sent twice in Slice views * Move events
-  handling in views in dedicated classes * Add SegmentRegionMask responsible for region masking *
-  Fix failing tests * Add support for segmentation Undo / Redo * Add helper for signal / slot
-  connection * Add segmentation button to medical example * Fix brush diameter update when switching
-  views * Add Undo / Redo functionnalities * Update example * Migrate to pyproject.toml * Bump
-  pre-commit rules * Fix pre-commit errors
+* Rename SegmentationEffect to Widget
+* Rename SegmentationTool to Effect
+* Rename SegmentationManager to SegmentationEditor
+* Rename SegmentationEditor to SegmentModifier
+* Move Segmentation logic to SegmentationEditor
+* Fix segmentation sanitize when using empty segment
+* Fix segmentation export to NIFTI file
+* Move IO to segmentation editor
+* Fix brush scaling in absolute mode and default to invariant
+* Fix events sent twice in Slice views
+* Move events handling in views in dedicated classes
+* Add SegmentRegionMask responsible for region masking
+* Fix failing tests
+* Add support for segmentation Undo / Redo
+* Add helper for signal / slot connection
+* Add segmentation button to medical example
+* Fix brush diameter update when switching views
+* Add Undo / Redo functionalities
+* Update example
+* Migrate to pyproject.toml
+* Bump pre-commit rules
+* Fix pre-commit errors
 
 - **segmentation**: Scissor effect in slice views
   ([`5b55f3b`](https://github.com/KitwareMedical/trame-slicer/commit/5b55f3be491c7be9702c389b6165112de3d46419))
-
 
 ## v0.0.2 (2025-04-08)
 
@@ -51,7 +62,8 @@ https://github.com/Kitware/trame-rca/pull/18
 - **view**: Rollback monitored resize event
   ([`f2de24e`](https://github.com/KitwareMedical/trame-slicer/commit/f2de24e316ab137dd52735204788e4bb50542e6a))
 
-* Rollback 05e7267a2eea3a953fa5fdc45b401401e898f4e2 which doesn't work for Linux systems.
+* Rollback 05e7267a2eea3a953fa5fdc45b401401e898f4e2 which doesn't work for Linux
+  systems.
 
 ### Documentation
 
@@ -76,8 +88,8 @@ https://github.com/Kitware/trame-rca/pull/18
 - **view**: Update interactor resize event
   ([`05e7267`](https://github.com/KitwareMedical/trame-slicer/commit/05e7267a2eea3a953fa5fdc45b401401e898f4e2))
 
-* Interactor WindowResizeEvent is scheduled to be deprecated / removed. Update to use ConfigureEvent
-  instead.
+* Interactor WindowResizeEvent is scheduled to be deprecated / removed. Update
+  to use ConfigureEvent instead.
 
 - **view_layout**: Add quick access to 3d view properties
   ([`b1fefcd`](https://github.com/KitwareMedical/trame-slicer/commit/b1fefcdad50c05506b670451a695b66b9856a77a))
@@ -86,7 +98,6 @@ https://github.com/Kitware/trame-rca/pull/18
   ([`99cf3e9`](https://github.com/KitwareMedical/trame-slicer/commit/99cf3e94724bedee7d8c229620910b038806a2ee))
 
 * Add helper methods to zoom in and out for Slice and 3D views
-
 
 ## v0.0.1 (2025-01-30)
 
@@ -143,8 +154,8 @@ https://github.com/Kitware/trame-rca/pull/18
 - **api**: Rename library to trame-slicer
   ([`e79f9a2`](https://github.com/KitwareMedical/trame-slicer/commit/e79f9a26e93be32377e87f6d4417f8ac24597610))
 
-* Rename library to trame-slicer for future usage consistency * SlicerTrame is reserved for Slicer
-  integrated trame-slicer extension
+* Rename library to trame-slicer for future usage consistency \* SlicerTrame is
+  reserved for Slicer integrated trame-slicer extension
 
 - **core**: Add custom share directory
   ([`9f26de6`](https://github.com/KitwareMedical/trame-slicer/commit/9f26de6a7b0db8048626b3d313e62d6150193455))
@@ -152,9 +163,10 @@ https://github.com/Kitware/trame-rca/pull/18
 - **core**: Add file loading from front end
   ([`634708c`](https://github.com/KitwareMedical/trame-slicer/commit/634708c8af04bf4f442d1165190b06ec9eed06e9))
 
-* Add file loading from front end * Automatically display the first volume * Fix Trame / Slicer
-  synchronization for 2D sliders and 3D view reset * Add background color property to view
-  definitions * Fix 2D view orientation to match volume orientation
+* Add file loading from front end _ Automatically display the first volume _ Fix
+  Trame / Slicer synchronization for 2D sliders and 3D view reset _ Add
+  background color property to view definitions _ Fix 2D view orientation to
+  match volume orientation
 
 - **core**: Add markups handling
   ([`d74153a`](https://github.com/KitwareMedical/trame-slicer/commit/d74153ac735437f51eaa7f62b881a1d9fa8dc810))
@@ -162,15 +174,15 @@ https://github.com/Kitware/trame-rca/pull/18
 - **core**: Add slice 3D view visibility
   ([`5032996`](https://github.com/KitwareMedical/trame-slicer/commit/5032996e3c79838a5c6818d8bee46b4549cef866))
 
-* Add Slice 3D view visibility * Add helper functions in io_manager * Move resources to dedicated
-  folder * Initialize additional logic * Bump minimum required trame-rca version to supporting mouse
-  hover
+* Add Slice 3D view visibility _ Add helper functions in io_manager _ Move
+  resources to dedicated folder _ Initialize additional logic _ Bump minimum
+  required trame-rca version to supporting mouse hover
 
 - **core**: Add volume rendering shift helpers
   ([`550953f`](https://github.com/KitwareMedical/trame-slicer/commit/550953f3aed077ee35e70cd6cfd2e6f47a298c46))
 
-* Add VolumeProperty class responsible for VR shift logic * Add VolumeRendering vr shift logic * Add
-  3D Slicer resources for preset icons
+* Add VolumeProperty class responsible for VR shift logic _ Add VolumeRendering
+  vr shift logic _ Add 3D Slicer resources for preset icons
 
 - **example**: Create demo content with simplistic UI
   ([`b96a875`](https://github.com/KitwareMedical/trame-slicer/commit/b96a875d7c2a43075ca92c4488c9964a4680d145))
@@ -178,10 +190,11 @@ https://github.com/Kitware/trame-rca/pull/18
 - **example**: Split medical view example
   ([`cff98d3`](https://github.com/KitwareMedical/trame-slicer/commit/cff98d30d21dbc7b37a72e382696b907d6788bb5))
 
-* Split medical viewer example code into modularized widgets * Add example for the VR Slider * Add
-  smoke test for medical viewer example
+* Split medical viewer example code into modularized widgets _ Add example for
+  the VR Slider _ Add smoke test for medical viewer example
 
-- **io-manager**: Add explicit options to save / load models without coordinate change
+- **io-manager**: Add explicit options to save / load models without coordinate
+  change
   ([`cd57308`](https://github.com/KitwareMedical/trame-slicer/commit/cd57308ad714c365af703992779a4cd4dc7bce86))
 
 - **segmentation**: Add segmentation
@@ -195,21 +208,22 @@ https://github.com/Kitware/trame-rca/pull/18
 - **views**: Add component responsible for the layout
   ([`ca92047`](https://github.com/KitwareMedical/trame-slicer/commit/ca92047e8be4d86f9fdb6dc2e3996e4e505c1278))
 
-* Refactor code structure for more clarity * Apply precommit rules * Add LayoutGrid component for
-  displaying the view layout * Add ViewManager responsible for instantiating the views * Removed
-  outdated classes and code
+* Refactor code structure for more clarity _ Apply precommit rules _ Add
+  LayoutGrid component for displaying the view layout _ Add ViewManager
+  responsible for instantiating the views _ Removed outdated classes and code
 
 - **views**: Add mouse hover support
   ([`99552f9`](https://github.com/KitwareMedical/trame-slicer/commit/99552f9a0eefc0be23cc29d2785c06ff213807fb))
 
-* Add mouse hover support * Fix double mouse release bug
+* Add mouse hover support \* Fix double mouse release bug
 
 - **views**: Add Slice and 3D view interaction
   ([`43861be`](https://github.com/KitwareMedical/trame-slicer/commit/43861bedf7d24232ea2760dbaff1bad0b629b421))
 
-* Bump VTK version to 9.3 for serialization support * Add 2D Slice interaction * Add 3D View
-  interaction in Remote Controlled Area * Add trame-vtklocal as dependency for local rendering * Add
-  trame-rca as dependency for remote rendering
+* Bump VTK version to 9.3 for serialization support _ Add 2D Slice interaction _
+  Add 3D View interaction in Remote Controlled Area _ Add trame-vtklocal as
+  dependency for local rendering _ Add trame-rca as dependency for remote
+  rendering
 
 - **views**: Add Slice offset interaction
   ([`acf6b8f`](https://github.com/KitwareMedical/trame-slicer/commit/acf6b8f78bcd8a606cccee0f392d89a9f719e15c))
@@ -228,8 +242,9 @@ https://github.com/Kitware/trame-rca/pull/18
 - **views**: Add Volume Rendering and 2D interaction refresh
   ([`b6cea3c`](https://github.com/KitwareMedical/trame-slicer/commit/b6cea3cc1537c3dc396768d1ca68963eda2c9442))
 
-* Add strategy responsible for scheduled rendering * Add volume rendering in POC application * Add
-  default scheduled rendering to direct rendering in unit tests
+* Add strategy responsible for scheduled rendering _ Add volume rendering in POC
+  application _ Add default scheduled rendering to direct rendering in unit
+  tests
 
 - **views**: Add WebP RCA encoding
   ([`a90173b`](https://github.com/KitwareMedical/trame-slicer/commit/a90173b5cbcba2a8f7669d027d30a1c2e24050e9))
@@ -242,8 +257,9 @@ https://github.com/Kitware/trame-rca/pull/18
 - **views**: First working version of layout display
   ([`de91828`](https://github.com/KitwareMedical/trame-slicer/commit/de91828aa2a91da41ad42155c298c833f53cdff7))
 
-* Change expected layout dict to dict of layout * Add fit to view to abstract view * Add rotate view
-  to 3D view * Add option to fit to content when showing volume
+* Change expected layout dict to dict of layout _ Add fit to view to abstract
+  view _ Add rotate view to 3D view \* Add option to fit to content when showing
+  volume
 
 - **views**: Improve rendering reactivity
   ([`44dd219`](https://github.com/KitwareMedical/trame-slicer/commit/44dd219b55b0a212ccf61af22db7b7460a0a3672))
@@ -253,12 +269,14 @@ https://github.com/Kitware/trame-rca/pull/18
 - **views**: Improve view creation and connectivity
   ([`9a07d6b`](https://github.com/KitwareMedical/trame-slicer/commit/9a07d6b358c8a2725256415847977d130b633c72))
 
-* Add DisplayManager responsible for showing nodes depending on views * Update SlicerApp * Update
-  TrameApp to reflect changes * Add IOManager responsible for loading volumes / models and
-  segmentations * Add tests for loading DCM volume * Move test data to dedicated folder
+* Add DisplayManager responsible for showing nodes depending on views _ Update
+  SlicerApp _ Update TrameApp to reflect changes _ Add IOManager responsible for
+  loading volumes / models and segmentations _ Add tests for loading DCM
+  volume \* Move test data to dedicated folder
 
 - **views**: Make RCA overlay configurable
   ([`578e7c1`](https://github.com/KitwareMedical/trame-slicer/commit/578e7c1bde0d64a93be6d1c54b66364be3beb3e5))
 
-* Allow injecting UI creation for the RCA views * Remove custom CSS for the vertical sliders * Add
-  helpers to configure Vuetify sliders and connect them to Slicer views
+* Allow injecting UI creation for the RCA views _ Remove custom CSS for the
+  vertical sliders _ Add helpers to configure Vuetify sliders and connect them
+  to Slicer views

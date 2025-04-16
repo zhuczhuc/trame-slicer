@@ -215,3 +215,18 @@ def test_an_io_manager_by_default_loads_and_saves_models_as_lps(
     assert out_file.exists()
     act_points = read_stl_file_points_as_numpy(out_file)
     np.testing.assert_allclose(act_points, exp_points)
+
+
+@pytest.mark.parametrize("scene_name", ["scene.mrml", "scene.mrb"])
+def test_an_io_manager_can_read_write_scene(
+    an_io_manager, a_slicer_app, scene_name, a_volume_node, tmpdir
+):
+    file_path = Path(tmpdir) / scene_name
+    an_io_manager.save_scene(file_path)
+    assert file_path.is_file()
+
+    volume_id = a_volume_node.GetID()
+    a_slicer_app.scene.Clear()
+
+    an_io_manager.load_scene(file_path)
+    assert a_slicer_app.scene.GetNodeByID(volume_id)
