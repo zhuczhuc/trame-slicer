@@ -100,6 +100,7 @@ class SegmentPropertyChangeUndoCommand(UndoCommand):
             return
 
         self._prev_properties.to_segment(self._segment)
+        
 
     def redo(self) -> None:
         self._properties.to_segment(self._segment)
